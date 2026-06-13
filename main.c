@@ -33,6 +33,30 @@ typedef enum {
 	TCP_STATE_ERROR
 } tcp_state_t;
 
+typedef struct {
+    unsigned long last_alive_time;
+    unsigned long last_sensor_time;
+    unsigned long current_time;
+} task_timer_t;
+
+typedef struct {
+    uint8_t loop_active; /* Vehicle on loop */
+    uint8_t prev_di2_state; /* Previous acle sensor state */
+    uint8_t axle_count;  /* Number of axles counted */
+    uint8_t prev_di1_state;  /* Previous loop detection state */
+    uint32_t embedded_seq_num; /* Sequence number for AVCC messages */
+} axle_counter_t;
+
+static axle_counter_t axle_counter = {
+    0,
+    0,
+    0,
+    0,
+    0
+};
+
+static task_timer_t task_timer = {0, 0, 0,};
+
 static sensor_state_t current_state = {0, 0, 0, 0};
 
 static tcp_state_t server_state = TCP_STATE_IDLE;
@@ -44,43 +68,47 @@ static volatile uint16_t uart_rx_head = 0;
 static volatile uint16_t uart_rx_tail = 0;
 static uint8_t uart_tx_buffer[UART_TX_BUFFER_SIZE];
 static uint8_t uart_rx_buffer[20];
+static unsigned long systick_ms = 0;
 
-void hal_uart_send_byte(uint8_t byte)
+
+unsigned long hal_get_millis(void)
 {
-    /* Wait for transmit buffer to be empty */
+    return systick_ms;
+}
+
+void hal_delay_ms(unsigned int ms)
+{
+    unsigned long start = hal_get_millis();
+    while ((hal_get_millis() - start) < ms);
+}
+
+int uart_server_is_ready(void){
+    return (uart_state != UART_STATE_IDLE) ? 1 : 0;
+}
+
+void hal_uart_send_byte(uint8_t byte){
     while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET);
-    
+
     /* Send byte */
     UART1_SendData8(byte);
-    
+
     /* Wait for transmission to complete */
     while (UART1_GetFlagStatus(UART1_FLAG_TC) == RESET);
 }
 
-
-void hal_uart_send(const uint8_t *data, uint16_t len)
-{
+void hal_uart_send(const uint8_t *data, uint16_t len){
     uint16_t i;
-    for (i = 0; i < len; i++) {
+    for(i = 0; i < len; i++){
         hal_uart_send_byte(data[i]);
     }
 }
 
-
-int uart_server_send(const uint8_t *data, uint16_t len)
+int uart_server_send(uint8_t *data, uint16_t len)
 {
-    if (uart_state == UART_STATE_IDLE) {
-        return -1;
-    }
-    
-    if (len > sizeof(uart_tx_buffer)) {
-        len = sizeof(uart_tx_buffer);
-    }
-    
-    /* Copy to TX buffer and send */
+    if(uart_state == UART_STATE_IDLE) return -1;
+    if(len > sizeof(uart_tx_buffer)) len = sizeof(uart_tx_buffer);
     memcpy(uart_tx_buffer, data, len);
     hal_uart_send(uart_tx_buffer, len);
-    
     return 0;
 }
 sensor_state_t sensor_reader_get_state(void)
@@ -124,19 +152,7 @@ uint8_t hal_di_read(uint8_t di_num)
     return (GPIO_ReadInputPin(port, pin) == SET) ? 1 : 0;
 }
 
-void sensor_reader_update(void)
-{
-    current_state.di1 = hal_di_read(1);
-    current_state.di2 = hal_di_read(2);
-    current_state.di3 = hal_di_read(3);
-    current_state.di4 = hal_di_read(4);
-}
 
-void sensor_reader_init(void)
-{
-    /* GPIO is already initialized by hal_gpio_init() */
-    sensor_reader_update();
-}
 
 void hal_relay_set(uint8_t relay_num, uint8_t state){
 	GPIO_TypeDef *port;
@@ -175,6 +191,47 @@ void relay_control_set_all(uint8_t state)
     relay_control_set(4, state);
     relay_control_set(5, state);
     relay_control_set(6, state);
+}
+
+void sensor_reader_update(void){
+    current_state.di1 = hal_di_read(1);
+    current_state.di2 = hal_di_read(2);
+    current_state.di3 = hal_di_read(3);
+    current_state.di4 = hal_di_read(4);
+}
+
+/*
+* Process acle counting state machine
+*/
+void process_axle_counting(void){
+    sensor_state_t sensor = sensor_reader_get_state();
+
+    /* Vehicle entered loop detection */
+    if(sensor.di1 == 1 && axle_counter.prev_di1_state == 0){
+        axle_counter.loop_active = 1;
+        axle_counter.axle_count = 0;
+    }
+    /* Count axle pulses while vehicle is on loop */
+    if(axle_counter.loop_active){
+        if(sensor.di2 == 1 && axle_counter.prev_di2_state == 0){
+            axle_counter.axle_count++;
+        }
+        axle_counter.prev_di2_state = sensor.di2;
+    }
+
+}
+void sensor_reader_init(void)
+{
+    /* GPIO is already initialized by hal_gpio_init() */
+    sensor_reader_update();
+}
+void timer_callback(void){
+    task_timer.current_time = hal_get_millis();
+    /* Update sensor readings every 50ms */
+    if ((task_timer.current_time - task_timer.last_sensor_time) >= SENSOR_READ_INTERVAL){
+        sensor_reader_update();
+        process_axle_counting();
+    }
 }
 
 int command_parser_execute(const char *cmd_str, int len)
@@ -295,33 +352,27 @@ void uart_server_process(void){
 					if (command_parser_execute((const char *)uart_rx_buffer,uart_rx_count) == 0){
 						state = sensor_reader_get_state();
 						message_formatter_alive(resp_buf, sizeof(resp_buf),state.di1,state.di2,state.di3,state.di4);
-						uart_server_send();
+					 	uart_server_send((uint8_t *)resp_buf,strlen(resp_buf));
 					}
+                    else {
+                        uart_server_send((uint8_t *)"ERROR,INVALID_COMMAND\n",strlen("ERROR,INVALID_COMMAND\n"));
+                    }
+                    uart_rx_count = 0;
 				}
 			}
+            else if (read_byte >= 32 && read_byte < 127){
+                uart_rx_buffer[uart_rx_count++] = read_byte;
+            }
+            available_len--;
 		}
+        uart_state = UART_STATE_READY;
 	}
-}
-
-/* Function Prototypes */
-void delay_ms(uint16_t ms);
-void main_loop(void);
-void system_init(void);
-
-/* Software Delay */
-void delay_ms(uint16_t ms)
-{
-    uint16_t i;
-    uint16_t j;
-
-    for(i = 0; i < ms; i++)
-    {
-        for(j = 0; j < 4000; j++)
-        {
-            _asm("nop");
-        }
+    else{
+        uart_state = UART_STATE_READY;
     }
 }
+void main_loop(void);
+void system_init(void);
 
 void tcp_server_process(void){
 	uint16_t received_len = 0;
@@ -343,21 +394,23 @@ void hal_uart_init(uint32_t baudrate)
      * - Parity: None
      * - Mode: RX and TX enabled
      */
-//     UART1_Init(
-//     baudrate,
-//     UART1_WORDLENGTH_8D,
-//     UART1_STOPBITS_1,
-//     UART1_PARITY_NO,
-//     UART1_SYNCMODE_CLOCK_DISABLE,
-//     (UART1_Mode_TypeDef)(UART1_MODE_TX_ENABLE | UART1_MODE_RX_ENABLE)
-// );
+    UART1_Init(
+    baudrate,
+    UART1_WORDLENGTH_8D,
+    UART1_STOPBITS_1,
+    UART1_PARITY_NO,
+    UART1_SYNCMODE_CLOCK_DISABLE,
+    (UART1_Mode_TypeDef)(UART1_MODE_TX_ENABLE | UART1_MODE_RX_ENABLE)
+);
     /* Enable UART1 Receive Interrupt */
-  //  UART1_ITConfig(UART1_IT_RXNE, ENABLE);
-	/* Enable UART1 */
-//    UART1_Cmd(ENABLE);
-	uart_rx_head = 0;
-	uart_rx_tail = 0;
-    uart_rx_count = 0;
+    UART1_ITConfig(UART1_IT_RXNE, ENABLE);
+
+    /* Enable UART1 */
+    UART1_Cmd(ENABLE);
+    /* Clear buffers */
+    uart_rx_head = 0;
+    uart_rx_tail = 0;
+    uart_rx_count = 0;   
 }
 
 void uart_server_init(uint32_t baudrate){
@@ -367,6 +420,16 @@ void uart_server_init(uint32_t baudrate){
 	hal_uart_init(baudrate);
 	
 	uart_state = UART_STATE_READY;
+}
+
+void hal_timer_init(void){
+    CLK_PeripheralClockConfig(CLK_PERIPHERAL_TIMER4, ENABLE);
+    TIM4_TimeBaseInit(TIM4_PRESCALER_128, 125);
+    TIM4_ClearFlag(TIM4_FLAG_UPDATE);
+    /* Enable interrupt */
+    TIM4_ITConfig(TIM4_IT_UPDATE, ENABLE);
+    /* Enable general interrupts */
+    enableInterrupts();
 }
 
 /* Main Application Loop */
@@ -382,11 +445,14 @@ void main_loop(void)
 
         if(GPIO_ReadInputPin(HARDRST_PORT, HARDRST_PIN) == RESET)
         {
-            delay_ms(50);
+            hal_delay_ms(50);
 			if (GPIO_ReadInputPin(HARDRST_PORT, HARDRST_PIN) == 0){
 				/* Send reset message */
-				char mssg[] = "RESET, OK\n";
-				delay_ms(100);
+				char msg[] = "RESET, OK\n";
+                if (uart_server_is_ready()){
+                    uart_server_send((uint8_t *)msg, strlen(msg));
+                }
+				hal_delay_ms(100);
 			}
         }
     }
@@ -398,12 +464,17 @@ void system_init(void){
 
 	/* Initialize HAL layers */
 	hal_gpio_init();
+    hal_timer_init();
 
 	/* Initialize application modules */
 	relay_control_init();
 	sensor_reader_init();
 	/* Initialize UART server for dual-channel communication */
-	delay_ms(500);
+    uart_server_init(UART_BAUDRATE);
+
+    /* Setup timer callback for periodic tasks */
+    timer_callback();
+	hal_delay_ms(500);
 }
 
 /* Main Function */
@@ -415,6 +486,9 @@ int main(void)
     while(1);
 }
 
-
-// hal_uart_init
 // void system_init(void)
+// main_loop( ka tcp_server_send(
+/* Initialize W5500 and TCP server */
+    // w5500_chip_init();
+    // tcp_server_init(TCP_SERVER_PORT);
+// process_axle_counting(void)

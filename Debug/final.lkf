@@ -52,6 +52,9 @@ crtsi0.sm8
 #<BEGIN OBJECT_FILES>
 Debug\stm8s_clk.o
 Debug\stm8s_gpio.o
+Debug\stm8s_tim4.o
+Debug\stm8s_uart1.o
+Debug\w5500.o
 Debug\main.o
 #<END OBJECT_FILES>
 

@@ -67,6 +67,46 @@
 #define W5500_INT_PIN   GPIO_PIN_4
 
 /* ============================================================================
+ * Network Configuration
+ * ========================================================================= */
+
+/* MAC Address */
+#define MAC_ADDR        {0x00, 0x08, 0xDC, 0x12, 0x34, 0x56}
+
+/* IP Address (Static or DHCP) */
+#define USE_DHCP        0   /* 0 = Static IP, 1 = DHCP */
+#define IP_ADDR         {192, 168, 1, 100}
+#define SUBNET_MASK     {255, 255, 255, 0}
+#define GATEWAY_ADDR    {192, 168, 1, 1}
+#define DNS_ADDR        {8, 8, 8, 8}
+
+/* TCP Server Configuration */
+#define TCP_SERVER_PORT 5000
+#define TCP_MAX_CLIENTS 1
+#define TCP_TIMEOUT_MS  5000
+
+/* ============================================================================
+ * Device Configuration
+ * ========================================================================= */
+
+/* Land ID (Identifier for this device) */
+#define DEVICE_LANID    125
+
+/* Serial Communication Parameters */
+#define SERIAL_BAUDRATE 115200
+
+/* System Timer Configuration */
+#define TIMER_TICK_MS   10      /* 10ms timer tick */
+#define ALIVE_INTERVAL  500     /* Send ALIVE message every 500ms */
+#define SENSOR_READ_INTERVAL 50 /* Read sensors every 50ms */
+
+/* Message Buffer Sizes */
+#define MSG_BUFFER_SIZE 80
+#define TCP_RX_BUFFER   512
+#define TCP_TX_BUFFER   512
+
+
+/* ============================================================================
  * UART (COM PORT)
  * ========================================================================= */
 #define UART_PORT  GPIOD
@@ -77,5 +117,15 @@
 
 /* UART Baudrate */
 #define UART_BAUDRATE   115200
+
+
+/* ============================================================================
+ * Feature Flags
+ * ========================================================================= */
+
+#define ENABLE_DEBUG    1       /* Enable debug output via UART */
+#define ENABLE_WATCHDOG 0       /* Enable IWDG watchdog */
+#define ENABLE_UART_SERVER 1    /* Enable dual-channel UART + TCP communication */
+
 
 #endif

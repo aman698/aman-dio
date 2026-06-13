@@ -52,6 +52,9 @@ crtsi0.sm8
 #<BEGIN OBJECT_FILES>
 Release\stm8s_clk.o
 Release\stm8s_gpio.o
+Release\stm8s_tim4.o
+Release\stm8s_uart1.o
+Release\w5500.o
 Release\main.o
 #<END OBJECT_FILES>
 
