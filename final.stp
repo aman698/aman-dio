@@ -294,6 +294,21 @@ Next=Root.Source Files.library\src\stm8s_gpio.c
 [Root.Source Files.library\src\stm8s_gpio.c]
 ElemType=File
 PathName=library\src\stm8s_gpio.c
+Next=Root.Source Files.library\src\stm8s_tim4.c
+
+[Root.Source Files.library\src\stm8s_tim4.c]
+ElemType=File
+PathName=library\src\stm8s_tim4.c
+Next=Root.Source Files.library\src\stm8s_uart1.c
+
+[Root.Source Files.library\src\stm8s_uart1.c]
+ElemType=File
+PathName=library\src\stm8s_uart1.c
+Next=Root.Source Files.library\src\w5500.c
+
+[Root.Source Files.library\src\w5500.c]
+ElemType=File
+PathName=library\src\w5500.c
 Next=Root.Source Files.main.c
 
 [Root.Source Files.main.c]
@@ -401,3 +416,18 @@ Next=Root.Include Files.library\inc\stm8s_gpio.h
 [Root.Include Files.library\inc\stm8s_gpio.h]
 ElemType=File
 PathName=library\inc\stm8s_gpio.h
+Next=Root.Include Files.library\inc\stm8s_tim4.h
+
+[Root.Include Files.library\inc\stm8s_tim4.h]
+ElemType=File
+PathName=library\inc\stm8s_tim4.h
+Next=Root.Include Files.library\inc\stm8s_uart1.h
+
+[Root.Include Files.library\inc\stm8s_uart1.h]
+ElemType=File
+PathName=library\inc\stm8s_uart1.h
+Next=Root.Include Files.library\inc\w5500.h
+
+[Root.Include Files.library\inc\w5500.h]
+ElemType=File
+PathName=library\inc\w5500.h

@@ -58,7 +58,7 @@ static axle_counter_t axle_counter = {
 static task_timer_t task_timer = {0, 0, 0,};
 
 static sensor_state_t current_state = {0, 0, 0, 0};
-
+typedef void (*timer_callback_t)(void);
 static tcp_state_t server_state = TCP_STATE_IDLE;
 static uart_state_t uart_state = UART_STATE_IDLE;
 static uint8_t server_socket = 0;
@@ -69,6 +69,7 @@ static volatile uint16_t uart_rx_tail = 0;
 static uint8_t uart_tx_buffer[UART_TX_BUFFER_SIZE];
 static uint8_t uart_rx_buffer[20];
 static unsigned long systick_ms = 0;
+static timer_callback_t user_callback = 0;
 
 
 unsigned long hal_get_millis(void)
@@ -193,11 +194,33 @@ void relay_control_set_all(uint8_t state)
     relay_control_set(6, state);
 }
 
+void message_formatter_avcc(char *buf, int buf_size, uint16_t lanid, uint32_t seqn, uint16_t axle_count){
+    if(buf == 0) return;
+    if(buf_size < 64) return;
+    sprintf(buf,"START,AVCC,%u,%lu,AXLE,%u,END",(unsigned int)lanid,(unsigned long)seqn,(unsigned int)axle_count);
+}
+
 void sensor_reader_update(void){
     current_state.di1 = hal_di_read(1);
     current_state.di2 = hal_di_read(2);
     current_state.di3 = hal_di_read(3);
     current_state.di4 = hal_di_read(4);
+}
+
+void send_alive_message(void){
+    char msg_buf[80];
+    sensor_state_t sensor;
+
+    sensor = sensor_reader_get_state();
+    message_formatter_alive(msg_buf,sizeof(msg_buf),sensor.di1,sensor.di2,sensor.di3,sensor.di4);
+    if(uart_server_is_ready()){
+        uart_server_send((uint8_t *)msg_buf, strlen(msg_buf));
+    }
+}
+
+void hal_timer_start(void)
+{
+    TIM4_Cmd(ENABLE);
 }
 
 /*
@@ -219,6 +242,25 @@ void process_axle_counting(void){
         axle_counter.prev_di2_state = sensor.di2;
     }
 
+    /* Vehicle left loop */
+    if (sensor.di1 == 0 && axle_counter.prev_di1_state == 1 && axle_counter.loop_active){
+        /* Calculate actual axle count (di2 transistions / 2) */
+        uint16_t axle_final_count = axle_counter.axle_count / 2;
+
+        /* Format and send AVCC message */
+        char msg_buf[80];
+        message_formatter_avcc(msg_buf, sizeof(msg_buf),DEVICE_LANID,axle_counter.embedded_seq_num,axle_final_count);
+        /* Send via UART if ready */
+        if(uart_server_is_ready()){
+            uart_server_send((uint8_t *)msg_buf, strlen(msg_buf));
+        }
+        /* RESET COUNTER */
+        axle_counter.embedded_seq_num++;
+        axle_counter.loop_active = 0;
+        axle_counter.axle_count = 0;
+    }
+    /* Update previous states */
+    axle_counter.prev_di1_state = sensor.di1;
 }
 void sensor_reader_init(void)
 {
@@ -231,8 +273,21 @@ void timer_callback(void){
     if ((task_timer.current_time - task_timer.last_sensor_time) >= SENSOR_READ_INTERVAL){
         sensor_reader_update();
         process_axle_counting();
+        task_timer.last_sensor_time = task_timer.current_time;
+    }
+
+    /* Send ALIVE message every 500ms */
+    if ((task_timer.current_time - task_timer.last_alive_time) >= ALIVE_INTERVAL){
+        send_alive_message();  
+        task_timer.last_alive_time = task_timer.current_time;
     }
 }
+
+void hal_timer_set_callback(timer_callback_t callback)
+{
+    user_callback = callback;
+}
+
 
 int command_parser_execute(const char *cmd_str, int len)
 {
@@ -371,8 +426,6 @@ void uart_server_process(void){
         uart_state = UART_STATE_READY;
     }
 }
-void main_loop(void);
-void system_init(void);
 
 void tcp_server_process(void){
 	uint16_t received_len = 0;
@@ -416,11 +469,10 @@ void hal_uart_init(uint32_t baudrate)
 void uart_server_init(uint32_t baudrate){
 	uart_state = UART_STATE_IDLE;
 	uart_rx_count = 0;
-
 	hal_uart_init(baudrate);
-	
 	uart_state = UART_STATE_READY;
 }
+
 
 void hal_timer_init(void){
     CLK_PeripheralClockConfig(CLK_PERIPHERAL_TIMER4, ENABLE);
@@ -430,6 +482,27 @@ void hal_timer_init(void){
     TIM4_ITConfig(TIM4_IT_UPDATE, ENABLE);
     /* Enable general interrupts */
     enableInterrupts();
+}
+
+void system_init(void){
+	/* Configure system clock */
+    CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1);  /* 16MHz clock */
+
+	/* Initialize HAL layers */
+	hal_gpio_init();
+    hal_timer_init();
+
+	/* Initialize application modules */
+	relay_control_init();
+	sensor_reader_init();
+	/* Initialize UART server for dual-channel communication */
+    w5500_chip_init();
+    uart_server_init(UART_BAUDRATE);
+
+    /* Setup timer callback for periodic tasks */
+    hal_timer_set_callback(timer_callback);
+    hal_timer_start();
+	hal_delay_ms(500);
 }
 
 /* Main Application Loop */
@@ -458,31 +531,13 @@ void main_loop(void)
     }
 }
 
-void system_init(void){
-	/* Configure system clock */
-    CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1);  /* 16MHz clock */
 
-	/* Initialize HAL layers */
-	hal_gpio_init();
-    hal_timer_init();
-
-	/* Initialize application modules */
-	relay_control_init();
-	sensor_reader_init();
-	/* Initialize UART server for dual-channel communication */
-    uart_server_init(UART_BAUDRATE);
-
-    /* Setup timer callback for periodic tasks */
-    timer_callback();
-	hal_delay_ms(500);
-}
 
 /* Main Function */
 int main(void)
 {
 	system_init();
     main_loop();
-
     while(1);
 }
 
@@ -492,3 +547,6 @@ int main(void)
     // w5500_chip_init();
     // tcp_server_init(TCP_SERVER_PORT);
 // process_axle_counting(void)
+// process_axle_counting(
+// send_alive_message(
+// w5500_chip_init
