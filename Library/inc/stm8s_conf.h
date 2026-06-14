@@ -8,6 +8,7 @@
 #include "stm8s_uart1.h"
 #include "stm8s_spi.h"
 #include "stm8s_tim4.h"
+#include "w5500.h"
 
 #define USE_FULL_ASSERT 0
 

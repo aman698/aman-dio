@@ -5,31 +5,22 @@ Keyword=ST7Project
 Number=1.3
 
 [Root.Source Files.library\src\stm8s_clk.c.Config.0]
-ExternDep= library\src\stm8s_clk.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"  library\inc\stm8s_clk.h library\inc\stm8s.h library\inc\stm8s_conf.h  library\inc\config.h library\inc\stm8s_gpio.h library\inc\stm8s_uart1.h  library\inc\stm8s_spi.h library\inc\stm8s_tim4.h library\inc\wizchip_conf.h  library\inc\w5500.h library\inc\socket.h
-
-[Root.Source Files.library\src\wizchip_conf.c.Config.0]
-ExternDep= library\src\wizchip_conf.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\stddef.h"  library\inc\wizchip_conf.h library\inc\stm8s.h library\inc\stm8s_conf.h  library\inc\stm8s_clk.h library\inc\config.h library\inc\stm8s_gpio.h  library\inc\stm8s_uart1.h library\inc\stm8s_spi.h library\inc\stm8s_tim4.h  library\inc\socket.h library\inc\w5500.h
-
-[Root.Source Files.library\src\socket.c.Config.0]
-ExternDep= library\src\socket.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"  library\inc\socket.h library\inc\wizchip_conf.h library\inc\stm8s.h  library\inc\stm8s_conf.h library\inc\stm8s_clk.h library\inc\config.h  library\inc\stm8s_gpio.h library\inc\stm8s_uart1.h library\inc\stm8s_spi.h  library\inc\stm8s_tim4.h library\inc\w5500.h
+ExternDep= library\src\stm8s_clk.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"  library\inc\stm8s_clk.h library\inc\stm8s.h library\inc\stm8s_conf.h  library\inc\config.h library\inc\stm8s_gpio.h library\inc\stm8s_uart1.h  library\inc\stm8s_spi.h library\inc\stm8s_tim4.h
 
 [Root.Source Files.library\src\stm8s_spi.c.Config.0]
-ExternDep= library\src\stm8s_spi.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"  library\inc\stm8s_spi.h library\inc\stm8s.h library\inc\stm8s_conf.h  library\inc\stm8s_clk.h library\inc\config.h library\inc\stm8s_gpio.h  library\inc\stm8s_uart1.h library\inc\stm8s_tim4.h library\inc\wizchip_conf.h  library\inc\w5500.h library\inc\socket.h
+ExternDep= library\src\stm8s_spi.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"  library\inc\stm8s_spi.h library\inc\stm8s.h library\inc\stm8s_conf.h  library\inc\stm8s_clk.h library\inc\config.h library\inc\stm8s_gpio.h  library\inc\stm8s_uart1.h library\inc\stm8s_tim4.h
 
 [Root.Source Files.library\src\stm8s_gpio.c.Config.0]
-ExternDep= library\src\stm8s_gpio.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"  library\inc\stm8s_gpio.h library\inc\stm8s.h library\inc\stm8s_conf.h  library\inc\stm8s_clk.h library\inc\config.h library\inc\stm8s_uart1.h  library\inc\stm8s_spi.h library\inc\stm8s_tim4.h library\inc\wizchip_conf.h  library\inc\w5500.h library\inc\socket.h
+ExternDep= library\src\stm8s_gpio.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"  library\inc\stm8s_gpio.h library\inc\stm8s.h library\inc\stm8s_conf.h  library\inc\stm8s_clk.h library\inc\config.h library\inc\stm8s_uart1.h  library\inc\stm8s_spi.h library\inc\stm8s_tim4.h
 
 [Root.Source Files.library\src\stm8s_tim4.c.Config.0]
-ExternDep= library\src\stm8s_tim4.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"  library\inc\stm8s_tim4.h library\inc\stm8s.h library\inc\stm8s_conf.h  library\inc\stm8s_clk.h library\inc\config.h library\inc\stm8s_gpio.h  library\inc\stm8s_uart1.h library\inc\stm8s_spi.h library\inc\wizchip_conf.h  library\inc\w5500.h library\inc\socket.h
+ExternDep= library\src\stm8s_tim4.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"  library\inc\stm8s_tim4.h library\inc\stm8s.h library\inc\stm8s_conf.h  library\inc\stm8s_clk.h library\inc\config.h library\inc\stm8s_gpio.h  library\inc\stm8s_uart1.h library\inc\stm8s_spi.h
 
 [Root.Source Files.library\src\stm8s_uart1.c.Config.0]
-ExternDep= library\src\stm8s_uart1.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"  library\inc\stm8s_uart1.h library\inc\stm8s.h library\inc\stm8s_conf.h  library\inc\stm8s_clk.h library\inc\config.h library\inc\stm8s_gpio.h  library\inc\stm8s_spi.h library\inc\stm8s_tim4.h library\inc\wizchip_conf.h  library\inc\w5500.h library\inc\socket.h
-
-[Root.Source Files.library\src\w5500.c.Config.0]
-ExternDep= library\src\w5500.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"  library\inc\w5500.h library\inc\stm8s.h library\inc\stm8s_conf.h  library\inc\stm8s_clk.h library\inc\config.h library\inc\stm8s_gpio.h  library\inc\stm8s_uart1.h library\inc\stm8s_spi.h library\inc\stm8s_tim4.h  library\inc\wizchip_conf.h library\inc\socket.h
+ExternDep= library\src\stm8s_uart1.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"  library\inc\stm8s_uart1.h library\inc\stm8s.h library\inc\stm8s_conf.h  library\inc\stm8s_clk.h library\inc\config.h library\inc\stm8s_gpio.h  library\inc\stm8s_spi.h library\inc\stm8s_tim4.h
 
 [Root.Source Files.main.c.Config.0]
-ExternDep= main.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"  library\inc\stm8s_conf.h library\inc\stm8s.h library\inc\stm8s_clk.h  library\inc\config.h library\inc\stm8s_gpio.h library\inc\stm8s_uart1.h  library\inc\stm8s_spi.h library\inc\stm8s_tim4.h library\inc\wizchip_conf.h  library\inc\w5500.h library\inc\socket.h
+ExternDep= main.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"  library\inc\stm8s_conf.h library\inc\stm8s.h library\inc\stm8s_clk.h  library\inc\config.h library\inc\stm8s_gpio.h library\inc\stm8s_uart1.h  library\inc\stm8s_spi.h library\inc\stm8s_tim4.h  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\string.h"
 
 [Root.Source Files.stm8_interrupt_vector.c.Config.0]
 ExternDep= stm8_interrupt_vector.c  "C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\HSTM8\mods0.h"

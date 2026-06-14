@@ -5,8 +5,8 @@
 #include "stm8s_conf.h"
 #include <string.h>
 
-#define UART_RX_BUFFER_SIZE 80
-#define UART_TX_BUFFER_SIZE 80
+#define UART_RX_BUFFER_SIZE 32
+#define UART_TX_BUFFER_SIZE 32
 typedef struct 
 {
     uint8_t di1;
@@ -22,14 +22,6 @@ typedef enum {
     UART_STATE_TX_PENDING,
     UART_STATE_ERROR
 } uart_state_t;
-
-typedef enum {
-	TCP_STATE_IDLE,
-	TCP_STATE_LISTENING,
-	TCP_STATE_CONNECTED,
-	TCP_STATE_ERROR
-} tcp_state_t;
-
 typedef struct {
     unsigned long last_alive_time;
     unsigned long last_sensor_time;
@@ -55,16 +47,13 @@ static axle_counter_t axle_counter = {
 static task_timer_t task_timer = {0, 0, 0,};
 static sensor_state_t current_state = {0, 0, 0, 0};
 typedef void (*timer_callback_t)(void);
-static tcp_state_t server_state = TCP_STATE_IDLE;
 static uart_state_t uart_state = UART_STATE_IDLE;
-static uint16_t server_port = TCP_SERVER_PORT;
 static uint8_t server_socket = 0;
 static volatile uint16_t uart_rx_count = 0;
 static volatile uint16_t uart_rx_head = 0;
 static volatile uint16_t uart_rx_tail = 0;
 static uint8_t uart_tx_buffer[UART_TX_BUFFER_SIZE];
-static uint8_t uart_rx_buffer[20];
-static uint8_t rx_buffer[TCP_RX_BUFFER];
+static uint8_t uart_rx_buffer[32];
 static unsigned long systick_ms = 0;
 static timer_callback_t user_callback = 0;
 
@@ -73,10 +62,7 @@ unsigned long hal_get_millis(void)
 {
     return systick_ms;
 }
-int tcp_server_is_connected(void)
-{
-    return (server_state == TCP_STATE_CONNECTED) ? 1 : 0;
-}
+
 void hal_delay_ms(unsigned int ms)
 {
     unsigned long start = hal_get_millis();
@@ -366,7 +352,7 @@ void process_axle_counting(void){
     if (sensor.di1 == 0 && axle_counter.prev_di1_state == 1 && axle_counter.loop_active){
         uint16_t axle_final_count = axle_counter.axle_count / 2;
 
-        char msg_buf[80];
+        char msg_buf[40];
         message_formatter_avcc(msg_buf, sizeof(msg_buf),DEVICE_LANID,axle_counter.embedded_seq_num,axle_final_count);
         /* Send via UART if ready */
         if(uart_server_is_ready()){
@@ -387,7 +373,7 @@ void sensor_reader_init(void)
 
 void send_alive_message(void)
 {
-    char msg_buf[256];
+    char msg_buf[32];
     sensor_state_t sensor;
 
     sensor = sensor_reader_get_state();
@@ -493,7 +479,7 @@ void hal_gpio_init(void){
     
     /* ===== W5500 Reset Pin ===== */
     GPIO_Init(W5500_RST_PORT, W5500_RST_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
-	  hal_w5500_reset_high();
+	hal_w5500_reset_high();
 }
 
 uint16_t hal_uart_available(void){
@@ -621,21 +607,53 @@ void hal_timer_init(void){
     enableInterrupts();
 }
 
+void w5500_chip_init(void)
+{
+    uint8_t version;
+
+    /* Reset W5500 */
+    GPIO_WriteLow(W5500_RST_PORT, W5500_RST_PIN);
+    hal_delay_ms(100);
+    hal_w5500_reset_high();
+    GPIO_WriteHigh(W5500_RST_PORT, W5500_RST_PIN);
+    CLK_PeripheralClockConfig(CLK_PERIPHERAL_SPI, ENABLE);
+    GPIO_Init(W5500_SCK_PORT,W5500_SCK_PIN,GPIO_MODE_OUT_PP_HIGH_FAST);
+    GPIO_Init(W5500_MOSI_PORT,W5500_MOSI_PIN,GPIO_MODE_OUT_PP_HIGH_FAST);
+    GPIO_Init(W5500_MISO_PORT,W5500_MISO_PIN,GPIO_MODE_IN_FL_NO_IT);
+    GPIO_Init(W5500_CS_PORT,W5500_CS_PIN,GPIO_MODE_OUT_PP_HIGH_FAST);
+    GPIO_WriteHigh(W5500_CS_PORT, W5500_CS_PIN);
+    GPIO_Init(W5500_RST_PORT,W5500_RST_PIN,GPIO_MODE_OUT_PP_HIGH_FAST);
+    SPI_DeInit();
+        SPI_Init(
+        SPI_FIRSTBIT_MSB,
+        SPI_BAUDRATEPRESCALER_4,
+        SPI_MODE_MASTER,
+        SPI_CLOCKPOLARITY_LOW,
+        SPI_CLOCKPHASE_1EDGE,
+        SPI_DATADIRECTION_2LINES_FULLDUPLEX,
+        SPI_NSS_SOFT,
+        0x07
+    );
+
+    SPI_Cmd(ENABLE);
+    reg_wizchip_spi_cbfunc(hal_spi_read_byte,hal_spi_write_byte);
+    reg_wizchip_spiburst_cbfunc(hal_spi_read,hal_spi_write);
+    reg_wizchip_cs_cbfunc(hal_spi_cs_low,hal_spi_cs_high);
+    wizchip_init(0, 0);
+}
+
 void system_init(void){
 	/* Configure system clock */
     CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1);  /* 16MHz clock */
 
-	/* Initialize HAL layers */
 	hal_gpio_init();
     hal_timer_init();
 
-	/* Initialize application modules */
 	relay_control_init();
 	sensor_reader_init();
-	/* Initialize UART server for dual-channel communication */
-  //  w5500_chip_init();
 
-  //  tcp_server_init(TCP_SERVER_PORT);
+    w5500_chip_init();
+
     uart_server_init(UART_BAUDRATE);
 
     /* Setup timer callback for periodic tasks */
@@ -644,14 +662,10 @@ void system_init(void){
 	hal_delay_ms(500);
 }
 
-/* Main Application Loop */
 void main_loop(void)
 {
     while(1)
     {
-		/* Process TCP server communication */
-	//	tcp_server_process();
-
 		/* Process UART server communcation*/
 		uart_server_process();
 
@@ -661,9 +675,6 @@ void main_loop(void)
 			if (GPIO_ReadInputPin(HARDRST_PORT, HARDRST_PIN) == 0){
 				/* Send reset message */
 				char msg[] = "RESET, OK\n";
-                if(tcp_server_is_connected()){
-                   // tcp_server_send((uint8_t *)msg, strlen(msg));
-                }
                 if (uart_server_is_ready()){
                     uart_server_send((uint8_t *)msg, strlen(msg));
                 }
@@ -673,8 +684,6 @@ void main_loop(void)
     }
 }
 
-
-
 /* Main Function */
 int main(void)
 {
@@ -683,32 +692,3 @@ int main(void)
     while(1);
 }
 
-// void system_init(void)
-// main_loop( ka tcp_server_send(
-/* Initialize W5500 and TCP server */
-    // w5500_chip_init();
-    // tcp_server_init(TCP_SERVER_PORT);
-// process_axle_counting(void)
-// process_axle_counting(
-// send_alive_message(
-// w5500_chip_init
-// iska dekhenge: message_formatter_avcc
-// message_formatter_alive
-// uart_server_send
-// command_parser_execute(
-// sensor_reader_update(
-// process_axle_counting(
-// uart_server_init(
-// uart_server_process(
-
-/*
-//  //   reg_wizchip_spi_cbfunc(hal_spi_read_byte,hal_spi_write_byte);
- //   reg_wizchip_spiburst_cbfunc(hal_spi_read,hal_spi_write);
- //   reg_wizchip_cs_cbfunc(hal_spi_cs_low,hal_spi_cs_high);
- // inko bhi banana ha w5500 ki library ko change kerna hoga bcz memory bahut use ker rhe ha
-*/
-//tcp_server_process(
-// w5500_chip_init(
-// system_init
-// tcp_server_init(
-// tcp_server_send(
