@@ -519,71 +519,33 @@ void w5500_chip_init(void){
     );
     SPI_Cmd(ENABLE);
     /* Register SPI callbacks with */
- //   reg_wizchip_spi_cbfunc(hal_spi_read_byte,hal_spi_write_byte);
- //   reg_wizchip_spiburst_cbfunc(hal_spi_read,hal_spi_write);
- //   reg_wizchip_cs_cbfunc(hal_spi_cs_low,hal_spi_cs_high);
-    // wizchip_init(0, 0); 
-    // version = getVERSIONR();
-    // if(version != 0x04)
-    // {
-    //     while(1);
-    // }
+   reg_wizchip_spi_cbfunc(hal_spi_read_byte,hal_spi_write_byte);
+   reg_wizchip_spiburst_cbfunc(hal_spi_read,hal_spi_write);
+   reg_wizchip_cs_cbfunc(hal_spi_cs_low,hal_spi_cs_high);
+   wizchip_init(0, 0); 
+   version = getVERSIONR();
+   if(version != 0x04)
+    {
+        while(1);
+    }
 }
 
-// void tcp_server_process(void)
-// {
-//     uint16_t received_len = 0;
-//     uint8_t sock_status;
-    
-//     if (server_state == TCP_STATE_IDLE) {
-//         return;
-//     }
-    
-//     sock_status = getSn_SR(server_socket);
-    
-//     switch (sock_status) {
-//         case SOCK_LISTEN:
-//             server_state = TCP_STATE_LISTENING;
-//             break;
-            
-//         case SOCK_ESTABLISHED:
-//             server_state = TCP_STATE_CONNECTED;
-            
-//             /* Check for incoming data */
-//             received_len = getSn_RX_RSR(server_socket);
-//             if (received_len > 0) {
-//                 uint16_t read_len = (received_len > TCP_RX_BUFFER) ?
-//                                    TCP_RX_BUFFER : received_len;
-                
-//                 /* Receive data */
-//                 read_len = recv(server_socket, rx_buffer, read_len);
-                
-//                 if (read_len > 0) {
-//                     /* Parse and execute command */
-//                     if (command_parser_execute((const char *)rx_buffer, read_len) == 0) {
-//                         /* Send success response (ALIVE message) */
-//                         char resp_buf[80];
-//                         sensor_state_t state = sensor_reader_get_state();
-//                         message_formatter_alive(resp_buf,sizeof(resp_buf),state.di1,state.di2,state.di3,state.di4);
-//                         tcp_server_send((uint8_t *)resp_buf, strlen(resp_buf));
-//                     }
-//                 }
-//             }
-//             break;
-            
-//         case SOCK_CLOSED:
-//             server_state = TCP_STATE_LISTENING;
-//             /* Reopen socket */
-//             close(server_socket);
-//             socket(server_socket, Sn_MR_TCP, server_port, 0);
-//             listen(server_socket);
-//             break;
-            
-//         default:
-//             server_state = TCP_STATE_ERROR;
-//             break;
-//     }
-// }
+void tcp_server_process(void){
+    uint16_t received_len = 0;
+    uint8_t sock_status;
+
+    if(server_state == TCP_STATE_IDLE){
+        return;
+    }
+    sock_status = getSn_SR(server_socket);
+    switch (sock_status){
+        case SOCK_LISTEN:
+            server_state = TCP_STATE_LISTENING;
+            break;
+        
+        
+    }
+}
 
 // void hal_uart_init(uint32_t baudrate)
 // {
@@ -625,18 +587,32 @@ void w5500_chip_init(void){
 
 
 
+
+static void w5500_init_network(void)
+{
+    uint8_t mac[6] = {0x00,0x08,0xDC,0x12,0x34,0x56};
+    uint8_t gw[4]  = {192,168,1,1};
+    uint8_t sn[4]  = {255,255,255,0};
+    uint8_t ip[4]  = {192,168,1,100};
+
+    setSHAR(mac);
+    setGAR(gw);
+    setSUBR(sn);
+    setSIPR(ip);
+}
+
 void tcp_server_init(uint16_t port)
 {
     server_port = port;
     server_state = TCP_STATE_IDLE;
     
     /* Initialize W5500 network settings */
-  //  w5500_init_network();
-//   if(socket(server_socket, Sn_MR_TCP, server_port, 0) == server_socket){
-//     if(listen(server_socket) == SOCK_OK){
-//         server_state = TCP_STATE_LISTENING;
-//     }
-//   }
+    w5500_init_network();
+    if (socket(server_socket, Sn_MR_TCP, server_port, 0) == server_socket){
+        if (listen(server_socket) == SOCK_OK){
+            server_state = TCP_STATE_LISTENING;
+        }
+    }
 }
 
 void hal_timer_init(void){
@@ -678,7 +654,7 @@ void main_loop(void)
     while(1)
     {
 		/* Process TCP server communication */
-	//	tcp_server_process();
+		tcp_server_process();
 
 		/* Process UART server communcation*/
 	//	uart_server_process();

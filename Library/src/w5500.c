@@ -166,48 +166,5 @@ uint16_t getSn_RX_RSR(uint8_t sn)
    return val;
 }
 
-void wiz_send_data(uint8_t sn, uint8_t *wizdata, uint16_t len)
-{
-   uint16_t ptr = 0;
-   uint32_t addrsel = 0;
-
-   if(len == 0)  return;
-   ptr = getSn_TX_WR(sn);
-   //M20140501 : implict type casting -> explict type casting
-   //addrsel = (ptr << 8) + (WIZCHIP_TXBUF_BLOCK(sn) << 3);
-   addrsel = ((uint32_t)ptr << 8) + (WIZCHIP_TXBUF_BLOCK(sn) << 3);
-   //
-   WIZCHIP_WRITE_BUF(addrsel,wizdata, len);
-   
-   ptr += len;
-   setSn_TX_WR(sn,ptr);
-}
-
-void wiz_recv_data(uint8_t sn, uint8_t *wizdata, uint16_t len)
-{
-   uint16_t ptr = 0;
-   uint32_t addrsel = 0;
-   
-   if(len == 0) return;
-   ptr = getSn_RX_RD(sn);
-   //M20140501 : implict type casting -> explict type casting
-   //addrsel = ((ptr << 8) + (WIZCHIP_RXBUF_BLOCK(sn) << 3);
-   addrsel = ((uint32_t)ptr << 8) + (WIZCHIP_RXBUF_BLOCK(sn) << 3);
-   //
-   WIZCHIP_READ_BUF(addrsel, wizdata, len);
-   ptr += len;
-   
-   setSn_RX_RD(sn,ptr);
-}
-
-
-void wiz_recv_ignore(uint8_t sn, uint16_t len)
-{
-   uint16_t ptr = 0;
-
-   ptr = getSn_RX_RD(sn);
-   ptr += len;
-   setSn_RX_RD(sn,ptr);
-}
 
 #endif

@@ -332,44 +332,14 @@ typedef enum { UART1_IT_TXE        = (uint16_t)0x0277, /*!< Transmit interrupt *
 #define UART1_ADDRESS_MAX ((uint8_t)16)
 #define IS_UART1_ADDRESS_OK(node) ((node) < UART1_ADDRESS_MAX )
 
-/**
-  * @}
-  */
 
-/* Exported functions ------------------------------------------------------- */
-
-/** @addtogroup UART1_Exported_Functions
-  * @{
-  */
-
-void UART1_DeInit(void);
 void UART1_Init(uint32_t BaudRate, UART1_WordLength_TypeDef WordLength, 
                 UART1_StopBits_TypeDef StopBits, UART1_Parity_TypeDef Parity, 
                 UART1_SyncMode_TypeDef SyncMode, UART1_Mode_TypeDef Mode);
 void UART1_Cmd(FunctionalState NewState);
 void UART1_ITConfig(UART1_IT_TypeDef UART1_IT, FunctionalState NewState);
-void UART1_HalfDuplexCmd(FunctionalState NewState);
-void UART1_IrDAConfig(UART1_IrDAMode_TypeDef UART1_IrDAMode);
-void UART1_IrDACmd(FunctionalState NewState);
-void UART1_LINBreakDetectionConfig(UART1_LINBreakDetectionLength_TypeDef UART1_LINBreakDetectionLength);
-void UART1_LINCmd(FunctionalState NewState);
-void UART1_SmartCardCmd(FunctionalState NewState);
-void UART1_SmartCardNACKCmd(FunctionalState NewState);
-void UART1_WakeUpConfig(UART1_WakeUp_TypeDef UART1_WakeUp);
-void UART1_ReceiverWakeUpCmd(FunctionalState NewState);
-uint8_t UART1_ReceiveData8(void);
-uint16_t UART1_ReceiveData9(void);
 void UART1_SendData8(uint8_t Data);
-void UART1_SendData9(uint16_t Data);
-void UART1_SendBreak(void);
-void UART1_SetAddress(uint8_t UART1_Address);
-void UART1_SetGuardTime(uint8_t UART1_GuardTime);
-void UART1_SetPrescaler(uint8_t UART1_Prescaler);
 FlagStatus UART1_GetFlagStatus(UART1_Flag_TypeDef UART1_FLAG);
-void UART1_ClearFlag(UART1_Flag_TypeDef UART1_FLAG);
-ITStatus UART1_GetITStatus(UART1_IT_TypeDef UART1_IT);
-void UART1_ClearITPendingBit(UART1_IT_TypeDef UART1_IT);
-
 /**
   * @}
   */

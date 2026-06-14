@@ -215,7 +215,7 @@ String.6.0=2026,6,12,13,5,48
 [Root.Source Files]
 ElemType=Folder
 PathName=Source Files
-Child=Root.Source Files.library\src\wizchip_conf.c
+Child=Root.Source Files.library\src\stm8s_clk.c
 Next=Root.Include Files
 Config.0=Root.Source Files.Config.0
 Config.1=Root.Source Files.Config.1
@@ -286,6 +286,11 @@ String.4.0=
 String.5.0=
 String.6.0=2026,6,12,13,5,48
 
+[Root.Source Files.library\src\stm8s_clk.c]
+ElemType=File
+PathName=library\src\stm8s_clk.c
+Next=Root.Source Files.library\src\wizchip_conf.c
+
 [Root.Source Files.library\src\wizchip_conf.c]
 ElemType=File
 PathName=library\src\wizchip_conf.c
@@ -299,11 +304,6 @@ Next=Root.Source Files.library\src\stm8s_spi.c
 [Root.Source Files.library\src\stm8s_spi.c]
 ElemType=File
 PathName=library\src\stm8s_spi.c
-Next=Root.Source Files.library\src\stm8s_clk.c
-
-[Root.Source Files.library\src\stm8s_clk.c]
-ElemType=File
-PathName=library\src\stm8s_clk.c
 Next=Root.Source Files.library\src\stm8s_gpio.c
 
 [Root.Source Files.library\src\stm8s_gpio.c]
@@ -338,7 +338,7 @@ PathName=stm8_interrupt_vector.c
 [Root.Include Files]
 ElemType=Folder
 PathName=Include Files
-Child=Root.Include Files.library\inc\wizchip_conf.h
+Child=Root.Include Files.library\inc\stm8s_clk.h
 Config.0=Root.Include Files.Config.0
 Config.1=Root.Include Files.Config.1
 
@@ -408,6 +408,11 @@ String.4.0=
 String.5.0=
 String.6.0=2026,6,12,13,5,48
 
+[Root.Include Files.library\inc\stm8s_clk.h]
+ElemType=File
+PathName=library\inc\stm8s_clk.h
+Next=Root.Include Files.library\inc\wizchip_conf.h
+
 [Root.Include Files.library\inc\wizchip_conf.h]
 ElemType=File
 PathName=library\inc\wizchip_conf.h
@@ -431,11 +436,6 @@ Next=Root.Include Files.library\inc\stm8s.h
 [Root.Include Files.library\inc\stm8s.h]
 ElemType=File
 PathName=library\inc\stm8s.h
-Next=Root.Include Files.library\inc\stm8s_clk.h
-
-[Root.Include Files.library\inc\stm8s_clk.h]
-ElemType=File
-PathName=library\inc\stm8s_clk.h
 Next=Root.Include Files.library\inc\stm8s_conf.h
 
 [Root.Include Files.library\inc\stm8s_conf.h]

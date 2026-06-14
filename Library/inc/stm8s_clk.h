@@ -277,9 +277,7 @@ typedef enum {
                                   ((OUTPUT) == CLK_OUTPUT_MASTER) ||\
                                   ((OUTPUT) == CLK_OUTPUT_OTHERS))
 
-/**
-  * @brief  Macros used by the assert function in order to check the different peripheral's clock.
-  */
+
 #define IS_CLK_PERIPHERAL_OK(PERIPHERAL) (((PERIPHERAL) == CLK_PERIPHERAL_I2C) ||\
     ((PERIPHERAL) == CLK_PERIPHERAL_SPI) ||\
     ((PERIPHERAL) == CLK_PERIPHERAL_UART3) ||\
@@ -295,9 +293,7 @@ typedef enum {
     ((PERIPHERAL) == CLK_PERIPHERAL_ADC) ||\
     ((PERIPHERAL) == CLK_PERIPHERAL_AWU))
 
-/**
-  * @brief  Macros used by the assert function in order to check the different clock flags.
-  */
+
 #define IS_CLK_FLAG_OK(FLAG) (((FLAG) == CLK_FLAG_LSIRDY) ||\
                               ((FLAG) == CLK_FLAG_HSIRDY) ||\
                               ((FLAG) == CLK_FLAG_HSERDY) ||\
@@ -308,22 +304,16 @@ typedef enum {
                               ((FLAG) == CLK_FLAG_CCOBSY) ||\
                               ((FLAG) == CLK_FLAG_CCORDY))
 
-/**
-  * @brief  Macros used by the assert function in order to check the different clock IT pending bits.
-  */
+
 #define IS_CLK_IT_OK(IT) (((IT) == CLK_IT_CSSD) || ((IT) == CLK_IT_SWIF))
 
-/**
-  * @brief  Macros used by the assert function in order to check the different HSI prescaler values.
-  */
+
 #define IS_CLK_HSIPRESCALER_OK(PRESCALER) (((PRESCALER) == CLK_PRESCALER_HSIDIV1) ||\
     ((PRESCALER) == CLK_PRESCALER_HSIDIV2) ||\
     ((PRESCALER) == CLK_PRESCALER_HSIDIV4) ||\
     ((PRESCALER) == CLK_PRESCALER_HSIDIV8))
 
-/**
-  * @brief  Macros used by the assert function in order to check the different clock  prescaler values.
-  */
+
 #define IS_CLK_PRESCALER_OK(PRESCALER) (((PRESCALER) == CLK_PRESCALER_HSIDIV1) ||\
                                         ((PRESCALER) == CLK_PRESCALER_HSIDIV2) ||\
                                         ((PRESCALER) == CLK_PRESCALER_HSIDIV4) ||\
@@ -337,46 +327,14 @@ typedef enum {
                                         ((PRESCALER) == CLK_PRESCALER_CPUDIV64) ||\
                                         ((PRESCALER) == CLK_PRESCALER_CPUDIV128))
 
-/**
-  * @brief  Macros used by the assert function in order to check the different SWIM dividers values.
-  */
+
 #define IS_CLK_SWIMDIVIDER_OK(SWIMDIVIDER) (((SWIMDIVIDER) == CLK_SWIMDIVIDER_2) || ((SWIMDIVIDER) == CLK_SWIMDIVIDER_OTHER))
 
-/**
-  * @}
-  */
 
-/** @addtogroup CLK_Exported_functions
-  * @{
-  */
-void CLK_DeInit(void);
-void CLK_HSECmd(FunctionalState NewState);
-void CLK_HSICmd(FunctionalState NewState);
-void CLK_LSICmd(FunctionalState NewState);
-void CLK_CCOCmd(FunctionalState NewState);
-void CLK_ClockSwitchCmd(FunctionalState NewState);
-void CLK_FastHaltWakeUpCmd(FunctionalState NewState);
-void CLK_SlowActiveHaltWakeUpCmd(FunctionalState NewState);
 void CLK_PeripheralClockConfig(CLK_Peripheral_TypeDef CLK_Peripheral, FunctionalState NewState);
-ErrorStatus CLK_ClockSwitchConfig(CLK_SwitchMode_TypeDef CLK_SwitchMode, CLK_Source_TypeDef CLK_NewClock, FunctionalState ITState, CLK_CurrentClockState_TypeDef CLK_CurrentClockState);
 void CLK_HSIPrescalerConfig(CLK_Prescaler_TypeDef HSIPrescaler);
-void CLK_CCOConfig(CLK_Output_TypeDef CLK_CCO);
-void CLK_ITConfig(CLK_IT_TypeDef CLK_IT, FunctionalState NewState);
-void CLK_SYSCLKConfig(CLK_Prescaler_TypeDef CLK_Prescaler);
-void CLK_SWIMConfig(CLK_SWIMDivider_TypeDef CLK_SWIMDivider);
-void CLK_ClockSecuritySystemEnable(void);
-void CLK_SYSCLKEmergencyClear(void);
-void CLK_AdjustHSICalibrationValue(CLK_HSITrimValue_TypeDef CLK_HSICalibrationValue);
 uint32_t CLK_GetClockFreq(void);
-CLK_Source_TypeDef CLK_GetSYSCLKSource(void);
-FlagStatus CLK_GetFlagStatus(CLK_Flag_TypeDef CLK_FLAG);
-ITStatus CLK_GetITStatus(CLK_IT_TypeDef CLK_IT);
-void CLK_ClearITPendingBit(CLK_IT_TypeDef CLK_IT);
-
-/**
-  * @}
-  */
-#endif /* __STM8S_CLK_H */
 
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+#endif 
+
