@@ -134,7 +134,22 @@ void WIZCHIP_READ_BUF(uint32_t AddrSel, uint8_t* pBuf, uint16_t len)
    WIZCHIP.CS._deselect();
    WIZCHIP_CRITICAL_EXIT();
 }
+uint16_t getSn_TX_FSR(uint8_t sn)
+{
+   uint16_t val=0,val1=0;
 
+   do
+   {
+      val1 = WIZCHIP_READ(Sn_TX_FSR(sn));
+      val1 = (val1 << 8) + WIZCHIP_READ(WIZCHIP_OFFSET_INC(Sn_TX_FSR(sn),1));
+      if (val1 != 0)
+      {
+        val = WIZCHIP_READ(Sn_TX_FSR(sn));
+        val = (val << 8) + WIZCHIP_READ(WIZCHIP_OFFSET_INC(Sn_TX_FSR(sn),1));
+      }
+   }while (val != val1);
+   return val;
+}
 uint16_t getSn_RX_RSR(uint8_t sn)
 {
    uint16_t val=0,val1=0;
@@ -394,7 +409,9 @@ int32_t recv(uint8_t sn, uint8_t *buf, uint16_t len){
                 return SOCKERR_SOCKSTATUS;
             }
         }
-        if(sock_io_mode & (1<<sn)) && (recvsize == 0) return SOCK_BUSY;
+        if ((sock_io_mode & (1 << sn)) && (recvsize == 0)){
+            return SOCK_BUSY;
+        }
         if(recvsize != 0) break;
     };
     if(recvsize < len) len = recvsize;

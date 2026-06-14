@@ -5,8 +5,8 @@
 #include "stm8s_conf.h"
 #include <string.h>
 
-#define UART_RX_BUFFER_SIZE 32
-#define UART_TX_BUFFER_SIZE 32
+#define UART_RX_BUFFER_SIZE 8
+#define UART_TX_BUFFER_SIZE 5
 typedef struct 
 {
     uint8_t di1;
@@ -165,32 +165,14 @@ void message_formatter_alive(char *buf,
     if(buf == 0)
         return;
 
-    if(buf_size < 21)
+    if(buf_size < 5)
         return;
 
-    buf[0]  = 'S';
-    buf[1]  = 'T';
-    buf[2]  = 'A';
-    buf[3]  = 'R';
-    buf[4]  = 'T';
-    buf[5]  = ',';
-    buf[6]  = 'A';
-    buf[7]  = 'L';
-    buf[8]  = 'I';
-    buf[9]  = 'V';
-    buf[10] = 'E';
-    buf[11] = ',';
-
-    buf[12] = di1 ? '1' : '0';
-    buf[13] = di2 ? '1' : '0';
-    buf[14] = di3 ? '1' : '0';
-    buf[15] = di4 ? '1' : '0';
-
-    buf[16] = ',';
-    buf[17] = 'E';
-    buf[18] = 'N';
-    buf[19] = 'D';
-    buf[20] = '\0';
+    buf[0] = di1 ? '1' : '0';
+    buf[1] = di2 ? '1' : '0';
+    buf[2] = di3 ? '1' : '0';
+    buf[3] = di4 ? '1' : '0';
+    buf[4] = '\0';
 }
     
 uint8_t hal_di_read(uint8_t di_num)
@@ -208,109 +190,109 @@ uint8_t hal_di_read(uint8_t di_num)
     return (GPIO_ReadInputPin(port, pin) == SET) ? 1 : 0;
 }
 
-char* u16_to_str(char *p, uint16_t value)
-{
-    char temp[6];
-    uint8_t i = 0;
-    uint8_t j;
+// char* u16_to_str(char *p, uint16_t value)
+// {
+//     char temp[6];
+//     uint8_t i = 0;
+//     uint8_t j;
 
-    if(value == 0)
-    {
-        *p++ = '0';
-        return p;
-    }
+//     if(value == 0)
+//     {
+//         *p++ = '0';
+//         return p;
+//     }
 
-    while(value)
-    {
-        temp[i++] = (value % 10) + '0';
-        value /= 10;
-    }
+//     while(value)
+//     {
+//         temp[i++] = (value % 10) + '0';
+//         value /= 10;
+//     }
 
-    for(j = i; j > 0; j--)
-    {
-        *p++ = temp[j - 1];
-    }
+//     for(j = i; j > 0; j--)
+//     {
+//         *p++ = temp[j - 1];
+//     }
 
-    return p;
-}
+//     return p;
+// }
 
-char* u32_to_str(char *p, uint32_t value)
-{
-    char temp[10];
-    uint8_t i = 0;
-    uint8_t j;
+// char* u32_to_str(char *p, uint32_t value)
+// {
+//     char temp[10];
+//     uint8_t i = 0;
+//     uint8_t j;
 
-    if(value == 0)
-    {
-        *p++ = '0';
-        return p;
-    }
+//     if(value == 0)
+//     {
+//         *p++ = '0';
+//         return p;
+//     }
 
-    while(value)
-    {
-        temp[i++] = (value % 10) + '0';
-        value /= 10;
-    }
+//     while(value)
+//     {
+//         temp[i++] = (value % 10) + '0';
+//         value /= 10;
+//     }
 
-    for(j = i; j > 0; j--)
-    {
-        *p++ = temp[j - 1];
-    }
+//     for(j = i; j > 0; j--)
+//     {
+//         *p++ = temp[j - 1];
+//     }
 
-    return p;
-}
+//     return p;
+// }
 
-void message_formatter_avcc(char *buf,
-                            int buf_size,
-                            uint16_t lanid,
-                            uint32_t seqn,
-                            uint16_t axle_count)
-{
-    char *p;
+// void message_formatter_avcc(char *buf,
+//                             int buf_size,
+//                             uint16_t lanid,
+//                             uint32_t seqn,
+//                             uint16_t axle_count)
+// {
+//     char *p;
 
-    if(buf == 0)
-        return;
+//     if(buf == 0)
+//         return;
 
-    if(buf_size < 40)
-        return;
+//     if(buf_size < 40)
+//         return;
 
-    p = buf;
+//     p = buf;
 
-    /* START,AVCC, */
-    *p++ = 'S';
-    *p++ = 'T';
-    *p++ = 'A';
-    *p++ = 'R';
-    *p++ = 'T';
-    *p++ = ',';
-    *p++ = 'A';
-    *p++ = 'V';
-    *p++ = 'C';
-    *p++ = 'C';
-    *p++ = ',';
+//     /* START,AVCC, */
+//     *p++ = 'S';
+//     *p++ = 'T';
+//     *p++ = 'A';
+//     *p++ = 'R';
+//     *p++ = 'T';
+//     *p++ = ',';
+//     *p++ = 'A';
+//     *p++ = 'V';
+//     *p++ = 'C';
+//     *p++ = 'C';
+//     *p++ = ',';
 
-    p = u16_to_str(p, lanid);
+//     p = u16_to_str(p, lanid);
 
-    *p++ = ',';
+//     *p++ = ',';
 
-    p = u32_to_str(p, seqn);
+//     p = u32_to_str(p, seqn);
 
-    *p++ = ',';
-    *p++ = 'A';
-    *p++ = 'X';
-    *p++ = 'L';
-    *p++ = 'E';
-    *p++ = ',';
+//     *p++ = ',';
+//     *p++ = 'A';
+//     *p++ = 'X';
+//     *p++ = 'L';
+//     *p++ = 'E';
+//     *p++ = ',';
 
-    p = u16_to_str(p, axle_count);
+//     p = u16_to_str(p, axle_count);
 
-    *p++ = ',';
-    *p++ = 'E';
-    *p++ = 'N';
-    *p++ = 'D';
+//     *p++ = ',';
+//     *p++ = 'E';
+//     *p++ = 'N';
+//     *p++ = 'D';
 
-    *p = '\0';
-}
+//     *p = '\0';
+// }
 
 void hal_relay_set(uint8_t relay_num, uint8_t state){
 	GPIO_TypeDef *port;
@@ -363,42 +345,74 @@ void hal_timer_start(void)
 {
     TIM4_Cmd(ENABLE);
 }
-
 /*
 * Process acle counting state machine
 */
-void process_axle_counting(void){
+// void process_axle_counting(void){
+//     sensor_state_t sensor = sensor_reader_get_state();
+
+//     /* Vehicle entered loop detection */
+//     if(sensor.di1 == 1 && axle_counter.prev_di1_state == 0){
+//         axle_counter.loop_active = 1;
+//         axle_counter.axle_count = 0;
+//     }
+//     /* Count axle pulses while vehicle is on loop */
+//     if(axle_counter.loop_active){
+//         if(sensor.di2 == 1 && axle_counter.prev_di2_state == 0){
+//             axle_counter.axle_count++;
+//         }
+//         axle_counter.prev_di2_state = sensor.di2;
+//     }
+
+//     /* Vehicle left loop */
+//     if (sensor.di1 == 0 && axle_counter.prev_di1_state == 1 && axle_counter.loop_active){
+//         uint16_t axle_final_count = axle_counter.axle_count / 2;
+
+//         char msg_buf[40];
+//         message_formatter_avcc(msg_buf, sizeof(msg_buf),DEVICE_LANID,axle_counter.embedded_seq_num,axle_final_count);
+//         /* Send via UART if ready */
+//         if(uart_server_is_ready()){
+//             uart_server_send((uint8_t *)msg_buf, strlen(msg_buf));
+//         }
+//         if(tcp_server_is_ready()){
+//             tcp_server_send((uint8_t *)msg_buf, strlen(msg_buf));
+//         }
+//         /* RESET COUNTER */
+//         axle_counter.embedded_seq_num++;
+//         axle_counter.loop_active = 0;
+//         axle_counter.axle_count = 0;
+//     }
+//     axle_counter.prev_di1_state = sensor.di1;
+// }
+void process_axle_counting(void)
+{
     sensor_state_t sensor = sensor_reader_get_state();
+    char msg_buf[5];
 
-    /* Vehicle entered loop detection */
-    if(sensor.di1 == 1 && axle_counter.prev_di1_state == 0){
-        axle_counter.loop_active = 1;
-        axle_counter.axle_count = 0;
-    }
-    /* Count axle pulses while vehicle is on loop */
-    if(axle_counter.loop_active){
-        if(sensor.di2 == 1 && axle_counter.prev_di2_state == 0){
-            axle_counter.axle_count++;
+    /* Create 4-bit input status string */
+    msg_buf[0] = sensor.di1 ? '1' : '0';
+    msg_buf[1] = sensor.di2 ? '1' : '0';
+    msg_buf[2] = sensor.di3 ? '1' : '0';
+    msg_buf[3] = sensor.di4 ? '1' : '0';
+    msg_buf[4] = '\0';
+
+    /* Send only when DI state changes */
+    if ((sensor.di1 != axle_counter.prev_di1_state) ||
+        (sensor.di2 != axle_counter.prev_di2_state))
+    {
+        if (uart_server_is_ready())
+        {
+            uart_server_send((uint8_t *)msg_buf, 4);
         }
-        axle_counter.prev_di2_state = sensor.di2;
-    }
 
-    /* Vehicle left loop */
-    if (sensor.di1 == 0 && axle_counter.prev_di1_state == 1 && axle_counter.loop_active){
-        uint16_t axle_final_count = axle_counter.axle_count / 2;
-
-        char msg_buf[40];
-        message_formatter_avcc(msg_buf, sizeof(msg_buf),DEVICE_LANID,axle_counter.embedded_seq_num,axle_final_count);
-        /* Send via UART if ready */
-        if(uart_server_is_ready()){
-            uart_server_send((uint8_t *)msg_buf, strlen(msg_buf));
+        if (tcp_server_is_connected())
+        {
+            tcp_server_send((uint8_t *)msg_buf, 4);
         }
-        /* RESET COUNTER */
-        axle_counter.embedded_seq_num++;
-        axle_counter.loop_active = 0;
-        axle_counter.axle_count = 0;
     }
+
     axle_counter.prev_di1_state = sensor.di1;
+    axle_counter.prev_di2_state = sensor.di2;
 }
 void sensor_reader_init(void)
 {

@@ -122,14 +122,14 @@
  350  0063               L22:
  351  0063 5a            	decw	x
  352  0064 92d600        	ld	a,([c_x.w],x)
- 353  0067 e740          	ld	(_tx_buffer,x),a
+ 353  0067 e725          	ld	(_tx_buffer,x),a
  354  0069 5d            	tnzw	x
  355  006a 26f7          	jrne	L22
  356  006c               L02:
  357                     ; 103     sent = send(server_socket, tx_buffer, len);
  359  006c 1e07          	ldw	x,(OFST+5,sp)
  360  006e 89            	pushw	x
- 361  006f ae0040        	ldw	x,#_tx_buffer
+ 361  006f ae0025        	ldw	x,#_tx_buffer
  362  0072 89            	pushw	x
  363  0073 b61c          	ld	a,L33_server_socket
  364  0075 cd0000        	call	_send
@@ -247,10 +247,10 @@
  735  00ef               L513:
  736                     ; 143     if (len > sizeof(uart_tx_buffer)) {
  738  00ef 1e05          	ldw	x,(OFST+5,sp)
- 739  00f1 a30021        	cpw	x,#33
+ 739  00f1 a30006        	cpw	x,#6
  740  00f4 2505          	jrult	L713
  741                     ; 144         len = sizeof(uart_tx_buffer);
- 743  00f6 ae0020        	ldw	x,#32
+ 743  00f6 ae0005        	ldw	x,#5
  744  00f9 1f05          	ldw	(OFST+5,sp),x
  745  00fb               L713:
  746                     ; 148     memcpy(uart_tx_buffer, data, len);
@@ -303,2044 +303,1582 @@
  943  0127 a30000        	cpw	x,#0
  944  012a 2708          	jreq	L401
  945                     ; 166         return;
- 947                     ; 168     if(buf_size < 21)
+ 947                     ; 168     if(buf_size < 5)
  949  012c 9c            	rvf
  950  012d 1e05          	ldw	x,(OFST+5,sp)
- 951  012f a30015        	cpw	x,#21
+ 951  012f a30005        	cpw	x,#5
  952  0132 2e02          	jrsge	L114
  953                     ; 169         return;
  954  0134               L401:
  957  0134 85            	popw	x
  958  0135 81            	ret
  959  0136               L114:
- 960                     ; 171     buf[0]  = 'S';
- 962  0136 1e01          	ldw	x,(OFST+1,sp)
- 963  0138 a653          	ld	a,#83
- 964  013a f7            	ld	(x),a
- 965                     ; 172     buf[1]  = 'T';
- 967  013b 1e01          	ldw	x,(OFST+1,sp)
- 968  013d a654          	ld	a,#84
- 969  013f e701          	ld	(1,x),a
- 970                     ; 173     buf[2]  = 'A';
- 972  0141 1e01          	ldw	x,(OFST+1,sp)
- 973  0143 a641          	ld	a,#65
- 974  0145 e702          	ld	(2,x),a
- 975                     ; 174     buf[3]  = 'R';
- 977  0147 1e01          	ldw	x,(OFST+1,sp)
- 978  0149 a652          	ld	a,#82
- 979  014b e703          	ld	(3,x),a
- 980                     ; 175     buf[4]  = 'T';
- 982  014d 1e01          	ldw	x,(OFST+1,sp)
- 983  014f a654          	ld	a,#84
- 984  0151 e704          	ld	(4,x),a
- 985                     ; 176     buf[5]  = ',';
- 987  0153 1e01          	ldw	x,(OFST+1,sp)
- 988  0155 a62c          	ld	a,#44
- 989  0157 e705          	ld	(5,x),a
- 990                     ; 177     buf[6]  = 'A';
- 992  0159 1e01          	ldw	x,(OFST+1,sp)
- 993  015b a641          	ld	a,#65
- 994  015d e706          	ld	(6,x),a
- 995                     ; 178     buf[7]  = 'L';
- 997  015f 1e01          	ldw	x,(OFST+1,sp)
- 998  0161 a64c          	ld	a,#76
- 999  0163 e707          	ld	(7,x),a
-1000                     ; 179     buf[8]  = 'I';
-1002  0165 1e01          	ldw	x,(OFST+1,sp)
-1003  0167 a649          	ld	a,#73
-1004  0169 e708          	ld	(8,x),a
-1005                     ; 180     buf[9]  = 'V';
-1007  016b 1e01          	ldw	x,(OFST+1,sp)
-1008  016d a656          	ld	a,#86
-1009  016f e709          	ld	(9,x),a
-1010                     ; 181     buf[10] = 'E';
-1012  0171 1e01          	ldw	x,(OFST+1,sp)
-1013  0173 a645          	ld	a,#69
-1014  0175 e70a          	ld	(10,x),a
-1015                     ; 182     buf[11] = ',';
-1017  0177 1e01          	ldw	x,(OFST+1,sp)
-1018  0179 a62c          	ld	a,#44
-1019  017b e70b          	ld	(11,x),a
-1020                     ; 184     buf[12] = di1 ? '1' : '0';
-1022  017d 0d07          	tnz	(OFST+7,sp)
-1023  017f 2704          	jreq	L46
-1024  0181 a631          	ld	a,#49
-1025  0183 2002          	jra	L66
-1026  0185               L46:
-1027  0185 a630          	ld	a,#48
-1028  0187               L66:
-1029  0187 1e01          	ldw	x,(OFST+1,sp)
-1030  0189 e70c          	ld	(12,x),a
-1031                     ; 185     buf[13] = di2 ? '1' : '0';
-1033  018b 0d08          	tnz	(OFST+8,sp)
-1034  018d 2704          	jreq	L07
-1035  018f a631          	ld	a,#49
-1036  0191 2002          	jra	L27
-1037  0193               L07:
-1038  0193 a630          	ld	a,#48
-1039  0195               L27:
-1040  0195 1e01          	ldw	x,(OFST+1,sp)
-1041  0197 e70d          	ld	(13,x),a
-1042                     ; 186     buf[14] = di3 ? '1' : '0';
-1044  0199 0d09          	tnz	(OFST+9,sp)
-1045  019b 2704          	jreq	L47
-1046  019d a631          	ld	a,#49
-1047  019f 2002          	jra	L67
-1048  01a1               L47:
-1049  01a1 a630          	ld	a,#48
-1050  01a3               L67:
-1051  01a3 1e01          	ldw	x,(OFST+1,sp)
-1052  01a5 e70e          	ld	(14,x),a
-1053                     ; 187     buf[15] = di4 ? '1' : '0';
-1055  01a7 0d0a          	tnz	(OFST+10,sp)
-1056  01a9 2704          	jreq	L001
-1057  01ab a631          	ld	a,#49
-1058  01ad 2002          	jra	L201
-1059  01af               L001:
-1060  01af a630          	ld	a,#48
-1061  01b1               L201:
-1062  01b1 1e01          	ldw	x,(OFST+1,sp)
-1063  01b3 e70f          	ld	(15,x),a
-1064                     ; 189     buf[16] = ',';
-1066  01b5 1e01          	ldw	x,(OFST+1,sp)
-1067  01b7 a62c          	ld	a,#44
-1068  01b9 e710          	ld	(16,x),a
-1069                     ; 190     buf[17] = 'E';
-1071  01bb 1e01          	ldw	x,(OFST+1,sp)
-1072  01bd a645          	ld	a,#69
-1073  01bf e711          	ld	(17,x),a
-1074                     ; 191     buf[18] = 'N';
-1076  01c1 1e01          	ldw	x,(OFST+1,sp)
-1077  01c3 a64e          	ld	a,#78
-1078  01c5 e712          	ld	(18,x),a
-1079                     ; 192     buf[19] = 'D';
-1081  01c7 1e01          	ldw	x,(OFST+1,sp)
-1082  01c9 a644          	ld	a,#68
-1083  01cb e713          	ld	(19,x),a
-1084                     ; 193     buf[20] = '\0';
-1086  01cd 1e01          	ldw	x,(OFST+1,sp)
-1087  01cf 6f14          	clr	(20,x)
-1088                     ; 194 }
-1091  01d1 85            	popw	x
-1092  01d2 81            	ret
-1284                     ; 196 uint8_t hal_di_read(uint8_t di_num)
-1284                     ; 197 {
-1285                     	switch	.text
-1286  01d3               _hal_di_read:
-1288  01d3 5203          	subw	sp,#3
-1289       00000003      OFST:	set	3
-1292                     ; 201     switch (di_num) {
-1295                     ; 206         default: return 0;
-1296  01d5 4a            	dec	a
-1297  01d6 270c          	jreq	L314
-1298  01d8 4a            	dec	a
-1299  01d9 2714          	jreq	L514
-1300  01db 4a            	dec	a
-1301  01dc 271c          	jreq	L714
-1302  01de 4a            	dec	a
-1303  01df 2724          	jreq	L124
-1304  01e1               L324:
-1307  01e1 4f            	clr	a
-1309  01e2 203d          	jra	L411
-1310  01e4               L314:
-1311                     ; 202         case 1: port = DI1_PORT; pin = DI1_PIN; break;
-1313  01e4 ae500f        	ldw	x,#20495
-1314  01e7 1f01          	ldw	(OFST-2,sp),x
-1318  01e9 a604          	ld	a,#4
-1319  01eb 6b03          	ld	(OFST+0,sp),a
-1323  01ed 201f          	jra	L145
-1324  01ef               L514:
-1325                     ; 203         case 2: port = DI2_PORT; pin = DI2_PIN; break;
-1327  01ef ae500f        	ldw	x,#20495
-1328  01f2 1f01          	ldw	(OFST-2,sp),x
-1332  01f4 a608          	ld	a,#8
-1333  01f6 6b03          	ld	(OFST+0,sp),a
-1337  01f8 2014          	jra	L145
-1338  01fa               L714:
-1339                     ; 204         case 3: port = DI3_PORT; pin = DI3_PIN; break;
-1341  01fa ae500f        	ldw	x,#20495
-1342  01fd 1f01          	ldw	(OFST-2,sp),x
-1346  01ff a610          	ld	a,#16
-1347  0201 6b03          	ld	(OFST+0,sp),a
-1351  0203 2009          	jra	L145
-1352  0205               L124:
-1353                     ; 205         case 4: port = DI4_PORT; pin = DI4_PIN; break;
-1355  0205 ae500f        	ldw	x,#20495
-1356  0208 1f01          	ldw	(OFST-2,sp),x
-1360  020a a680          	ld	a,#128
-1361  020c 6b03          	ld	(OFST+0,sp),a
-1365  020e               L145:
-1366                     ; 208     return (GPIO_ReadInputPin(port, pin) == SET) ? 1 : 0;
-1368  020e 7b03          	ld	a,(OFST+0,sp)
-1369  0210 88            	push	a
-1370  0211 1e02          	ldw	x,(OFST-1,sp)
-1371  0213 cd0000        	call	_GPIO_ReadInputPin
-1373  0216 5b01          	addw	sp,#1
-1374  0218 a101          	cp	a,#1
-1375  021a 2604          	jrne	L011
-1376  021c a601          	ld	a,#1
-1377  021e 2001          	jra	L211
-1378  0220               L011:
-1379  0220 4f            	clr	a
-1380  0221               L211:
-1382  0221               L411:
-1384  0221 5b03          	addw	sp,#3
-1385  0223 81            	ret
-1458                     ; 211 char* u16_to_str(char *p, uint16_t value)
-1458                     ; 212 {
-1459                     	switch	.text
-1460  0224               _u16_to_str:
-1462  0224 89            	pushw	x
-1463  0225 5209          	subw	sp,#9
-1464       00000009      OFST:	set	9
-1467                     ; 214     uint8_t i = 0;
-1469  0227 0f09          	clr	(OFST+0,sp)
-1471                     ; 217     if(value == 0)
-1473  0229 1e0e          	ldw	x,(OFST+5,sp)
-1474  022b 263d          	jrne	L506
-1475                     ; 219         *p++ = '0';
-1477  022d 1e0a          	ldw	x,(OFST+1,sp)
-1478  022f 1c0001        	addw	x,#1
-1479  0232 1f0a          	ldw	(OFST+1,sp),x
-1480  0234 1d0001        	subw	x,#1
-1481  0237 a630          	ld	a,#48
-1482  0239 f7            	ld	(x),a
-1483                     ; 220         return p;
-1485  023a 1e0a          	ldw	x,(OFST+1,sp)
-1487  023c 2058          	jra	L021
-1488  023e               L306:
-1489                     ; 225         temp[i++] = (value % 10) + '0';
-1491  023e 1e0e          	ldw	x,(OFST+5,sp)
-1492  0240 a60a          	ld	a,#10
-1493  0242 62            	div	x,a
-1494  0243 5f            	clrw	x
-1495  0244 97            	ld	xl,a
-1496  0245 1c0030        	addw	x,#48
-1497  0248 9096          	ldw	y,sp
-1498  024a 72a90003      	addw	y,#OFST-6
-1499  024e 1701          	ldw	(OFST-8,sp),y
-1501  0250 7b09          	ld	a,(OFST+0,sp)
-1502  0252 9097          	ld	yl,a
-1503  0254 0c09          	inc	(OFST+0,sp)
-1505  0256 909f          	ld	a,yl
-1506  0258 905f          	clrw	y
-1507  025a 9097          	ld	yl,a
-1508  025c 72f901        	addw	y,(OFST-8,sp)
-1509  025f 01            	rrwa	x,a
-1510  0260 90f7          	ld	(y),a
-1511  0262 02            	rlwa	x,a
-1512                     ; 226         value /= 10;
-1514  0263 1e0e          	ldw	x,(OFST+5,sp)
-1515  0265 a60a          	ld	a,#10
-1516  0267 62            	div	x,a
-1517  0268 1f0e          	ldw	(OFST+5,sp),x
-1518  026a               L506:
-1519                     ; 223     while(value)
-1521  026a 1e0e          	ldw	x,(OFST+5,sp)
-1522  026c 26d0          	jrne	L306
-1523                     ; 229     for(j = i; j > 0; j--)
-1525  026e 7b09          	ld	a,(OFST+0,sp)
-1526  0270 6b09          	ld	(OFST+0,sp),a
-1529  0272 201c          	jra	L516
-1530  0274               L116:
-1531                     ; 231         *p++ = temp[j - 1];
-1533  0274 96            	ldw	x,sp
-1534  0275 1c0003        	addw	x,#OFST-6
-1535  0278 1f01          	ldw	(OFST-8,sp),x
-1537  027a 7b09          	ld	a,(OFST+0,sp)
-1538  027c 5f            	clrw	x
-1539  027d 97            	ld	xl,a
-1540  027e 5a            	decw	x
-1541  027f 72fb01        	addw	x,(OFST-8,sp)
-1542  0282 f6            	ld	a,(x)
-1543  0283 1e0a          	ldw	x,(OFST+1,sp)
-1544  0285 1c0001        	addw	x,#1
-1545  0288 1f0a          	ldw	(OFST+1,sp),x
-1546  028a 1d0001        	subw	x,#1
-1547  028d f7            	ld	(x),a
-1548                     ; 229     for(j = i; j > 0; j--)
-1550  028e 0a09          	dec	(OFST+0,sp)
-1552  0290               L516:
-1555  0290 0d09          	tnz	(OFST+0,sp)
-1556  0292 26e0          	jrne	L116
-1557                     ; 234     return p;
-1559  0294 1e0a          	ldw	x,(OFST+1,sp)
-1561  0296               L021:
-1563  0296 5b0b          	addw	sp,#11
-1564  0298 81            	ret
-1637                     .const:	section	.text
-1638  0000               L421:
-1639  0000 0000000a      	dc.l	10
-1640                     ; 237 char* u32_to_str(char *p, uint32_t value)
-1640                     ; 238 {
-1641                     	switch	.text
-1642  0299               _u32_to_str:
-1644  0299 89            	pushw	x
-1645  029a 520d          	subw	sp,#13
-1646       0000000d      OFST:	set	13
-1649                     ; 240     uint8_t i = 0;
-1651  029c 0f0d          	clr	(OFST+0,sp)
-1653                     ; 243     if(value == 0)
-1655  029e 96            	ldw	x,sp
-1656  029f 1c0012        	addw	x,#OFST+5
-1657  02a2 cd0000        	call	c_lzmp
-1659  02a5 264b          	jrne	L366
-1660                     ; 245         *p++ = '0';
-1662  02a7 1e0e          	ldw	x,(OFST+1,sp)
-1663  02a9 1c0001        	addw	x,#1
-1664  02ac 1f0e          	ldw	(OFST+1,sp),x
-1665  02ae 1d0001        	subw	x,#1
-1666  02b1 a630          	ld	a,#48
-1667  02b3 f7            	ld	(x),a
-1668                     ; 246         return p;
-1670  02b4 1e0e          	ldw	x,(OFST+1,sp)
-1672  02b6 206b          	jra	L621
-1673  02b8               L166:
-1674                     ; 251         temp[i++] = (value % 10) + '0';
-1676  02b8 96            	ldw	x,sp
-1677  02b9 1c0012        	addw	x,#OFST+5
-1678  02bc cd0000        	call	c_ltor
-1680  02bf ae0000        	ldw	x,#L421
-1681  02c2 cd0000        	call	c_lumd
-1683  02c5 a630          	ld	a,#48
-1684  02c7 cd0000        	call	c_ladc
-1686  02ca 96            	ldw	x,sp
-1687  02cb 1c0003        	addw	x,#OFST-10
-1688  02ce 1f01          	ldw	(OFST-12,sp),x
-1690  02d0 7b0d          	ld	a,(OFST+0,sp)
-1691  02d2 97            	ld	xl,a
-1692  02d3 0c0d          	inc	(OFST+0,sp)
-1694  02d5 9f            	ld	a,xl
-1695  02d6 5f            	clrw	x
-1696  02d7 97            	ld	xl,a
-1697  02d8 72fb01        	addw	x,(OFST-12,sp)
-1698  02db b603          	ld	a,c_lreg+3
-1699  02dd f7            	ld	(x),a
-1700                     ; 252         value /= 10;
-1702  02de 96            	ldw	x,sp
-1703  02df 1c0012        	addw	x,#OFST+5
-1704  02e2 cd0000        	call	c_ltor
-1706  02e5 ae0000        	ldw	x,#L421
-1707  02e8 cd0000        	call	c_ludv
-1709  02eb 96            	ldw	x,sp
-1710  02ec 1c0012        	addw	x,#OFST+5
-1711  02ef cd0000        	call	c_rtol
-1713  02f2               L366:
-1714                     ; 249     while(value)
-1716  02f2 96            	ldw	x,sp
-1717  02f3 1c0012        	addw	x,#OFST+5
-1718  02f6 cd0000        	call	c_lzmp
-1720  02f9 26bd          	jrne	L166
-1721                     ; 255     for(j = i; j > 0; j--)
-1723  02fb 7b0d          	ld	a,(OFST+0,sp)
-1724  02fd 6b0d          	ld	(OFST+0,sp),a
-1727  02ff 201c          	jra	L376
-1728  0301               L766:
-1729                     ; 257         *p++ = temp[j - 1];
-1731  0301 96            	ldw	x,sp
-1732  0302 1c0003        	addw	x,#OFST-10
-1733  0305 1f01          	ldw	(OFST-12,sp),x
-1735  0307 7b0d          	ld	a,(OFST+0,sp)
-1736  0309 5f            	clrw	x
-1737  030a 97            	ld	xl,a
-1738  030b 5a            	decw	x
-1739  030c 72fb01        	addw	x,(OFST-12,sp)
-1740  030f f6            	ld	a,(x)
-1741  0310 1e0e          	ldw	x,(OFST+1,sp)
-1742  0312 1c0001        	addw	x,#1
-1743  0315 1f0e          	ldw	(OFST+1,sp),x
-1744  0317 1d0001        	subw	x,#1
-1745  031a f7            	ld	(x),a
-1746                     ; 255     for(j = i; j > 0; j--)
-1748  031b 0a0d          	dec	(OFST+0,sp)
-1750  031d               L376:
-1753  031d 0d0d          	tnz	(OFST+0,sp)
-1754  031f 26e0          	jrne	L766
-1755                     ; 260     return p;
-1757  0321 1e0e          	ldw	x,(OFST+1,sp)
-1759  0323               L621:
-1761  0323 5b0f          	addw	sp,#15
-1762  0325 81            	ret
-1846                     ; 263 void message_formatter_avcc(char *buf,
-1846                     ; 264                             int buf_size,
-1846                     ; 265                             uint16_t lanid,
-1846                     ; 266                             uint32_t seqn,
-1846                     ; 267                             uint16_t axle_count)
-1846                     ; 268 {
-1847                     	switch	.text
-1848  0326               _message_formatter_avcc:
-1850  0326 89            	pushw	x
-1851  0327 89            	pushw	x
-1852       00000002      OFST:	set	2
-1855                     ; 271     if(buf == 0)
-1857  0328 a30000        	cpw	x,#0
-1858  032b 2708          	jreq	L231
-1859                     ; 272         return;
-1861                     ; 274     if(buf_size < 40)
-1863  032d 9c            	rvf
-1864  032e 1e07          	ldw	x,(OFST+5,sp)
-1865  0330 a30028        	cpw	x,#40
-1866  0333 2e03          	jrsge	L347
-1867                     ; 275         return;
-1868  0335               L231:
-1871  0335 5b04          	addw	sp,#4
-1872  0337 81            	ret
-1873  0338               L347:
-1874                     ; 277     p = buf;
-1876  0338 1e03          	ldw	x,(OFST+1,sp)
-1877  033a 1f01          	ldw	(OFST-1,sp),x
-1879                     ; 280     *p++ = 'S';
-1881  033c 1e01          	ldw	x,(OFST-1,sp)
-1882  033e 1c0001        	addw	x,#1
-1883  0341 1f01          	ldw	(OFST-1,sp),x
-1884  0343 1d0001        	subw	x,#1
-1886  0346 a653          	ld	a,#83
-1887  0348 f7            	ld	(x),a
-1888                     ; 281     *p++ = 'T';
-1890  0349 1e01          	ldw	x,(OFST-1,sp)
-1891  034b 1c0001        	addw	x,#1
-1892  034e 1f01          	ldw	(OFST-1,sp),x
-1893  0350 1d0001        	subw	x,#1
-1895  0353 a654          	ld	a,#84
-1896  0355 f7            	ld	(x),a
-1897                     ; 282     *p++ = 'A';
-1899  0356 1e01          	ldw	x,(OFST-1,sp)
-1900  0358 1c0001        	addw	x,#1
-1901  035b 1f01          	ldw	(OFST-1,sp),x
-1902  035d 1d0001        	subw	x,#1
-1904  0360 a641          	ld	a,#65
-1905  0362 f7            	ld	(x),a
-1906                     ; 283     *p++ = 'R';
-1908  0363 1e01          	ldw	x,(OFST-1,sp)
-1909  0365 1c0001        	addw	x,#1
-1910  0368 1f01          	ldw	(OFST-1,sp),x
-1911  036a 1d0001        	subw	x,#1
-1913  036d a652          	ld	a,#82
-1914  036f f7            	ld	(x),a
-1915                     ; 284     *p++ = 'T';
-1917  0370 1e01          	ldw	x,(OFST-1,sp)
-1918  0372 1c0001        	addw	x,#1
-1919  0375 1f01          	ldw	(OFST-1,sp),x
-1920  0377 1d0001        	subw	x,#1
-1922  037a a654          	ld	a,#84
-1923  037c f7            	ld	(x),a
-1924                     ; 285     *p++ = ',';
-1926  037d 1e01          	ldw	x,(OFST-1,sp)
-1927  037f 1c0001        	addw	x,#1
-1928  0382 1f01          	ldw	(OFST-1,sp),x
-1929  0384 1d0001        	subw	x,#1
-1931  0387 a62c          	ld	a,#44
-1932  0389 f7            	ld	(x),a
-1933                     ; 286     *p++ = 'A';
-1935  038a 1e01          	ldw	x,(OFST-1,sp)
-1936  038c 1c0001        	addw	x,#1
-1937  038f 1f01          	ldw	(OFST-1,sp),x
-1938  0391 1d0001        	subw	x,#1
-1940  0394 a641          	ld	a,#65
-1941  0396 f7            	ld	(x),a
-1942                     ; 287     *p++ = 'V';
-1944  0397 1e01          	ldw	x,(OFST-1,sp)
-1945  0399 1c0001        	addw	x,#1
-1946  039c 1f01          	ldw	(OFST-1,sp),x
-1947  039e 1d0001        	subw	x,#1
-1949  03a1 a656          	ld	a,#86
-1950  03a3 f7            	ld	(x),a
-1951                     ; 288     *p++ = 'C';
-1953  03a4 1e01          	ldw	x,(OFST-1,sp)
-1954  03a6 1c0001        	addw	x,#1
-1955  03a9 1f01          	ldw	(OFST-1,sp),x
-1956  03ab 1d0001        	subw	x,#1
-1958  03ae a643          	ld	a,#67
-1959  03b0 f7            	ld	(x),a
-1960                     ; 289     *p++ = 'C';
-1962  03b1 1e01          	ldw	x,(OFST-1,sp)
-1963  03b3 1c0001        	addw	x,#1
-1964  03b6 1f01          	ldw	(OFST-1,sp),x
-1965  03b8 1d0001        	subw	x,#1
-1967  03bb a643          	ld	a,#67
-1968  03bd f7            	ld	(x),a
-1969                     ; 290     *p++ = ',';
-1971  03be 1e01          	ldw	x,(OFST-1,sp)
-1972  03c0 1c0001        	addw	x,#1
-1973  03c3 1f01          	ldw	(OFST-1,sp),x
-1974  03c5 1d0001        	subw	x,#1
-1976  03c8 a62c          	ld	a,#44
-1977  03ca f7            	ld	(x),a
-1978                     ; 292     p = u16_to_str(p, lanid);
-1980  03cb 1e09          	ldw	x,(OFST+7,sp)
-1981  03cd 89            	pushw	x
-1982  03ce 1e03          	ldw	x,(OFST+1,sp)
-1983  03d0 cd0224        	call	_u16_to_str
-1985  03d3 5b02          	addw	sp,#2
-1986  03d5 1f01          	ldw	(OFST-1,sp),x
-1988                     ; 294     *p++ = ',';
-1990  03d7 1e01          	ldw	x,(OFST-1,sp)
-1991  03d9 1c0001        	addw	x,#1
-1992  03dc 1f01          	ldw	(OFST-1,sp),x
-1993  03de 1d0001        	subw	x,#1
-1995  03e1 a62c          	ld	a,#44
-1996  03e3 f7            	ld	(x),a
-1997                     ; 296     p = u32_to_str(p, seqn);
-1999  03e4 1e0d          	ldw	x,(OFST+11,sp)
-2000  03e6 89            	pushw	x
-2001  03e7 1e0d          	ldw	x,(OFST+11,sp)
-2002  03e9 89            	pushw	x
-2003  03ea 1e05          	ldw	x,(OFST+3,sp)
-2004  03ec cd0299        	call	_u32_to_str
-2006  03ef 5b04          	addw	sp,#4
-2007  03f1 1f01          	ldw	(OFST-1,sp),x
-2009                     ; 298     *p++ = ',';
-2011  03f3 1e01          	ldw	x,(OFST-1,sp)
-2012  03f5 1c0001        	addw	x,#1
-2013  03f8 1f01          	ldw	(OFST-1,sp),x
-2014  03fa 1d0001        	subw	x,#1
-2016  03fd a62c          	ld	a,#44
-2017  03ff f7            	ld	(x),a
-2018                     ; 299     *p++ = 'A';
-2020  0400 1e01          	ldw	x,(OFST-1,sp)
-2021  0402 1c0001        	addw	x,#1
-2022  0405 1f01          	ldw	(OFST-1,sp),x
-2023  0407 1d0001        	subw	x,#1
-2025  040a a641          	ld	a,#65
-2026  040c f7            	ld	(x),a
-2027                     ; 300     *p++ = 'X';
-2029  040d 1e01          	ldw	x,(OFST-1,sp)
-2030  040f 1c0001        	addw	x,#1
-2031  0412 1f01          	ldw	(OFST-1,sp),x
-2032  0414 1d0001        	subw	x,#1
-2034  0417 a658          	ld	a,#88
-2035  0419 f7            	ld	(x),a
-2036                     ; 301     *p++ = 'L';
-2038  041a 1e01          	ldw	x,(OFST-1,sp)
-2039  041c 1c0001        	addw	x,#1
-2040  041f 1f01          	ldw	(OFST-1,sp),x
-2041  0421 1d0001        	subw	x,#1
-2043  0424 a64c          	ld	a,#76
-2044  0426 f7            	ld	(x),a
-2045                     ; 302     *p++ = 'E';
-2047  0427 1e01          	ldw	x,(OFST-1,sp)
-2048  0429 1c0001        	addw	x,#1
-2049  042c 1f01          	ldw	(OFST-1,sp),x
-2050  042e 1d0001        	subw	x,#1
-2052  0431 a645          	ld	a,#69
-2053  0433 f7            	ld	(x),a
-2054                     ; 303     *p++ = ',';
-2056  0434 1e01          	ldw	x,(OFST-1,sp)
-2057  0436 1c0001        	addw	x,#1
-2058  0439 1f01          	ldw	(OFST-1,sp),x
-2059  043b 1d0001        	subw	x,#1
-2061  043e a62c          	ld	a,#44
-2062  0440 f7            	ld	(x),a
-2063                     ; 305     p = u16_to_str(p, axle_count);
-2065  0441 1e0f          	ldw	x,(OFST+13,sp)
-2066  0443 89            	pushw	x
-2067  0444 1e03          	ldw	x,(OFST+1,sp)
-2068  0446 cd0224        	call	_u16_to_str
-2070  0449 5b02          	addw	sp,#2
-2071  044b 1f01          	ldw	(OFST-1,sp),x
-2073                     ; 307     *p++ = ',';
-2075  044d 1e01          	ldw	x,(OFST-1,sp)
-2076  044f 1c0001        	addw	x,#1
-2077  0452 1f01          	ldw	(OFST-1,sp),x
-2078  0454 1d0001        	subw	x,#1
-2080  0457 a62c          	ld	a,#44
-2081  0459 f7            	ld	(x),a
-2082                     ; 308     *p++ = 'E';
-2084  045a 1e01          	ldw	x,(OFST-1,sp)
-2085  045c 1c0001        	addw	x,#1
-2086  045f 1f01          	ldw	(OFST-1,sp),x
-2087  0461 1d0001        	subw	x,#1
-2089  0464 a645          	ld	a,#69
-2090  0466 f7            	ld	(x),a
-2091                     ; 309     *p++ = 'N';
-2093  0467 1e01          	ldw	x,(OFST-1,sp)
-2094  0469 1c0001        	addw	x,#1
-2095  046c 1f01          	ldw	(OFST-1,sp),x
-2096  046e 1d0001        	subw	x,#1
-2098  0471 a64e          	ld	a,#78
-2099  0473 f7            	ld	(x),a
-2100                     ; 310     *p++ = 'D';
-2102  0474 1e01          	ldw	x,(OFST-1,sp)
-2103  0476 1c0001        	addw	x,#1
-2104  0479 1f01          	ldw	(OFST-1,sp),x
-2105  047b 1d0001        	subw	x,#1
-2107  047e a644          	ld	a,#68
-2108  0480 f7            	ld	(x),a
-2109                     ; 312     *p = '\0';
-2111  0481 1e01          	ldw	x,(OFST-1,sp)
-2112  0483 7f            	clr	(x)
-2113                     ; 313 }
-2115  0484 ac350335      	jpf	L231
-2212                     ; 315 void hal_relay_set(uint8_t relay_num, uint8_t state){
-2213                     	switch	.text
-2214  0488               _hal_relay_set:
-2216  0488 89            	pushw	x
-2217  0489 5204          	subw	sp,#4
-2218       00000004      OFST:	set	4
-2221                     ; 318 	BitStatus bit_state = (state == 0) ? SET : RESET;
-2223  048b 9f            	ld	a,xl
-2224  048c 4d            	tnz	a
-2225  048d 2605          	jrne	L631
-2226  048f ae0001        	ldw	x,#1
-2227  0492 2001          	jra	L041
-2228  0494               L631:
-2229  0494 5f            	clrw	x
-2230  0495               L041:
-2231  0495 01            	rrwa	x,a
-2232  0496 6b01          	ld	(OFST-3,sp),a
-2233  0498 02            	rlwa	x,a
-2235                     ; 320 	switch (relay_num) {
-2237  0499 7b05          	ld	a,(OFST+1,sp)
-2239                     ; 327         default: return;
-2240  049b 4a            	dec	a
-2241  049c 2711          	jreq	L547
-2242  049e 4a            	dec	a
-2243  049f 2719          	jreq	L747
-2244  04a1 4a            	dec	a
-2245  04a2 2721          	jreq	L157
-2246  04a4 4a            	dec	a
-2247  04a5 2729          	jreq	L357
-2248  04a7 4a            	dec	a
-2249  04a8 2731          	jreq	L557
-2250  04aa 4a            	dec	a
-2251  04ab 2739          	jreq	L757
-2252  04ad               L167:
-2255  04ad 205a          	jra	L241
-2256  04af               L547:
-2257                     ; 321         case 1: port = RELAY1_PORT; pin = RELAY1_PIN; break;
-2259  04af ae5005        	ldw	x,#20485
-2260  04b2 1f02          	ldw	(OFST-2,sp),x
-2264  04b4 a608          	ld	a,#8
-2265  04b6 6b04          	ld	(OFST+0,sp),a
-2269  04b8 2035          	jra	L5301
-2270  04ba               L747:
-2271                     ; 322         case 2: port = RELAY2_PORT; pin = RELAY2_PIN; break;
-2273  04ba ae5005        	ldw	x,#20485
-2274  04bd 1f02          	ldw	(OFST-2,sp),x
-2278  04bf a604          	ld	a,#4
-2279  04c1 6b04          	ld	(OFST+0,sp),a
-2283  04c3 202a          	jra	L5301
-2284  04c5               L157:
-2285                     ; 323         case 3: port = RELAY3_PORT; pin = RELAY3_PIN; break;
-2287  04c5 ae5005        	ldw	x,#20485
-2288  04c8 1f02          	ldw	(OFST-2,sp),x
-2292  04ca a602          	ld	a,#2
-2293  04cc 6b04          	ld	(OFST+0,sp),a
-2297  04ce 201f          	jra	L5301
-2298  04d0               L357:
-2299                     ; 324         case 4: port = RELAY4_PORT; pin = RELAY4_PIN; break;
-2301  04d0 ae5005        	ldw	x,#20485
-2302  04d3 1f02          	ldw	(OFST-2,sp),x
-2306  04d5 a601          	ld	a,#1
-2307  04d7 6b04          	ld	(OFST+0,sp),a
-2311  04d9 2014          	jra	L5301
-2312  04db               L557:
-2313                     ; 325         case 5: port = RELAY5_PORT; pin = RELAY5_PIN; break;
-2315  04db ae500a        	ldw	x,#20490
-2316  04de 1f02          	ldw	(OFST-2,sp),x
-2320  04e0 a608          	ld	a,#8
-2321  04e2 6b04          	ld	(OFST+0,sp),a
-2325  04e4 2009          	jra	L5301
-2326  04e6               L757:
-2327                     ; 326         case 6: port = RELAY6_PORT; pin = RELAY6_PIN; break;
-2329  04e6 ae500a        	ldw	x,#20490
-2330  04e9 1f02          	ldw	(OFST-2,sp),x
-2334  04eb a610          	ld	a,#16
-2335  04ed 6b04          	ld	(OFST+0,sp),a
-2339  04ef               L5301:
-2340                     ; 330 	if (bit_state == SET) {
-2342  04ef 7b01          	ld	a,(OFST-3,sp)
-2343  04f1 a101          	cp	a,#1
-2344  04f3 260b          	jrne	L7301
-2345                     ; 331         GPIO_WriteHigh(port, pin);  /* Set HIGH = relay off */
-2347  04f5 7b04          	ld	a,(OFST+0,sp)
-2348  04f7 88            	push	a
-2349  04f8 1e03          	ldw	x,(OFST-1,sp)
-2350  04fa cd0000        	call	_GPIO_WriteHigh
-2352  04fd 84            	pop	a
-2354  04fe 2009          	jra	L1401
-2355  0500               L7301:
-2356                     ; 333         GPIO_WriteLow(port, pin); /* Set LOW = relay on */
-2358  0500 7b04          	ld	a,(OFST+0,sp)
-2359  0502 88            	push	a
-2360  0503 1e03          	ldw	x,(OFST-1,sp)
-2361  0505 cd0000        	call	_GPIO_WriteLow
-2363  0508 84            	pop	a
-2364  0509               L1401:
-2365                     ; 335 }
-2366  0509               L241:
-2369  0509 5b06          	addw	sp,#6
-2370  050b 81            	ret
-2414                     ; 337 void relay_control_set(uint8_t relay_num, uint8_t state)
-2414                     ; 338 {
-2415                     	switch	.text
-2416  050c               _relay_control_set:
-2418  050c 89            	pushw	x
-2419       00000000      OFST:	set	0
-2422                     ; 339     if (relay_num >= 1 && relay_num <= 6) {
-2424  050d 9e            	ld	a,xh
-2425  050e 4d            	tnz	a
-2426  050f 270d          	jreq	L5601
-2428  0511 9e            	ld	a,xh
-2429  0512 a107          	cp	a,#7
-2430  0514 2408          	jruge	L5601
-2431                     ; 340         hal_relay_set(relay_num, state);
-2433  0516 9f            	ld	a,xl
-2434  0517 97            	ld	xl,a
-2435  0518 7b01          	ld	a,(OFST+1,sp)
-2436  051a 95            	ld	xh,a
-2437  051b cd0488        	call	_hal_relay_set
-2439  051e               L5601:
-2440                     ; 342 }
-2443  051e 85            	popw	x
-2444  051f 81            	ret
-2480                     ; 344 void relay_control_set_all(uint8_t state)
-2480                     ; 345 {
-2481                     	switch	.text
-2482  0520               _relay_control_set_all:
-2484  0520 88            	push	a
-2485       00000000      OFST:	set	0
-2488                     ; 346     relay_control_set(1, state);
-2490  0521 ae0100        	ldw	x,#256
-2491  0524 97            	ld	xl,a
-2492  0525 ade5          	call	_relay_control_set
-2494                     ; 347     relay_control_set(2, state);
-2496  0527 7b01          	ld	a,(OFST+1,sp)
-2497  0529 ae0200        	ldw	x,#512
-2498  052c 97            	ld	xl,a
-2499  052d addd          	call	_relay_control_set
-2501                     ; 348     relay_control_set(3, state);
-2503  052f 7b01          	ld	a,(OFST+1,sp)
-2504  0531 ae0300        	ldw	x,#768
-2505  0534 97            	ld	xl,a
-2506  0535 add5          	call	_relay_control_set
-2508                     ; 349     relay_control_set(4, state);
-2510  0537 7b01          	ld	a,(OFST+1,sp)
-2511  0539 ae0400        	ldw	x,#1024
-2512  053c 97            	ld	xl,a
-2513  053d adcd          	call	_relay_control_set
-2515                     ; 350     relay_control_set(5, state);
-2517  053f 7b01          	ld	a,(OFST+1,sp)
-2518  0541 ae0500        	ldw	x,#1280
-2519  0544 97            	ld	xl,a
-2520  0545 adc5          	call	_relay_control_set
-2522                     ; 351     relay_control_set(6, state);
-2524  0547 7b01          	ld	a,(OFST+1,sp)
-2525  0549 ae0600        	ldw	x,#1536
-2526  054c 97            	ld	xl,a
-2527  054d adbd          	call	_relay_control_set
-2529                     ; 352 }
-2532  054f 84            	pop	a
-2533  0550 81            	ret
-2559                     ; 354 void sensor_reader_update(void){
-2560                     	switch	.text
-2561  0551               _sensor_reader_update:
-2565                     ; 355     current_state.di1 = hal_di_read(1);
-2567  0551 a601          	ld	a,#1
-2568  0553 cd01d3        	call	_hal_di_read
-2570  0556 b717          	ld	L72_current_state,a
-2571                     ; 356     current_state.di2 = hal_di_read(2);
-2573  0558 a602          	ld	a,#2
-2574  055a cd01d3        	call	_hal_di_read
-2576  055d b718          	ld	L72_current_state+1,a
-2577                     ; 357     current_state.di3 = hal_di_read(3);
-2579  055f a603          	ld	a,#3
-2580  0561 cd01d3        	call	_hal_di_read
-2582  0564 b719          	ld	L72_current_state+2,a
-2583                     ; 358     current_state.di4 = hal_di_read(4);
-2585  0566 a604          	ld	a,#4
-2586  0568 cd01d3        	call	_hal_di_read
-2588  056b b71a          	ld	L72_current_state+3,a
-2589                     ; 359 }
-2592  056d 81            	ret
-2616                     ; 362 void hal_timer_start(void)
-2616                     ; 363 {
-2617                     	switch	.text
-2618  056e               _hal_timer_start:
-2622                     ; 364     TIM4_Cmd(ENABLE);
-2624  056e a601          	ld	a,#1
-2625  0570 cd0000        	call	_TIM4_Cmd
-2627                     ; 365 }
-2630  0573 81            	ret
-2691                     ; 370 void process_axle_counting(void){
-2692                     	switch	.text
-2693  0574               _process_axle_counting:
-2695  0574 5232          	subw	sp,#50
-2696       00000032      OFST:	set	50
-2699                     ; 371     sensor_state_t sensor = sensor_reader_get_state();
-2701  0576 96            	ldw	x,sp
-2702  0577 1c002f        	addw	x,#OFST-3
-2703  057a 89            	pushw	x
-2704  057b cd011a        	call	_sensor_reader_get_state
-2706  057e 85            	popw	x
-2707                     ; 374     if(sensor.di1 == 1 && axle_counter.prev_di1_state == 0){
-2709  057f 7b2f          	ld	a,(OFST-3,sp)
-2710  0581 a101          	cp	a,#1
-2711  0583 260a          	jrne	L3511
-2713  0585 3d05          	tnz	L12_axle_counter+3
-2714  0587 2606          	jrne	L3511
-2715                     ; 375         axle_counter.loop_active = 1;
-2717  0589 35010002      	mov	L12_axle_counter,#1
-2718                     ; 376         axle_counter.axle_count = 0;
-2720  058d 3f04          	clr	L12_axle_counter+2
-2721  058f               L3511:
-2722                     ; 379     if(axle_counter.loop_active){
-2724  058f 3d02          	tnz	L12_axle_counter
-2725  0591 2710          	jreq	L5511
-2726                     ; 380         if(sensor.di2 == 1 && axle_counter.prev_di2_state == 0){
-2728  0593 7b30          	ld	a,(OFST-2,sp)
-2729  0595 a101          	cp	a,#1
-2730  0597 2606          	jrne	L7511
-2732  0599 3d03          	tnz	L12_axle_counter+1
-2733  059b 2602          	jrne	L7511
-2734                     ; 381             axle_counter.axle_count++;
-2736  059d 3c04          	inc	L12_axle_counter+2
-2737  059f               L7511:
-2738                     ; 383         axle_counter.prev_di2_state = sensor.di2;
-2740  059f 7b30          	ld	a,(OFST-2,sp)
-2741  05a1 b703          	ld	L12_axle_counter+1,a
-2742  05a3               L5511:
-2743                     ; 387     if (sensor.di1 == 0 && axle_counter.prev_di1_state == 1 && axle_counter.loop_active){
-2745  05a3 0d2f          	tnz	(OFST-3,sp)
-2746  05a5 264f          	jrne	L1611
-2748  05a7 b605          	ld	a,L12_axle_counter+3
-2749  05a9 a101          	cp	a,#1
-2750  05ab 2649          	jrne	L1611
-2752  05ad 3d02          	tnz	L12_axle_counter
-2753  05af 2745          	jreq	L1611
-2754                     ; 388         uint16_t axle_final_count = axle_counter.axle_count / 2;
-2756  05b1 b604          	ld	a,L12_axle_counter+2
-2757  05b3 5f            	clrw	x
-2758  05b4 97            	ld	xl,a
-2759  05b5 57            	sraw	x
-2760  05b6 1f05          	ldw	(OFST-45,sp),x
-2762                     ; 391         message_formatter_avcc(msg_buf, sizeof(msg_buf),DEVICE_LANID,axle_counter.embedded_seq_num,axle_final_count);
-2764  05b8 1e05          	ldw	x,(OFST-45,sp)
-2765  05ba 89            	pushw	x
-2766  05bb be08          	ldw	x,L12_axle_counter+6
-2767  05bd 89            	pushw	x
-2768  05be be06          	ldw	x,L12_axle_counter+4
-2769  05c0 89            	pushw	x
-2770  05c1 ae007d        	ldw	x,#125
-2771  05c4 89            	pushw	x
-2772  05c5 ae0028        	ldw	x,#40
-2773  05c8 89            	pushw	x
-2774  05c9 96            	ldw	x,sp
-2775  05ca 1c0011        	addw	x,#OFST-33
-2776  05cd cd0326        	call	_message_formatter_avcc
-2778  05d0 5b0a          	addw	sp,#10
-2779                     ; 393         if(uart_server_is_ready()){
-2781  05d2 cd008d        	call	_uart_server_is_ready
-2783  05d5 a30000        	cpw	x,#0
-2784  05d8 2710          	jreq	L3611
-2785                     ; 394             uart_server_send((uint8_t *)msg_buf, strlen(msg_buf));
-2787  05da 96            	ldw	x,sp
-2788  05db 1c0007        	addw	x,#OFST-43
-2789  05de cd0000        	call	_strlen
-2791  05e1 89            	pushw	x
-2792  05e2 96            	ldw	x,sp
-2793  05e3 1c0009        	addw	x,#OFST-41
-2794  05e6 cd00e5        	call	_uart_server_send
-2796  05e9 85            	popw	x
-2797  05ea               L3611:
-2798                     ; 397         axle_counter.embedded_seq_num++;
-2800  05ea ae0006        	ldw	x,#L12_axle_counter+4
-2801  05ed a601          	ld	a,#1
-2802  05ef cd0000        	call	c_lgadc
-2804                     ; 398         axle_counter.loop_active = 0;
-2806  05f2 3f02          	clr	L12_axle_counter
-2807                     ; 399         axle_counter.axle_count = 0;
-2809  05f4 3f04          	clr	L12_axle_counter+2
-2810  05f6               L1611:
-2811                     ; 401     axle_counter.prev_di1_state = sensor.di1;
-2813  05f6 7b2f          	ld	a,(OFST-3,sp)
-2814  05f8 b705          	ld	L12_axle_counter+3,a
-2815                     ; 402 }
-2818  05fa 5b32          	addw	sp,#50
-2819  05fc 81            	ret
-2843                     ; 403 void sensor_reader_init(void)
-2843                     ; 404 {
-2844                     	switch	.text
-2845  05fd               _sensor_reader_init:
-2849                     ; 406     sensor_reader_update();
-2851  05fd cd0551        	call	_sensor_reader_update
-2853                     ; 407 }
-2856  0600 81            	ret
-2906                     ; 409 void send_alive_message(void)
-2906                     ; 410 {
-2907                     	switch	.text
-2908  0601               _send_alive_message:
-2910  0601 5228          	subw	sp,#40
-2911       00000028      OFST:	set	40
-2914                     ; 414     sensor = sensor_reader_get_state();
-2916  0603 96            	ldw	x,sp
-2917  0604 1c0025        	addw	x,#OFST-3
-2918  0607 89            	pushw	x
-2919  0608 cd011a        	call	_sensor_reader_get_state
-2921  060b 85            	popw	x
-2922                     ; 416     message_formatter_alive(
-2922                     ; 417         msg_buf,
-2922                     ; 418         sizeof(msg_buf),
-2922                     ; 419         sensor.di1,
-2922                     ; 420         sensor.di2,
-2922                     ; 421         sensor.di3,
-2922                     ; 422         sensor.di4
-2922                     ; 423     );
-2924  060c 7b28          	ld	a,(OFST+0,sp)
-2925  060e 88            	push	a
-2926  060f 7b28          	ld	a,(OFST+0,sp)
-2927  0611 88            	push	a
-2928  0612 7b28          	ld	a,(OFST+0,sp)
-2929  0614 88            	push	a
-2930  0615 7b28          	ld	a,(OFST+0,sp)
-2931  0617 88            	push	a
-2932  0618 ae0020        	ldw	x,#32
-2933  061b 89            	pushw	x
-2934  061c 96            	ldw	x,sp
-2935  061d 1c000b        	addw	x,#OFST-29
-2936  0620 cd0126        	call	_message_formatter_alive
-2938  0623 5b06          	addw	sp,#6
-2939                     ; 425     if (uart_server_is_ready())
-2941  0625 cd008d        	call	_uart_server_is_ready
-2943  0628 a30000        	cpw	x,#0
-2944  062b 2710          	jreq	L7121
-2945                     ; 427         uart_server_send((uint8_t *)msg_buf, strlen(msg_buf));
-2947  062d 96            	ldw	x,sp
-2948  062e 1c0005        	addw	x,#OFST-35
-2949  0631 cd0000        	call	_strlen
-2951  0634 89            	pushw	x
-2952  0635 96            	ldw	x,sp
-2953  0636 1c0007        	addw	x,#OFST-33
-2954  0639 cd00e5        	call	_uart_server_send
-2956  063c 85            	popw	x
-2957  063d               L7121:
-2958                     ; 429 }
-2961  063d 5b28          	addw	sp,#40
-2962  063f 81            	ret
-2990                     	switch	.const
-2991  0004               L461:
-2992  0004 00000032      	dc.l	50
-2993  0008               L661:
-2994  0008 000001f4      	dc.l	500
-2995                     ; 431 void timer_callback(void){
-2996                     	switch	.text
-2997  0640               _timer_callback:
-3001                     ; 432     task_timer.current_time = hal_get_millis();
-3003  0640 cd0000        	call	_hal_get_millis
-3005  0643 ae0013        	ldw	x,#L52_task_timer+8
-3006  0646 cd0000        	call	c_rtol
-3008                     ; 433     if ((task_timer.current_time - task_timer.last_sensor_time) >= SENSOR_READ_INTERVAL){
-3010  0649 ae0013        	ldw	x,#L52_task_timer+8
-3011  064c cd0000        	call	c_ltor
-3013  064f ae000f        	ldw	x,#L52_task_timer+4
-3014  0652 cd0000        	call	c_lsub
-3016  0655 ae0004        	ldw	x,#L461
-3017  0658 cd0000        	call	c_lcmp
-3019  065b 250e          	jrult	L1321
-3020                     ; 434         sensor_reader_update();
-3022  065d cd0551        	call	_sensor_reader_update
-3024                     ; 435         process_axle_counting();
-3026  0660 cd0574        	call	_process_axle_counting
-3028                     ; 436         task_timer.last_sensor_time = task_timer.current_time;
-3030  0663 be15          	ldw	x,L52_task_timer+10
-3031  0665 bf11          	ldw	L52_task_timer+6,x
-3032  0667 be13          	ldw	x,L52_task_timer+8
-3033  0669 bf0f          	ldw	L52_task_timer+4,x
-3034  066b               L1321:
-3035                     ; 439     if ((task_timer.current_time - task_timer.last_alive_time) >= ALIVE_INTERVAL){
-3037  066b ae0013        	ldw	x,#L52_task_timer+8
-3038  066e cd0000        	call	c_ltor
-3040  0671 ae000b        	ldw	x,#L52_task_timer
-3041  0674 cd0000        	call	c_lsub
-3043  0677 ae0008        	ldw	x,#L661
-3044  067a cd0000        	call	c_lcmp
-3046  067d 250a          	jrult	L3321
-3047                     ; 440         send_alive_message();  
-3049  067f ad80          	call	_send_alive_message
-3051                     ; 441         task_timer.last_alive_time = task_timer.current_time;
-3053  0681 be15          	ldw	x,L52_task_timer+10
-3054  0683 bf0d          	ldw	L52_task_timer+2,x
-3055  0685 be13          	ldw	x,L52_task_timer+8
-3056  0687 bf0b          	ldw	L52_task_timer,x
-3057  0689               L3321:
-3058                     ; 443 }
-3061  0689 81            	ret
-3099                     ; 445 void hal_timer_set_callback(timer_callback_t callback)
-3099                     ; 446 {
-3100                     	switch	.text
-3101  068a               _hal_timer_set_callback:
-3105                     ; 447     user_callback = callback;
-3107  068a bf29          	ldw	_user_callback,x
-3108                     ; 448 }
-3111  068c 81            	ret
-3175                     ; 450 int command_parser_execute(const char *cmd_str, int len)
-3175                     ; 451 {
-3176                     	switch	.text
-3177  068d               _command_parser_execute:
-3179  068d 89            	pushw	x
-3180  068e 89            	pushw	x
-3181       00000002      OFST:	set	2
-3184                     ; 456     if (len < 4)
-3186  068f 9c            	rvf
-3187  0690 1e07          	ldw	x,(OFST+5,sp)
-3188  0692 a30004        	cpw	x,#4
-3189  0695 2e05          	jrsge	L5031
-3190                     ; 457         return -1;
-3192  0697 aeffff        	ldw	x,#65535
-3194  069a 200a          	jra	L471
-3195  069c               L5031:
-3196                     ; 459     if (cmd_str[0] != 'R')
-3198  069c 1e03          	ldw	x,(OFST+1,sp)
-3199  069e f6            	ld	a,(x)
-3200  069f a152          	cp	a,#82
-3201  06a1 2706          	jreq	L7031
-3202                     ; 460         return -1;
-3204  06a3 aeffff        	ldw	x,#65535
-3206  06a6               L471:
-3208  06a6 5b04          	addw	sp,#4
-3209  06a8 81            	ret
-3210  06a9               L7031:
-3211                     ; 462     if (cmd_str[1] < '1' || cmd_str[1] > '6')
-3213  06a9 1e03          	ldw	x,(OFST+1,sp)
-3214  06ab e601          	ld	a,(1,x)
-3215  06ad a131          	cp	a,#49
-3216  06af 2508          	jrult	L3131
-3218  06b1 1e03          	ldw	x,(OFST+1,sp)
-3219  06b3 e601          	ld	a,(1,x)
-3220  06b5 a137          	cp	a,#55
-3221  06b7 2505          	jrult	L1131
-3222  06b9               L3131:
-3223                     ; 463         return -1;
-3225  06b9 aeffff        	ldw	x,#65535
-3227  06bc 20e8          	jra	L471
-3228  06be               L1131:
-3229                     ; 465     if (cmd_str[2] != ',')
-3231  06be 1e03          	ldw	x,(OFST+1,sp)
-3232  06c0 e602          	ld	a,(2,x)
-3233  06c2 a12c          	cp	a,#44
-3234  06c4 2705          	jreq	L5131
-3235                     ; 466         return -1;
-3237  06c6 aeffff        	ldw	x,#65535
-3239  06c9 20db          	jra	L471
-3240  06cb               L5131:
-3241                     ; 468     if (cmd_str[3] != '0' && cmd_str[3] != '1')
-3243  06cb 1e03          	ldw	x,(OFST+1,sp)
-3244  06cd e603          	ld	a,(3,x)
-3245  06cf a130          	cp	a,#48
-3246  06d1 270d          	jreq	L7131
-3248  06d3 1e03          	ldw	x,(OFST+1,sp)
-3249  06d5 e603          	ld	a,(3,x)
-3250  06d7 a131          	cp	a,#49
-3251  06d9 2705          	jreq	L7131
-3252                     ; 469         return -1;
-3254  06db aeffff        	ldw	x,#65535
-3256  06de 20c6          	jra	L471
-3257  06e0               L7131:
-3258                     ; 471     relay_num = cmd_str[1] - '0';
-3260  06e0 1e03          	ldw	x,(OFST+1,sp)
-3261  06e2 e601          	ld	a,(1,x)
-3262  06e4 a030          	sub	a,#48
-3263  06e6 6b01          	ld	(OFST-1,sp),a
-3265                     ; 472     relay_state = cmd_str[3] - '0';
-3267  06e8 1e03          	ldw	x,(OFST+1,sp)
-3268  06ea e603          	ld	a,(3,x)
-3269  06ec a030          	sub	a,#48
-3270  06ee 6b02          	ld	(OFST+0,sp),a
-3272                     ; 474     relay_control_set(relay_num, relay_state);
-3274  06f0 7b02          	ld	a,(OFST+0,sp)
-3275  06f2 97            	ld	xl,a
-3276  06f3 7b01          	ld	a,(OFST-1,sp)
-3277  06f5 95            	ld	xh,a
-3278  06f6 cd050c        	call	_relay_control_set
-3280                     ; 476     return 0;
-3282  06f9 5f            	clrw	x
-3284  06fa 20aa          	jra	L471
-3308                     ; 479 void relay_control_init(void)
-3308                     ; 480 {
-3309                     	switch	.text
-3310  06fc               _relay_control_init:
-3314                     ; 481     relay_control_set_all(1);  /* 1 = on for active-low relays */
-3316  06fc a601          	ld	a,#1
-3317  06fe cd0520        	call	_relay_control_set_all
-3319                     ; 482 }
-3322  0701 81            	ret
-3347                     ; 484 void hal_w5500_reset_high(void)
-3347                     ; 485 {
-3348                     	switch	.text
-3349  0702               _hal_w5500_reset_high:
-3353                     ; 486     GPIO_WriteHigh(W5500_RST_PORT, W5500_RST_PIN);
-3355  0702 4b20          	push	#32
-3356  0704 ae5014        	ldw	x,#20500
-3357  0707 cd0000        	call	_GPIO_WriteHigh
-3359  070a 84            	pop	a
-3360                     ; 487 }
-3363  070b 81            	ret
-3389                     ; 489 void hal_gpio_init(void){
-3390                     	switch	.text
-3391  070c               _hal_gpio_init:
-3395                     ; 491     GPIO_Init(DI1_PORT, DI1_PIN, GPIO_MODE_IN_PU_NO_IT);
-3397  070c 4b40          	push	#64
-3398  070e 4b04          	push	#4
-3399  0710 ae500f        	ldw	x,#20495
-3400  0713 cd0000        	call	_GPIO_Init
-3402  0716 85            	popw	x
-3403                     ; 492     GPIO_Init(DI2_PORT, DI2_PIN, GPIO_MODE_IN_PU_NO_IT);
-3405  0717 4b40          	push	#64
-3406  0719 4b08          	push	#8
-3407  071b ae500f        	ldw	x,#20495
-3408  071e cd0000        	call	_GPIO_Init
-3410  0721 85            	popw	x
-3411                     ; 493     GPIO_Init(DI3_PORT, DI3_PIN, GPIO_MODE_IN_PU_NO_IT);
-3413  0722 4b40          	push	#64
-3414  0724 4b10          	push	#16
-3415  0726 ae500f        	ldw	x,#20495
-3416  0729 cd0000        	call	_GPIO_Init
-3418  072c 85            	popw	x
-3419                     ; 494     GPIO_Init(DI4_PORT, DI4_PIN, GPIO_MODE_IN_PU_NO_IT);
-3421  072d 4b40          	push	#64
-3422  072f 4b80          	push	#128
-3423  0731 ae500f        	ldw	x,#20495
-3424  0734 cd0000        	call	_GPIO_Init
-3426  0737 85            	popw	x
-3427                     ; 497     GPIO_Init(RELAY1_PORT, RELAY1_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
-3429  0738 4bf0          	push	#240
-3430  073a 4b08          	push	#8
-3431  073c ae5005        	ldw	x,#20485
-3432  073f cd0000        	call	_GPIO_Init
-3434  0742 85            	popw	x
-3435                     ; 498     GPIO_Init(RELAY2_PORT, RELAY2_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
-3437  0743 4bf0          	push	#240
-3438  0745 4b04          	push	#4
-3439  0747 ae5005        	ldw	x,#20485
-3440  074a cd0000        	call	_GPIO_Init
-3442  074d 85            	popw	x
-3443                     ; 499     GPIO_Init(RELAY3_PORT, RELAY3_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
-3445  074e 4bf0          	push	#240
-3446  0750 4b02          	push	#2
-3447  0752 ae5005        	ldw	x,#20485
-3448  0755 cd0000        	call	_GPIO_Init
-3450  0758 85            	popw	x
-3451                     ; 500     GPIO_Init(RELAY4_PORT, RELAY4_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
-3453  0759 4bf0          	push	#240
-3454  075b 4b01          	push	#1
-3455  075d ae5005        	ldw	x,#20485
-3456  0760 cd0000        	call	_GPIO_Init
-3458  0763 85            	popw	x
-3459                     ; 501     GPIO_Init(RELAY5_PORT, RELAY5_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
-3461  0764 4bf0          	push	#240
-3462  0766 4b08          	push	#8
-3463  0768 ae500a        	ldw	x,#20490
-3464  076b cd0000        	call	_GPIO_Init
-3466  076e 85            	popw	x
-3467                     ; 502     GPIO_Init(RELAY6_PORT, RELAY6_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
-3469  076f 4bf0          	push	#240
-3470  0771 4b10          	push	#16
-3471  0773 ae500a        	ldw	x,#20490
-3472  0776 cd0000        	call	_GPIO_Init
-3474  0779 85            	popw	x
-3475                     ; 505     hal_relay_set(1, 1);
-3477  077a ae0101        	ldw	x,#257
-3478  077d cd0488        	call	_hal_relay_set
-3480                     ; 506     hal_relay_set(2, 1);
-3482  0780 ae0201        	ldw	x,#513
-3483  0783 cd0488        	call	_hal_relay_set
-3485                     ; 507     hal_relay_set(3, 1);
-3487  0786 ae0301        	ldw	x,#769
-3488  0789 cd0488        	call	_hal_relay_set
-3490                     ; 508     hal_relay_set(4, 1);
-3492  078c ae0401        	ldw	x,#1025
-3493  078f cd0488        	call	_hal_relay_set
-3495                     ; 509     hal_relay_set(5, 1);
-3497  0792 ae0501        	ldw	x,#1281
-3498  0795 cd0488        	call	_hal_relay_set
-3500                     ; 510     hal_relay_set(6, 1);
-3502  0798 ae0601        	ldw	x,#1537
-3503  079b cd0488        	call	_hal_relay_set
-3505                     ; 513     GPIO_Init(HARDRST_PORT, HARDRST_PIN, GPIO_MODE_IN_PU_NO_IT);
-3507  079e 4b40          	push	#64
-3508  07a0 4b80          	push	#128
-3509  07a2 ae5005        	ldw	x,#20485
-3510  07a5 cd0000        	call	_GPIO_Init
-3512  07a8 85            	popw	x
-3513                     ; 516     GPIO_Init(W5500_RST_PORT, W5500_RST_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
-3515  07a9 4bf0          	push	#240
-3516  07ab 4b20          	push	#32
-3517  07ad ae5014        	ldw	x,#20500
-3518  07b0 cd0000        	call	_GPIO_Init
-3520  07b3 85            	popw	x
-3521                     ; 517 	hal_w5500_reset_high();
-3523  07b4 cd0702        	call	_hal_w5500_reset_high
-3525                     ; 518 }
-3528  07b7 81            	ret
-3552                     ; 520 uint16_t hal_uart_available(void){
-3553                     	switch	.text
-3554  07b8               _hal_uart_available:
-3558                     ; 521 	return uart_rx_count;
-3560  07b8 be1f          	ldw	x,_uart_rx_count
-3563  07ba 81            	ret
-3602                     ; 524 uint8_t hal_uart_read_byte(void){
-3603                     	switch	.text
-3604  07bb               _hal_uart_read_byte:
-3606  07bb 88            	push	a
-3607       00000001      OFST:	set	1
-3610                     ; 525 	uint8_t byte = 0;
-3612  07bc 0f01          	clr	(OFST+0,sp)
-3614                     ; 526 	if (uart_rx_count > 0){
-3616  07be be1f          	ldw	x,_uart_rx_count
-3617  07c0 271b          	jreq	L7731
-3618                     ; 527 		disableInterrupts();
-3621  07c2 9b            sim
-3623                     ; 529 		byte = uart_rx_buffer[uart_rx_tail];
-3626  07c3 be23          	ldw	x,_uart_rx_tail
-3627  07c5 e600          	ld	a,(_uart_rx_buffer,x)
-3628  07c7 6b01          	ld	(OFST+0,sp),a
-3630                     ; 530 		uart_rx_tail = (uart_rx_tail + 1) % UART_RX_BUFFER_SIZE;
-3632  07c9 be23          	ldw	x,_uart_rx_tail
-3633  07cb 5c            	incw	x
-3634  07cc 01            	rrwa	x,a
-3635  07cd a41f          	and	a,#31
-3636  07cf 5f            	clrw	x
-3637  07d0 b724          	ld	_uart_rx_tail+1,a
-3638  07d2 9f            	ld	a,xl
-3639  07d3 b723          	ld	_uart_rx_tail,a
-3640                     ; 531 		uart_rx_count--;
-3642  07d5 be1f          	ldw	x,_uart_rx_count
-3643  07d7 1d0001        	subw	x,#1
-3644  07da bf1f          	ldw	_uart_rx_count,x
-3645                     ; 532 		enableInterrupts();
-3648  07dc 9a            rim
-3651  07dd               L7731:
-3652                     ; 534 	return byte;
-3654  07dd 7b01          	ld	a,(OFST+0,sp)
-3657  07df 5b01          	addw	sp,#1
-3658  07e1 81            	ret
-3732                     ; 537 void uart_server_process(void){
-3733                     	switch	.text
-3734  07e2               _uart_server_process:
-3736  07e2 522b          	subw	sp,#43
-3737       0000002b      OFST:	set	43
-3740                     ; 543 	if (uart_state == UART_STATE_IDLE){
-3742  07e4 3d1b          	tnz	L13_uart_state
-3743  07e6 2603          	jrne	L412
-3744  07e8 cc08a3        	jp	L212
-3745  07eb               L412:
-3746                     ; 544 		return;
-3748                     ; 546 	available_len = hal_uart_available();
-3750  07eb adcb          	call	_hal_uart_available
-3752  07ed 1f05          	ldw	(OFST-38,sp),x
-3754                     ; 548 	if(available_len > 0){
-3756  07ef 1e05          	ldw	x,(OFST-38,sp)
-3757  07f1 2603          	jrne	L612
-3758  07f3 cc089f        	jp	L5341
-3759  07f6               L612:
-3760                     ; 549 		uart_state = UART_STATE_RX_PENDING;
-3762  07f6 3502001b      	mov	L13_uart_state,#2
-3764  07fa ac8b088b      	jpf	L3441
-3765  07fe               L7341:
-3766                     ; 552 			read_byte = hal_uart_read_byte();
-3768  07fe adbb          	call	_hal_uart_read_byte
-3770  0800 6b2b          	ld	(OFST+0,sp),a
-3772                     ; 554 			if (read_byte == '\n' || read_byte == '\r'){
-3774  0802 7b2b          	ld	a,(OFST+0,sp)
-3775  0804 a10a          	cp	a,#10
-3776  0806 2706          	jreq	L1541
-3778  0808 7b2b          	ld	a,(OFST+0,sp)
-3779  080a a10d          	cp	a,#13
-3780  080c 265c          	jrne	L7441
-3781  080e               L1541:
-3782                     ; 555 				if(uart_rx_count > 0){
-3784  080e be1f          	ldw	x,_uart_rx_count
-3785  0810 2772          	jreq	L3641
-3786                     ; 556 					uart_rx_buffer[uart_rx_count] = '\0';
-3788  0812 be1f          	ldw	x,_uart_rx_count
-3789  0814 6f00          	clr	(_uart_rx_buffer,x)
-3790                     ; 557 					if (command_parser_execute((const char *)uart_rx_buffer,uart_rx_count) == 0){
-3792  0816 be1f          	ldw	x,_uart_rx_count
-3793  0818 89            	pushw	x
-3794  0819 ae0000        	ldw	x,#_uart_rx_buffer
-3795  081c cd068d        	call	_command_parser_execute
-3797  081f 5b02          	addw	sp,#2
-3798  0821 a30000        	cpw	x,#0
-3799  0824 2634          	jrne	L5541
-3800                     ; 558 						state = sensor_reader_get_state();
-3802  0826 96            	ldw	x,sp
-3803  0827 1c0027        	addw	x,#OFST-4
-3804  082a 89            	pushw	x
-3805  082b cd011a        	call	_sensor_reader_get_state
-3807  082e 85            	popw	x
-3808                     ; 559 						message_formatter_alive(resp_buf, sizeof(resp_buf),state.di1,state.di2,state.di3,state.di4);
-3810  082f 7b2a          	ld	a,(OFST-1,sp)
-3811  0831 88            	push	a
-3812  0832 7b2a          	ld	a,(OFST-1,sp)
-3813  0834 88            	push	a
-3814  0835 7b2a          	ld	a,(OFST-1,sp)
-3815  0837 88            	push	a
-3816  0838 7b2a          	ld	a,(OFST-1,sp)
-3817  083a 88            	push	a
-3818  083b ae0020        	ldw	x,#32
-3819  083e 89            	pushw	x
-3820  083f 96            	ldw	x,sp
-3821  0840 1c000d        	addw	x,#OFST-30
-3822  0843 cd0126        	call	_message_formatter_alive
-3824  0846 5b06          	addw	sp,#6
-3825                     ; 560 					 	uart_server_send((uint8_t *)resp_buf,strlen(resp_buf));
-3827  0848 96            	ldw	x,sp
-3828  0849 1c0007        	addw	x,#OFST-36
-3829  084c cd0000        	call	_strlen
-3831  084f 89            	pushw	x
-3832  0850 96            	ldw	x,sp
-3833  0851 1c0009        	addw	x,#OFST-34
-3834  0854 cd00e5        	call	_uart_server_send
-3836  0857 85            	popw	x
-3838  0858 200b          	jra	L7541
-3839  085a               L5541:
-3840                     ; 563                         uart_server_send((uint8_t *)"ERROR,INVALID_COMMAND\n",strlen("ERROR,INVALID_COMMAND\n"));
-3842  085a ae0016        	ldw	x,#22
-3843  085d 89            	pushw	x
-3844  085e ae0017        	ldw	x,#L1641
-3845  0861 cd00e5        	call	_uart_server_send
-3847  0864 85            	popw	x
-3848  0865               L7541:
-3849                     ; 565                     uart_rx_count = 0;
-3851  0865 5f            	clrw	x
-3852  0866 bf1f          	ldw	_uart_rx_count,x
-3853  0868 201a          	jra	L3641
-3854  086a               L7441:
-3855                     ; 568             else if (read_byte >= 32 && read_byte < 127){
-3857  086a 7b2b          	ld	a,(OFST+0,sp)
-3858  086c a120          	cp	a,#32
-3859  086e 2514          	jrult	L3641
-3861  0870 7b2b          	ld	a,(OFST+0,sp)
-3862  0872 a17f          	cp	a,#127
-3863  0874 240e          	jruge	L3641
-3864                     ; 569                 uart_rx_buffer[uart_rx_count++] = read_byte;
-3866  0876 7b2b          	ld	a,(OFST+0,sp)
-3867  0878 be1f          	ldw	x,_uart_rx_count
-3868  087a 1c0001        	addw	x,#1
-3869  087d bf1f          	ldw	_uart_rx_count,x
-3870  087f 1d0001        	subw	x,#1
-3871  0882 e700          	ld	(_uart_rx_buffer,x),a
-3872  0884               L3641:
-3873                     ; 571             available_len--;
-3875  0884 1e05          	ldw	x,(OFST-38,sp)
-3876  0886 1d0001        	subw	x,#1
-3877  0889 1f05          	ldw	(OFST-38,sp),x
-3879  088b               L3441:
-3880                     ; 551 		while (available_len > 0 && uart_rx_count < sizeof(uart_rx_buffer) - 1){
-3882  088b 1e05          	ldw	x,(OFST-38,sp)
-3883  088d 270a          	jreq	L7641
-3885  088f be1f          	ldw	x,_uart_rx_count
-3886  0891 a3001f        	cpw	x,#31
-3887  0894 2403          	jruge	L022
-3888  0896 cc07fe        	jp	L7341
-3889  0899               L022:
-3890  0899               L7641:
-3891                     ; 573         uart_state = UART_STATE_READY;
-3893  0899 3501001b      	mov	L13_uart_state,#1
-3895  089d 2004          	jra	L1741
-3896  089f               L5341:
-3897                     ; 576         uart_state = UART_STATE_READY;
-3899  089f 3501001b      	mov	L13_uart_state,#1
-3900  08a3               L1741:
-3901                     ; 578 }
-3902  08a3               L212:
-3905  08a3 5b2b          	addw	sp,#43
-3906  08a5 81            	ret
-3943                     ; 579 uint8_t hal_spi_byte(uint8_t data)
-3943                     ; 580 {
-3944                     	switch	.text
-3945  08a6               _hal_spi_byte:
-3947  08a6 88            	push	a
-3948       00000000      OFST:	set	0
-3951  08a7               L3151:
-3952                     ; 581     while (SPI_GetFlagStatus(SPI_FLAG_TXE) == RESET);
-3954  08a7 a602          	ld	a,#2
-3955  08a9 cd0000        	call	_SPI_GetFlagStatus
-3957  08ac 4d            	tnz	a
-3958  08ad 27f8          	jreq	L3151
-3959                     ; 583     SPI_SendData(data);
-3961  08af 7b01          	ld	a,(OFST+1,sp)
-3962  08b1 cd0000        	call	_SPI_SendData
-3965  08b4               L1251:
-3966                     ; 585     while (SPI_GetFlagStatus(SPI_FLAG_RXNE) == RESET);
-3968  08b4 a601          	ld	a,#1
-3969  08b6 cd0000        	call	_SPI_GetFlagStatus
-3971  08b9 4d            	tnz	a
-3972  08ba 27f8          	jreq	L1251
-3973                     ; 587     return SPI_ReceiveData();
-3975  08bc cd0000        	call	_SPI_ReceiveData
-3979  08bf 5b01          	addw	sp,#1
-3980  08c1 81            	ret
-4004                     ; 589 uint8_t hal_spi_read_byte(void)
-4004                     ; 590 {
-4005                     	switch	.text
-4006  08c2               _hal_spi_read_byte:
-4010                     ; 591     return hal_spi_byte(0xFF);
-4012  08c2 a6ff          	ld	a,#255
-4013  08c4 ade0          	call	_hal_spi_byte
-4017  08c6 81            	ret
-4052                     ; 593 void hal_spi_write_byte(uint8_t data)
-4052                     ; 594 {
-4053                     	switch	.text
-4054  08c7               _hal_spi_write_byte:
-4058                     ; 595     hal_spi_byte(data);
-4060  08c7 addd          	call	_hal_spi_byte
-4062                     ; 596 }
-4065  08c9 81            	ret
-4119                     ; 597 void hal_spi_read(uint8_t *buf, uint16_t len){
-4120                     	switch	.text
-4121  08ca               _hal_spi_read:
-4123  08ca 89            	pushw	x
-4124  08cb 89            	pushw	x
-4125       00000002      OFST:	set	2
-4128                     ; 599     for(i = 0; i < len; i++){
-4130  08cc 5f            	clrw	x
-4131  08cd 1f01          	ldw	(OFST-1,sp),x
-4134  08cf 2011          	jra	L5061
-4135  08d1               L1061:
-4136                     ; 600         buf[i] = hal_spi_byte(0xFF);
-4138  08d1 a6ff          	ld	a,#255
-4139  08d3 add1          	call	_hal_spi_byte
-4141  08d5 1e03          	ldw	x,(OFST+1,sp)
-4142  08d7 72fb01        	addw	x,(OFST-1,sp)
-4143  08da f7            	ld	(x),a
-4144                     ; 599     for(i = 0; i < len; i++){
-4146  08db 1e01          	ldw	x,(OFST-1,sp)
-4147  08dd 1c0001        	addw	x,#1
-4148  08e0 1f01          	ldw	(OFST-1,sp),x
-4150  08e2               L5061:
-4153  08e2 1e01          	ldw	x,(OFST-1,sp)
-4154  08e4 1307          	cpw	x,(OFST+5,sp)
-4155  08e6 25e9          	jrult	L1061
-4156                     ; 602 }
-4159  08e8 5b04          	addw	sp,#4
-4160  08ea 81            	ret
-4214                     ; 604 void hal_spi_write(uint8_t *buf, uint16_t len){
+ 960                     ; 171     buf[0] = di1 ? '1' : '0';
+ 962  0136 0d07          	tnz	(OFST+7,sp)
+ 963  0138 2704          	jreq	L46
+ 964  013a a631          	ld	a,#49
+ 965  013c 2002          	jra	L66
+ 966  013e               L46:
+ 967  013e a630          	ld	a,#48
+ 968  0140               L66:
+ 969  0140 1e01          	ldw	x,(OFST+1,sp)
+ 970  0142 f7            	ld	(x),a
+ 971                     ; 172     buf[1] = di2 ? '1' : '0';
+ 973  0143 0d08          	tnz	(OFST+8,sp)
+ 974  0145 2704          	jreq	L07
+ 975  0147 a631          	ld	a,#49
+ 976  0149 2002          	jra	L27
+ 977  014b               L07:
+ 978  014b a630          	ld	a,#48
+ 979  014d               L27:
+ 980  014d 1e01          	ldw	x,(OFST+1,sp)
+ 981  014f e701          	ld	(1,x),a
+ 982                     ; 173     buf[2] = di3 ? '1' : '0';
+ 984  0151 0d09          	tnz	(OFST+9,sp)
+ 985  0153 2704          	jreq	L47
+ 986  0155 a631          	ld	a,#49
+ 987  0157 2002          	jra	L67
+ 988  0159               L47:
+ 989  0159 a630          	ld	a,#48
+ 990  015b               L67:
+ 991  015b 1e01          	ldw	x,(OFST+1,sp)
+ 992  015d e702          	ld	(2,x),a
+ 993                     ; 174     buf[3] = di4 ? '1' : '0';
+ 995  015f 0d0a          	tnz	(OFST+10,sp)
+ 996  0161 2704          	jreq	L001
+ 997  0163 a631          	ld	a,#49
+ 998  0165 2002          	jra	L201
+ 999  0167               L001:
+1000  0167 a630          	ld	a,#48
+1001  0169               L201:
+1002  0169 1e01          	ldw	x,(OFST+1,sp)
+1003  016b e703          	ld	(3,x),a
+1004                     ; 175     buf[4] = '\0';
+1006  016d 1e01          	ldw	x,(OFST+1,sp)
+1007  016f 6f04          	clr	(4,x)
+1008                     ; 176 }
+1010  0171 20c1          	jra	L401
+1202                     ; 178 uint8_t hal_di_read(uint8_t di_num)
+1202                     ; 179 {
+1203                     	switch	.text
+1204  0173               _hal_di_read:
+1206  0173 5203          	subw	sp,#3
+1207       00000003      OFST:	set	3
+1210                     ; 183     switch (di_num) {
+1213                     ; 188         default: return 0;
+1214  0175 4a            	dec	a
+1215  0176 270c          	jreq	L314
+1216  0178 4a            	dec	a
+1217  0179 2714          	jreq	L514
+1218  017b 4a            	dec	a
+1219  017c 271c          	jreq	L714
+1220  017e 4a            	dec	a
+1221  017f 2724          	jreq	L124
+1222  0181               L324:
+1225  0181 4f            	clr	a
+1227  0182 203d          	jra	L411
+1228  0184               L314:
+1229                     ; 184         case 1: port = DI1_PORT; pin = DI1_PIN; break;
+1231  0184 ae500f        	ldw	x,#20495
+1232  0187 1f01          	ldw	(OFST-2,sp),x
+1236  0189 a604          	ld	a,#4
+1237  018b 6b03          	ld	(OFST+0,sp),a
+1241  018d 201f          	jra	L145
+1242  018f               L514:
+1243                     ; 185         case 2: port = DI2_PORT; pin = DI2_PIN; break;
+1245  018f ae500f        	ldw	x,#20495
+1246  0192 1f01          	ldw	(OFST-2,sp),x
+1250  0194 a608          	ld	a,#8
+1251  0196 6b03          	ld	(OFST+0,sp),a
+1255  0198 2014          	jra	L145
+1256  019a               L714:
+1257                     ; 186         case 3: port = DI3_PORT; pin = DI3_PIN; break;
+1259  019a ae500f        	ldw	x,#20495
+1260  019d 1f01          	ldw	(OFST-2,sp),x
+1264  019f a610          	ld	a,#16
+1265  01a1 6b03          	ld	(OFST+0,sp),a
+1269  01a3 2009          	jra	L145
+1270  01a5               L124:
+1271                     ; 187         case 4: port = DI4_PORT; pin = DI4_PIN; break;
+1273  01a5 ae500f        	ldw	x,#20495
+1274  01a8 1f01          	ldw	(OFST-2,sp),x
+1278  01aa a680          	ld	a,#128
+1279  01ac 6b03          	ld	(OFST+0,sp),a
+1283  01ae               L145:
+1284                     ; 190     return (GPIO_ReadInputPin(port, pin) == SET) ? 1 : 0;
+1286  01ae 7b03          	ld	a,(OFST+0,sp)
+1287  01b0 88            	push	a
+1288  01b1 1e02          	ldw	x,(OFST-1,sp)
+1289  01b3 cd0000        	call	_GPIO_ReadInputPin
+1291  01b6 5b01          	addw	sp,#1
+1292  01b8 a101          	cp	a,#1
+1293  01ba 2604          	jrne	L011
+1294  01bc a601          	ld	a,#1
+1295  01be 2001          	jra	L211
+1296  01c0               L011:
+1297  01c0 4f            	clr	a
+1298  01c1               L211:
+1300  01c1               L411:
+1302  01c1 5b03          	addw	sp,#3
+1303  01c3 81            	ret
+1400                     ; 297 void hal_relay_set(uint8_t relay_num, uint8_t state){
+1401                     	switch	.text
+1402  01c4               _hal_relay_set:
+1404  01c4 89            	pushw	x
+1405  01c5 5204          	subw	sp,#4
+1406       00000004      OFST:	set	4
+1409                     ; 300 	BitStatus bit_state = (state == 0) ? SET : RESET;
+1411  01c7 9f            	ld	a,xl
+1412  01c8 4d            	tnz	a
+1413  01c9 2605          	jrne	L021
+1414  01cb ae0001        	ldw	x,#1
+1415  01ce 2001          	jra	L221
+1416  01d0               L021:
+1417  01d0 5f            	clrw	x
+1418  01d1               L221:
+1419  01d1 01            	rrwa	x,a
+1420  01d2 6b01          	ld	(OFST-3,sp),a
+1421  01d4 02            	rlwa	x,a
+1423                     ; 302 	switch (relay_num) {
+1425  01d5 7b05          	ld	a,(OFST+1,sp)
+1427                     ; 309         default: return;
+1428  01d7 4a            	dec	a
+1429  01d8 2711          	jreq	L345
+1430  01da 4a            	dec	a
+1431  01db 2719          	jreq	L545
+1432  01dd 4a            	dec	a
+1433  01de 2721          	jreq	L745
+1434  01e0 4a            	dec	a
+1435  01e1 2729          	jreq	L155
+1436  01e3 4a            	dec	a
+1437  01e4 2731          	jreq	L355
+1438  01e6 4a            	dec	a
+1439  01e7 2739          	jreq	L555
+1440  01e9               L755:
+1443  01e9 205a          	jra	L421
+1444  01eb               L345:
+1445                     ; 303         case 1: port = RELAY1_PORT; pin = RELAY1_PIN; break;
+1447  01eb ae5005        	ldw	x,#20485
+1448  01ee 1f02          	ldw	(OFST-2,sp),x
+1452  01f0 a608          	ld	a,#8
+1453  01f2 6b04          	ld	(OFST+0,sp),a
+1457  01f4 2035          	jra	L336
+1458  01f6               L545:
+1459                     ; 304         case 2: port = RELAY2_PORT; pin = RELAY2_PIN; break;
+1461  01f6 ae5005        	ldw	x,#20485
+1462  01f9 1f02          	ldw	(OFST-2,sp),x
+1466  01fb a604          	ld	a,#4
+1467  01fd 6b04          	ld	(OFST+0,sp),a
+1471  01ff 202a          	jra	L336
+1472  0201               L745:
+1473                     ; 305         case 3: port = RELAY3_PORT; pin = RELAY3_PIN; break;
+1475  0201 ae5005        	ldw	x,#20485
+1476  0204 1f02          	ldw	(OFST-2,sp),x
+1480  0206 a602          	ld	a,#2
+1481  0208 6b04          	ld	(OFST+0,sp),a
+1485  020a 201f          	jra	L336
+1486  020c               L155:
+1487                     ; 306         case 4: port = RELAY4_PORT; pin = RELAY4_PIN; break;
+1489  020c ae5005        	ldw	x,#20485
+1490  020f 1f02          	ldw	(OFST-2,sp),x
+1494  0211 a601          	ld	a,#1
+1495  0213 6b04          	ld	(OFST+0,sp),a
+1499  0215 2014          	jra	L336
+1500  0217               L355:
+1501                     ; 307         case 5: port = RELAY5_PORT; pin = RELAY5_PIN; break;
+1503  0217 ae500a        	ldw	x,#20490
+1504  021a 1f02          	ldw	(OFST-2,sp),x
+1508  021c a608          	ld	a,#8
+1509  021e 6b04          	ld	(OFST+0,sp),a
+1513  0220 2009          	jra	L336
+1514  0222               L555:
+1515                     ; 308         case 6: port = RELAY6_PORT; pin = RELAY6_PIN; break;
+1517  0222 ae500a        	ldw	x,#20490
+1518  0225 1f02          	ldw	(OFST-2,sp),x
+1522  0227 a610          	ld	a,#16
+1523  0229 6b04          	ld	(OFST+0,sp),a
+1527  022b               L336:
+1528                     ; 312 	if (bit_state == SET) {
+1530  022b 7b01          	ld	a,(OFST-3,sp)
+1531  022d a101          	cp	a,#1
+1532  022f 260b          	jrne	L536
+1533                     ; 313         GPIO_WriteHigh(port, pin);  /* Set HIGH = relay off */
+1535  0231 7b04          	ld	a,(OFST+0,sp)
+1536  0233 88            	push	a
+1537  0234 1e03          	ldw	x,(OFST-1,sp)
+1538  0236 cd0000        	call	_GPIO_WriteHigh
+1540  0239 84            	pop	a
+1542  023a 2009          	jra	L736
+1543  023c               L536:
+1544                     ; 315         GPIO_WriteLow(port, pin); /* Set LOW = relay on */
+1546  023c 7b04          	ld	a,(OFST+0,sp)
+1547  023e 88            	push	a
+1548  023f 1e03          	ldw	x,(OFST-1,sp)
+1549  0241 cd0000        	call	_GPIO_WriteLow
+1551  0244 84            	pop	a
+1552  0245               L736:
+1553                     ; 317 }
+1554  0245               L421:
+1557  0245 5b06          	addw	sp,#6
+1558  0247 81            	ret
+1602                     ; 319 void relay_control_set(uint8_t relay_num, uint8_t state)
+1602                     ; 320 {
+1603                     	switch	.text
+1604  0248               _relay_control_set:
+1606  0248 89            	pushw	x
+1607       00000000      OFST:	set	0
+1610                     ; 321     if (relay_num >= 1 && relay_num <= 6) {
+1612  0249 9e            	ld	a,xh
+1613  024a 4d            	tnz	a
+1614  024b 270d          	jreq	L366
+1616  024d 9e            	ld	a,xh
+1617  024e a107          	cp	a,#7
+1618  0250 2408          	jruge	L366
+1619                     ; 322         hal_relay_set(relay_num, state);
+1621  0252 9f            	ld	a,xl
+1622  0253 97            	ld	xl,a
+1623  0254 7b01          	ld	a,(OFST+1,sp)
+1624  0256 95            	ld	xh,a
+1625  0257 cd01c4        	call	_hal_relay_set
+1627  025a               L366:
+1628                     ; 324 }
+1631  025a 85            	popw	x
+1632  025b 81            	ret
+1668                     ; 326 void relay_control_set_all(uint8_t state)
+1668                     ; 327 {
+1669                     	switch	.text
+1670  025c               _relay_control_set_all:
+1672  025c 88            	push	a
+1673       00000000      OFST:	set	0
+1676                     ; 328     relay_control_set(1, state);
+1678  025d ae0100        	ldw	x,#256
+1679  0260 97            	ld	xl,a
+1680  0261 ade5          	call	_relay_control_set
+1682                     ; 329     relay_control_set(2, state);
+1684  0263 7b01          	ld	a,(OFST+1,sp)
+1685  0265 ae0200        	ldw	x,#512
+1686  0268 97            	ld	xl,a
+1687  0269 addd          	call	_relay_control_set
+1689                     ; 330     relay_control_set(3, state);
+1691  026b 7b01          	ld	a,(OFST+1,sp)
+1692  026d ae0300        	ldw	x,#768
+1693  0270 97            	ld	xl,a
+1694  0271 add5          	call	_relay_control_set
+1696                     ; 331     relay_control_set(4, state);
+1698  0273 7b01          	ld	a,(OFST+1,sp)
+1699  0275 ae0400        	ldw	x,#1024
+1700  0278 97            	ld	xl,a
+1701  0279 adcd          	call	_relay_control_set
+1703                     ; 332     relay_control_set(5, state);
+1705  027b 7b01          	ld	a,(OFST+1,sp)
+1706  027d ae0500        	ldw	x,#1280
+1707  0280 97            	ld	xl,a
+1708  0281 adc5          	call	_relay_control_set
+1710                     ; 333     relay_control_set(6, state);
+1712  0283 7b01          	ld	a,(OFST+1,sp)
+1713  0285 ae0600        	ldw	x,#1536
+1714  0288 97            	ld	xl,a
+1715  0289 adbd          	call	_relay_control_set
+1717                     ; 334 }
+1720  028b 84            	pop	a
+1721  028c 81            	ret
+1747                     ; 336 void sensor_reader_update(void){
+1748                     	switch	.text
+1749  028d               _sensor_reader_update:
+1753                     ; 337     current_state.di1 = hal_di_read(1);
+1755  028d a601          	ld	a,#1
+1756  028f cd0173        	call	_hal_di_read
+1758  0292 b717          	ld	L72_current_state,a
+1759                     ; 338     current_state.di2 = hal_di_read(2);
+1761  0294 a602          	ld	a,#2
+1762  0296 cd0173        	call	_hal_di_read
+1764  0299 b718          	ld	L72_current_state+1,a
+1765                     ; 339     current_state.di3 = hal_di_read(3);
+1767  029b a603          	ld	a,#3
+1768  029d cd0173        	call	_hal_di_read
+1770  02a0 b719          	ld	L72_current_state+2,a
+1771                     ; 340     current_state.di4 = hal_di_read(4);
+1773  02a2 a604          	ld	a,#4
+1774  02a4 cd0173        	call	_hal_di_read
+1776  02a7 b71a          	ld	L72_current_state+3,a
+1777                     ; 341 }
+1780  02a9 81            	ret
+1804                     ; 344 void hal_timer_start(void)
+1804                     ; 345 {
+1805                     	switch	.text
+1806  02aa               _hal_timer_start:
+1810                     ; 346     TIM4_Cmd(ENABLE);
+1812  02aa a601          	ld	a,#1
+1813  02ac cd0000        	call	_TIM4_Cmd
+1815                     ; 347 }
+1818  02af 81            	ret
+1870                     ; 387 void process_axle_counting(void)
+1870                     ; 388 {
+1871                     	switch	.text
+1872  02b0               _process_axle_counting:
+1874  02b0 520d          	subw	sp,#13
+1875       0000000d      OFST:	set	13
+1878                     ; 389     sensor_state_t sensor = sensor_reader_get_state();
+1880  02b2 96            	ldw	x,sp
+1881  02b3 1c000a        	addw	x,#OFST-3
+1882  02b6 89            	pushw	x
+1883  02b7 cd011a        	call	_sensor_reader_get_state
+1885  02ba 85            	popw	x
+1886                     ; 393     msg_buf[0] = sensor.di1 ? '1' : '0';
+1888  02bb 0d0a          	tnz	(OFST-3,sp)
+1889  02bd 2704          	jreq	L041
+1890  02bf a631          	ld	a,#49
+1891  02c1 2002          	jra	L241
+1892  02c3               L041:
+1893  02c3 a630          	ld	a,#48
+1894  02c5               L241:
+1895  02c5 6b05          	ld	(OFST-8,sp),a
+1897                     ; 394     msg_buf[1] = sensor.di2 ? '1' : '0';
+1899  02c7 0d0b          	tnz	(OFST-2,sp)
+1900  02c9 2704          	jreq	L441
+1901  02cb a631          	ld	a,#49
+1902  02cd 2002          	jra	L641
+1903  02cf               L441:
+1904  02cf a630          	ld	a,#48
+1905  02d1               L641:
+1906  02d1 6b06          	ld	(OFST-7,sp),a
+1908                     ; 395     msg_buf[2] = sensor.di3 ? '1' : '0';
+1910  02d3 0d0c          	tnz	(OFST-1,sp)
+1911  02d5 2704          	jreq	L051
+1912  02d7 a631          	ld	a,#49
+1913  02d9 2002          	jra	L251
+1914  02db               L051:
+1915  02db a630          	ld	a,#48
+1916  02dd               L251:
+1917  02dd 6b07          	ld	(OFST-6,sp),a
+1919                     ; 396     msg_buf[3] = sensor.di4 ? '1' : '0';
+1921  02df 0d0d          	tnz	(OFST+0,sp)
+1922  02e1 2704          	jreq	L451
+1923  02e3 a631          	ld	a,#49
+1924  02e5 2002          	jra	L651
+1925  02e7               L451:
+1926  02e7 a630          	ld	a,#48
+1927  02e9               L651:
+1928  02e9 6b08          	ld	(OFST-5,sp),a
+1930                     ; 397     msg_buf[4] = '\0';
+1932  02eb 0f09          	clr	(OFST-4,sp)
+1934                     ; 400     if ((sensor.di1 != axle_counter.prev_di1_state) ||
+1934                     ; 401         (sensor.di2 != axle_counter.prev_di2_state))
+1936  02ed 7b0a          	ld	a,(OFST-3,sp)
+1937  02ef b105          	cp	a,L12_axle_counter+3
+1938  02f1 2606          	jrne	L747
+1940  02f3 7b0b          	ld	a,(OFST-2,sp)
+1941  02f5 b103          	cp	a,L12_axle_counter+1
+1942  02f7 2728          	jreq	L547
+1943  02f9               L747:
+1944                     ; 403         if (uart_server_is_ready())
+1946  02f9 cd008d        	call	_uart_server_is_ready
+1948  02fc a30000        	cpw	x,#0
+1949  02ff 270c          	jreq	L157
+1950                     ; 405             uart_server_send((uint8_t *)msg_buf, 4);
+1952  0301 ae0004        	ldw	x,#4
+1953  0304 89            	pushw	x
+1954  0305 96            	ldw	x,sp
+1955  0306 1c0007        	addw	x,#OFST-6
+1956  0309 cd00e5        	call	_uart_server_send
+1958  030c 85            	popw	x
+1959  030d               L157:
+1960                     ; 408         if (tcp_server_is_connected())
+1962  030d cd0007        	call	_tcp_server_is_connected
+1964  0310 a30000        	cpw	x,#0
+1965  0313 270c          	jreq	L547
+1966                     ; 410             tcp_server_send((uint8_t *)msg_buf, 4);
+1968  0315 ae0004        	ldw	x,#4
+1969  0318 89            	pushw	x
+1970  0319 96            	ldw	x,sp
+1971  031a 1c0007        	addw	x,#OFST-6
+1972  031d cd0041        	call	_tcp_server_send
+1974  0320 85            	popw	x
+1975  0321               L547:
+1976                     ; 414     axle_counter.prev_di1_state = sensor.di1;
+1978  0321 7b0a          	ld	a,(OFST-3,sp)
+1979  0323 b705          	ld	L12_axle_counter+3,a
+1980                     ; 415     axle_counter.prev_di2_state = sensor.di2;
+1982  0325 7b0b          	ld	a,(OFST-2,sp)
+1983  0327 b703          	ld	L12_axle_counter+1,a
+1984                     ; 416 }
+1987  0329 5b0d          	addw	sp,#13
+1988  032b 81            	ret
+2012                     ; 417 void sensor_reader_init(void)
+2012                     ; 418 {
+2013                     	switch	.text
+2014  032c               _sensor_reader_init:
+2018                     ; 420     sensor_reader_update();
+2020  032c cd028d        	call	_sensor_reader_update
+2022                     ; 421 }
+2025  032f 81            	ret
+2075                     ; 423 void send_alive_message(void)
+2075                     ; 424 {
+2076                     	switch	.text
+2077  0330               _send_alive_message:
+2079  0330 5228          	subw	sp,#40
+2080       00000028      OFST:	set	40
+2083                     ; 428     sensor = sensor_reader_get_state();
+2085  0332 96            	ldw	x,sp
+2086  0333 1c0025        	addw	x,#OFST-3
+2087  0336 89            	pushw	x
+2088  0337 cd011a        	call	_sensor_reader_get_state
+2090  033a 85            	popw	x
+2091                     ; 430     message_formatter_alive(
+2091                     ; 431         msg_buf,
+2091                     ; 432         sizeof(msg_buf),
+2091                     ; 433         sensor.di1,
+2091                     ; 434         sensor.di2,
+2091                     ; 435         sensor.di3,
+2091                     ; 436         sensor.di4
+2091                     ; 437     );
+2093  033b 7b28          	ld	a,(OFST+0,sp)
+2094  033d 88            	push	a
+2095  033e 7b28          	ld	a,(OFST+0,sp)
+2096  0340 88            	push	a
+2097  0341 7b28          	ld	a,(OFST+0,sp)
+2098  0343 88            	push	a
+2099  0344 7b28          	ld	a,(OFST+0,sp)
+2100  0346 88            	push	a
+2101  0347 ae0020        	ldw	x,#32
+2102  034a 89            	pushw	x
+2103  034b 96            	ldw	x,sp
+2104  034c 1c000b        	addw	x,#OFST-29
+2105  034f cd0126        	call	_message_formatter_alive
+2107  0352 5b06          	addw	sp,#6
+2108                     ; 439     if (uart_server_is_ready())
+2110  0354 cd008d        	call	_uart_server_is_ready
+2112  0357 a30000        	cpw	x,#0
+2113  035a 2710          	jreq	L7001
+2114                     ; 441         uart_server_send((uint8_t *)msg_buf, strlen(msg_buf));
+2116  035c 96            	ldw	x,sp
+2117  035d 1c0005        	addw	x,#OFST-35
+2118  0360 cd0000        	call	_strlen
+2120  0363 89            	pushw	x
+2121  0364 96            	ldw	x,sp
+2122  0365 1c0007        	addw	x,#OFST-33
+2123  0368 cd00e5        	call	_uart_server_send
+2125  036b 85            	popw	x
+2126  036c               L7001:
+2127                     ; 443 }
+2130  036c 5b28          	addw	sp,#40
+2131  036e 81            	ret
+2159                     .const:	section	.text
+2160  0000               L661:
+2161  0000 00000032      	dc.l	50
+2162  0004               L071:
+2163  0004 000001f4      	dc.l	500
+2164                     ; 445 void timer_callback(void){
+2165                     	switch	.text
+2166  036f               _timer_callback:
+2170                     ; 446     task_timer.current_time = hal_get_millis();
+2172  036f cd0000        	call	_hal_get_millis
+2174  0372 ae0013        	ldw	x,#L52_task_timer+8
+2175  0375 cd0000        	call	c_rtol
+2177                     ; 447     if ((task_timer.current_time - task_timer.last_sensor_time) >= SENSOR_READ_INTERVAL){
+2179  0378 ae0013        	ldw	x,#L52_task_timer+8
+2180  037b cd0000        	call	c_ltor
+2182  037e ae000f        	ldw	x,#L52_task_timer+4
+2183  0381 cd0000        	call	c_lsub
+2185  0384 ae0000        	ldw	x,#L661
+2186  0387 cd0000        	call	c_lcmp
+2188  038a 250e          	jrult	L1201
+2189                     ; 448         sensor_reader_update();
+2191  038c cd028d        	call	_sensor_reader_update
+2193                     ; 449         process_axle_counting();
+2195  038f cd02b0        	call	_process_axle_counting
+2197                     ; 450         task_timer.last_sensor_time = task_timer.current_time;
+2199  0392 be15          	ldw	x,L52_task_timer+10
+2200  0394 bf11          	ldw	L52_task_timer+6,x
+2201  0396 be13          	ldw	x,L52_task_timer+8
+2202  0398 bf0f          	ldw	L52_task_timer+4,x
+2203  039a               L1201:
+2204                     ; 453     if ((task_timer.current_time - task_timer.last_alive_time) >= ALIVE_INTERVAL){
+2206  039a ae0013        	ldw	x,#L52_task_timer+8
+2207  039d cd0000        	call	c_ltor
+2209  03a0 ae000b        	ldw	x,#L52_task_timer
+2210  03a3 cd0000        	call	c_lsub
+2212  03a6 ae0004        	ldw	x,#L071
+2213  03a9 cd0000        	call	c_lcmp
+2215  03ac 250a          	jrult	L3201
+2216                     ; 454         send_alive_message();  
+2218  03ae ad80          	call	_send_alive_message
+2220                     ; 455         task_timer.last_alive_time = task_timer.current_time;
+2222  03b0 be15          	ldw	x,L52_task_timer+10
+2223  03b2 bf0d          	ldw	L52_task_timer+2,x
+2224  03b4 be13          	ldw	x,L52_task_timer+8
+2225  03b6 bf0b          	ldw	L52_task_timer,x
+2226  03b8               L3201:
+2227                     ; 457 }
+2230  03b8 81            	ret
+2268                     ; 459 void hal_timer_set_callback(timer_callback_t callback)
+2268                     ; 460 {
+2269                     	switch	.text
+2270  03b9               _hal_timer_set_callback:
+2274                     ; 461     user_callback = callback;
+2276  03b9 bf29          	ldw	_user_callback,x
+2277                     ; 462 }
+2280  03bb 81            	ret
+2344                     ; 464 int command_parser_execute(const char *cmd_str, int len)
+2344                     ; 465 {
+2345                     	switch	.text
+2346  03bc               _command_parser_execute:
+2348  03bc 89            	pushw	x
+2349  03bd 89            	pushw	x
+2350       00000002      OFST:	set	2
+2353                     ; 470     if (len < 4)
+2355  03be 9c            	rvf
+2356  03bf 1e07          	ldw	x,(OFST+5,sp)
+2357  03c1 a30004        	cpw	x,#4
+2358  03c4 2e05          	jrsge	L5701
+2359                     ; 471         return -1;
+2361  03c6 aeffff        	ldw	x,#65535
+2363  03c9 200a          	jra	L671
+2364  03cb               L5701:
+2365                     ; 473     if (cmd_str[0] != 'R')
+2367  03cb 1e03          	ldw	x,(OFST+1,sp)
+2368  03cd f6            	ld	a,(x)
+2369  03ce a152          	cp	a,#82
+2370  03d0 2706          	jreq	L7701
+2371                     ; 474         return -1;
+2373  03d2 aeffff        	ldw	x,#65535
+2375  03d5               L671:
+2377  03d5 5b04          	addw	sp,#4
+2378  03d7 81            	ret
+2379  03d8               L7701:
+2380                     ; 476     if (cmd_str[1] < '1' || cmd_str[1] > '6')
+2382  03d8 1e03          	ldw	x,(OFST+1,sp)
+2383  03da e601          	ld	a,(1,x)
+2384  03dc a131          	cp	a,#49
+2385  03de 2508          	jrult	L3011
+2387  03e0 1e03          	ldw	x,(OFST+1,sp)
+2388  03e2 e601          	ld	a,(1,x)
+2389  03e4 a137          	cp	a,#55
+2390  03e6 2505          	jrult	L1011
+2391  03e8               L3011:
+2392                     ; 477         return -1;
+2394  03e8 aeffff        	ldw	x,#65535
+2396  03eb 20e8          	jra	L671
+2397  03ed               L1011:
+2398                     ; 479     if (cmd_str[2] != ',')
+2400  03ed 1e03          	ldw	x,(OFST+1,sp)
+2401  03ef e602          	ld	a,(2,x)
+2402  03f1 a12c          	cp	a,#44
+2403  03f3 2705          	jreq	L5011
+2404                     ; 480         return -1;
+2406  03f5 aeffff        	ldw	x,#65535
+2408  03f8 20db          	jra	L671
+2409  03fa               L5011:
+2410                     ; 482     if (cmd_str[3] != '0' && cmd_str[3] != '1')
+2412  03fa 1e03          	ldw	x,(OFST+1,sp)
+2413  03fc e603          	ld	a,(3,x)
+2414  03fe a130          	cp	a,#48
+2415  0400 270d          	jreq	L7011
+2417  0402 1e03          	ldw	x,(OFST+1,sp)
+2418  0404 e603          	ld	a,(3,x)
+2419  0406 a131          	cp	a,#49
+2420  0408 2705          	jreq	L7011
+2421                     ; 483         return -1;
+2423  040a aeffff        	ldw	x,#65535
+2425  040d 20c6          	jra	L671
+2426  040f               L7011:
+2427                     ; 485     relay_num = cmd_str[1] - '0';
+2429  040f 1e03          	ldw	x,(OFST+1,sp)
+2430  0411 e601          	ld	a,(1,x)
+2431  0413 a030          	sub	a,#48
+2432  0415 6b01          	ld	(OFST-1,sp),a
+2434                     ; 486     relay_state = cmd_str[3] - '0';
+2436  0417 1e03          	ldw	x,(OFST+1,sp)
+2437  0419 e603          	ld	a,(3,x)
+2438  041b a030          	sub	a,#48
+2439  041d 6b02          	ld	(OFST+0,sp),a
+2441                     ; 488     relay_control_set(relay_num, relay_state);
+2443  041f 7b02          	ld	a,(OFST+0,sp)
+2444  0421 97            	ld	xl,a
+2445  0422 7b01          	ld	a,(OFST-1,sp)
+2446  0424 95            	ld	xh,a
+2447  0425 cd0248        	call	_relay_control_set
+2449                     ; 490     return 0;
+2451  0428 5f            	clrw	x
+2453  0429 20aa          	jra	L671
+2477                     ; 493 void relay_control_init(void)
+2477                     ; 494 {
+2478                     	switch	.text
+2479  042b               _relay_control_init:
+2483                     ; 495     relay_control_set_all(1);  /* 1 = on for active-low relays */
+2485  042b a601          	ld	a,#1
+2486  042d cd025c        	call	_relay_control_set_all
+2488                     ; 496 }
+2491  0430 81            	ret
+2516                     ; 498 void hal_w5500_reset_high(void)
+2516                     ; 499 {
+2517                     	switch	.text
+2518  0431               _hal_w5500_reset_high:
+2522                     ; 500     GPIO_WriteHigh(W5500_RST_PORT, W5500_RST_PIN);
+2524  0431 4b20          	push	#32
+2525  0433 ae5014        	ldw	x,#20500
+2526  0436 cd0000        	call	_GPIO_WriteHigh
+2528  0439 84            	pop	a
+2529                     ; 501 }
+2532  043a 81            	ret
+2558                     ; 503 void hal_gpio_init(void){
+2559                     	switch	.text
+2560  043b               _hal_gpio_init:
+2564                     ; 505     GPIO_Init(DI1_PORT, DI1_PIN, GPIO_MODE_IN_PU_NO_IT);
+2566  043b 4b40          	push	#64
+2567  043d 4b04          	push	#4
+2568  043f ae500f        	ldw	x,#20495
+2569  0442 cd0000        	call	_GPIO_Init
+2571  0445 85            	popw	x
+2572                     ; 506     GPIO_Init(DI2_PORT, DI2_PIN, GPIO_MODE_IN_PU_NO_IT);
+2574  0446 4b40          	push	#64
+2575  0448 4b08          	push	#8
+2576  044a ae500f        	ldw	x,#20495
+2577  044d cd0000        	call	_GPIO_Init
+2579  0450 85            	popw	x
+2580                     ; 507     GPIO_Init(DI3_PORT, DI3_PIN, GPIO_MODE_IN_PU_NO_IT);
+2582  0451 4b40          	push	#64
+2583  0453 4b10          	push	#16
+2584  0455 ae500f        	ldw	x,#20495
+2585  0458 cd0000        	call	_GPIO_Init
+2587  045b 85            	popw	x
+2588                     ; 508     GPIO_Init(DI4_PORT, DI4_PIN, GPIO_MODE_IN_PU_NO_IT);
+2590  045c 4b40          	push	#64
+2591  045e 4b80          	push	#128
+2592  0460 ae500f        	ldw	x,#20495
+2593  0463 cd0000        	call	_GPIO_Init
+2595  0466 85            	popw	x
+2596                     ; 511     GPIO_Init(RELAY1_PORT, RELAY1_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
+2598  0467 4bf0          	push	#240
+2599  0469 4b08          	push	#8
+2600  046b ae5005        	ldw	x,#20485
+2601  046e cd0000        	call	_GPIO_Init
+2603  0471 85            	popw	x
+2604                     ; 512     GPIO_Init(RELAY2_PORT, RELAY2_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
+2606  0472 4bf0          	push	#240
+2607  0474 4b04          	push	#4
+2608  0476 ae5005        	ldw	x,#20485
+2609  0479 cd0000        	call	_GPIO_Init
+2611  047c 85            	popw	x
+2612                     ; 513     GPIO_Init(RELAY3_PORT, RELAY3_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
+2614  047d 4bf0          	push	#240
+2615  047f 4b02          	push	#2
+2616  0481 ae5005        	ldw	x,#20485
+2617  0484 cd0000        	call	_GPIO_Init
+2619  0487 85            	popw	x
+2620                     ; 514     GPIO_Init(RELAY4_PORT, RELAY4_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
+2622  0488 4bf0          	push	#240
+2623  048a 4b01          	push	#1
+2624  048c ae5005        	ldw	x,#20485
+2625  048f cd0000        	call	_GPIO_Init
+2627  0492 85            	popw	x
+2628                     ; 515     GPIO_Init(RELAY5_PORT, RELAY5_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
+2630  0493 4bf0          	push	#240
+2631  0495 4b08          	push	#8
+2632  0497 ae500a        	ldw	x,#20490
+2633  049a cd0000        	call	_GPIO_Init
+2635  049d 85            	popw	x
+2636                     ; 516     GPIO_Init(RELAY6_PORT, RELAY6_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
+2638  049e 4bf0          	push	#240
+2639  04a0 4b10          	push	#16
+2640  04a2 ae500a        	ldw	x,#20490
+2641  04a5 cd0000        	call	_GPIO_Init
+2643  04a8 85            	popw	x
+2644                     ; 519     hal_relay_set(1, 1);
+2646  04a9 ae0101        	ldw	x,#257
+2647  04ac cd01c4        	call	_hal_relay_set
+2649                     ; 520     hal_relay_set(2, 1);
+2651  04af ae0201        	ldw	x,#513
+2652  04b2 cd01c4        	call	_hal_relay_set
+2654                     ; 521     hal_relay_set(3, 1);
+2656  04b5 ae0301        	ldw	x,#769
+2657  04b8 cd01c4        	call	_hal_relay_set
+2659                     ; 522     hal_relay_set(4, 1);
+2661  04bb ae0401        	ldw	x,#1025
+2662  04be cd01c4        	call	_hal_relay_set
+2664                     ; 523     hal_relay_set(5, 1);
+2666  04c1 ae0501        	ldw	x,#1281
+2667  04c4 cd01c4        	call	_hal_relay_set
+2669                     ; 524     hal_relay_set(6, 1);
+2671  04c7 ae0601        	ldw	x,#1537
+2672  04ca cd01c4        	call	_hal_relay_set
+2674                     ; 527     GPIO_Init(HARDRST_PORT, HARDRST_PIN, GPIO_MODE_IN_PU_NO_IT);
+2676  04cd 4b40          	push	#64
+2677  04cf 4b80          	push	#128
+2678  04d1 ae5005        	ldw	x,#20485
+2679  04d4 cd0000        	call	_GPIO_Init
+2681  04d7 85            	popw	x
+2682                     ; 530     GPIO_Init(W5500_RST_PORT, W5500_RST_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
+2684  04d8 4bf0          	push	#240
+2685  04da 4b20          	push	#32
+2686  04dc ae5014        	ldw	x,#20500
+2687  04df cd0000        	call	_GPIO_Init
+2689  04e2 85            	popw	x
+2690                     ; 531 	hal_w5500_reset_high();
+2692  04e3 cd0431        	call	_hal_w5500_reset_high
+2694                     ; 532 }
+2697  04e6 81            	ret
+2721                     ; 534 uint16_t hal_uart_available(void){
+2722                     	switch	.text
+2723  04e7               _hal_uart_available:
+2727                     ; 535 	return uart_rx_count;
+2729  04e7 be1f          	ldw	x,_uart_rx_count
+2732  04e9 81            	ret
+2771                     ; 538 uint8_t hal_uart_read_byte(void){
+2772                     	switch	.text
+2773  04ea               _hal_uart_read_byte:
+2775  04ea 88            	push	a
+2776       00000001      OFST:	set	1
+2779                     ; 539 	uint8_t byte = 0;
+2781  04eb 0f01          	clr	(OFST+0,sp)
+2783                     ; 540 	if (uart_rx_count > 0){
+2785  04ed be1f          	ldw	x,_uart_rx_count
+2786  04ef 271b          	jreq	L7611
+2787                     ; 541 		disableInterrupts();
+2790  04f1 9b            sim
+2792                     ; 543 		byte = uart_rx_buffer[uart_rx_tail];
+2795  04f2 be23          	ldw	x,_uart_rx_tail
+2796  04f4 e600          	ld	a,(_uart_rx_buffer,x)
+2797  04f6 6b01          	ld	(OFST+0,sp),a
+2799                     ; 544 		uart_rx_tail = (uart_rx_tail + 1) % UART_RX_BUFFER_SIZE;
+2801  04f8 be23          	ldw	x,_uart_rx_tail
+2802  04fa 5c            	incw	x
+2803  04fb 01            	rrwa	x,a
+2804  04fc a407          	and	a,#7
+2805  04fe 5f            	clrw	x
+2806  04ff b724          	ld	_uart_rx_tail+1,a
+2807  0501 9f            	ld	a,xl
+2808  0502 b723          	ld	_uart_rx_tail,a
+2809                     ; 545 		uart_rx_count--;
+2811  0504 be1f          	ldw	x,_uart_rx_count
+2812  0506 1d0001        	subw	x,#1
+2813  0509 bf1f          	ldw	_uart_rx_count,x
+2814                     ; 546 		enableInterrupts();
+2817  050b 9a            rim
+2820  050c               L7611:
+2821                     ; 548 	return byte;
+2823  050c 7b01          	ld	a,(OFST+0,sp)
+2826  050e 5b01          	addw	sp,#1
+2827  0510 81            	ret
+2901                     ; 551 void uart_server_process(void){
+2902                     	switch	.text
+2903  0511               _uart_server_process:
+2905  0511 522b          	subw	sp,#43
+2906       0000002b      OFST:	set	43
+2909                     ; 557 	if (uart_state == UART_STATE_IDLE){
+2911  0513 3d1b          	tnz	L13_uart_state
+2912  0515 2603          	jrne	L612
+2913  0517 cc05d2        	jp	L412
+2914  051a               L612:
+2915                     ; 558 		return;
+2917                     ; 560 	available_len = hal_uart_available();
+2919  051a adcb          	call	_hal_uart_available
+2921  051c 1f05          	ldw	(OFST-38,sp),x
+2923                     ; 562 	if(available_len > 0){
+2925  051e 1e05          	ldw	x,(OFST-38,sp)
+2926  0520 2603          	jrne	L022
+2927  0522 cc05ce        	jp	L5221
+2928  0525               L022:
+2929                     ; 563 		uart_state = UART_STATE_RX_PENDING;
+2931  0525 3502001b      	mov	L13_uart_state,#2
+2933  0529 acba05ba      	jpf	L3321
+2934  052d               L7221:
+2935                     ; 566 			read_byte = hal_uart_read_byte();
+2937  052d adbb          	call	_hal_uart_read_byte
+2939  052f 6b2b          	ld	(OFST+0,sp),a
+2941                     ; 568 			if (read_byte == '\n' || read_byte == '\r'){
+2943  0531 7b2b          	ld	a,(OFST+0,sp)
+2944  0533 a10a          	cp	a,#10
+2945  0535 2706          	jreq	L1421
+2947  0537 7b2b          	ld	a,(OFST+0,sp)
+2948  0539 a10d          	cp	a,#13
+2949  053b 265c          	jrne	L7321
+2950  053d               L1421:
+2951                     ; 569 				if(uart_rx_count > 0){
+2953  053d be1f          	ldw	x,_uart_rx_count
+2954  053f 2772          	jreq	L3521
+2955                     ; 570 					uart_rx_buffer[uart_rx_count] = '\0';
+2957  0541 be1f          	ldw	x,_uart_rx_count
+2958  0543 6f00          	clr	(_uart_rx_buffer,x)
+2959                     ; 571 					if (command_parser_execute((const char *)uart_rx_buffer,uart_rx_count) == 0){
+2961  0545 be1f          	ldw	x,_uart_rx_count
+2962  0547 89            	pushw	x
+2963  0548 ae0000        	ldw	x,#_uart_rx_buffer
+2964  054b cd03bc        	call	_command_parser_execute
+2966  054e 5b02          	addw	sp,#2
+2967  0550 a30000        	cpw	x,#0
+2968  0553 2634          	jrne	L5421
+2969                     ; 572 						state = sensor_reader_get_state();
+2971  0555 96            	ldw	x,sp
+2972  0556 1c0027        	addw	x,#OFST-4
+2973  0559 89            	pushw	x
+2974  055a cd011a        	call	_sensor_reader_get_state
+2976  055d 85            	popw	x
+2977                     ; 573 						message_formatter_alive(resp_buf, sizeof(resp_buf),state.di1,state.di2,state.di3,state.di4);
+2979  055e 7b2a          	ld	a,(OFST-1,sp)
+2980  0560 88            	push	a
+2981  0561 7b2a          	ld	a,(OFST-1,sp)
+2982  0563 88            	push	a
+2983  0564 7b2a          	ld	a,(OFST-1,sp)
+2984  0566 88            	push	a
+2985  0567 7b2a          	ld	a,(OFST-1,sp)
+2986  0569 88            	push	a
+2987  056a ae0020        	ldw	x,#32
+2988  056d 89            	pushw	x
+2989  056e 96            	ldw	x,sp
+2990  056f 1c000d        	addw	x,#OFST-30
+2991  0572 cd0126        	call	_message_formatter_alive
+2993  0575 5b06          	addw	sp,#6
+2994                     ; 574 					 	uart_server_send((uint8_t *)resp_buf,strlen(resp_buf));
+2996  0577 96            	ldw	x,sp
+2997  0578 1c0007        	addw	x,#OFST-36
+2998  057b cd0000        	call	_strlen
+3000  057e 89            	pushw	x
+3001  057f 96            	ldw	x,sp
+3002  0580 1c0009        	addw	x,#OFST-34
+3003  0583 cd00e5        	call	_uart_server_send
+3005  0586 85            	popw	x
+3007  0587 200b          	jra	L7421
+3008  0589               L5421:
+3009                     ; 577                         uart_server_send((uint8_t *)"ERROR,INVALID_COMMAND\n",strlen("ERROR,INVALID_COMMAND\n"));
+3011  0589 ae0016        	ldw	x,#22
+3012  058c 89            	pushw	x
+3013  058d ae0013        	ldw	x,#L1521
+3014  0590 cd00e5        	call	_uart_server_send
+3016  0593 85            	popw	x
+3017  0594               L7421:
+3018                     ; 579                     uart_rx_count = 0;
+3020  0594 5f            	clrw	x
+3021  0595 bf1f          	ldw	_uart_rx_count,x
+3022  0597 201a          	jra	L3521
+3023  0599               L7321:
+3024                     ; 582             else if (read_byte >= 32 && read_byte < 127){
+3026  0599 7b2b          	ld	a,(OFST+0,sp)
+3027  059b a120          	cp	a,#32
+3028  059d 2514          	jrult	L3521
+3030  059f 7b2b          	ld	a,(OFST+0,sp)
+3031  05a1 a17f          	cp	a,#127
+3032  05a3 240e          	jruge	L3521
+3033                     ; 583                 uart_rx_buffer[uart_rx_count++] = read_byte;
+3035  05a5 7b2b          	ld	a,(OFST+0,sp)
+3036  05a7 be1f          	ldw	x,_uart_rx_count
+3037  05a9 1c0001        	addw	x,#1
+3038  05ac bf1f          	ldw	_uart_rx_count,x
+3039  05ae 1d0001        	subw	x,#1
+3040  05b1 e700          	ld	(_uart_rx_buffer,x),a
+3041  05b3               L3521:
+3042                     ; 585             available_len--;
+3044  05b3 1e05          	ldw	x,(OFST-38,sp)
+3045  05b5 1d0001        	subw	x,#1
+3046  05b8 1f05          	ldw	(OFST-38,sp),x
+3048  05ba               L3321:
+3049                     ; 565 		while (available_len > 0 && uart_rx_count < sizeof(uart_rx_buffer) - 1){
+3051  05ba 1e05          	ldw	x,(OFST-38,sp)
+3052  05bc 270a          	jreq	L7521
+3054  05be be1f          	ldw	x,_uart_rx_count
+3055  05c0 a3001f        	cpw	x,#31
+3056  05c3 2403          	jruge	L222
+3057  05c5 cc052d        	jp	L7221
+3058  05c8               L222:
+3059  05c8               L7521:
+3060                     ; 587         uart_state = UART_STATE_READY;
+3062  05c8 3501001b      	mov	L13_uart_state,#1
+3064  05cc 2004          	jra	L1621
+3065  05ce               L5221:
+3066                     ; 590         uart_state = UART_STATE_READY;
+3068  05ce 3501001b      	mov	L13_uart_state,#1
+3069  05d2               L1621:
+3070                     ; 592 }
+3071  05d2               L412:
+3074  05d2 5b2b          	addw	sp,#43
+3075  05d4 81            	ret
+3112                     ; 593 uint8_t hal_spi_byte(uint8_t data)
+3112                     ; 594 {
+3113                     	switch	.text
+3114  05d5               _hal_spi_byte:
+3116  05d5 88            	push	a
+3117       00000000      OFST:	set	0
+3120  05d6               L3031:
+3121                     ; 595     while (SPI_GetFlagStatus(SPI_FLAG_TXE) == RESET);
+3123  05d6 a602          	ld	a,#2
+3124  05d8 cd0000        	call	_SPI_GetFlagStatus
+3126  05db 4d            	tnz	a
+3127  05dc 27f8          	jreq	L3031
+3128                     ; 597     SPI_SendData(data);
+3130  05de 7b01          	ld	a,(OFST+1,sp)
+3131  05e0 cd0000        	call	_SPI_SendData
+3134  05e3               L1131:
+3135                     ; 599     while (SPI_GetFlagStatus(SPI_FLAG_RXNE) == RESET);
+3137  05e3 a601          	ld	a,#1
+3138  05e5 cd0000        	call	_SPI_GetFlagStatus
+3140  05e8 4d            	tnz	a
+3141  05e9 27f8          	jreq	L1131
+3142                     ; 601     return SPI_ReceiveData();
+3144  05eb cd0000        	call	_SPI_ReceiveData
+3148  05ee 5b01          	addw	sp,#1
+3149  05f0 81            	ret
+3173                     ; 603 uint8_t hal_spi_read_byte(void)
+3173                     ; 604 {
+3174                     	switch	.text
+3175  05f1               _hal_spi_read_byte:
+3179                     ; 605     return hal_spi_byte(0xFF);
+3181  05f1 a6ff          	ld	a,#255
+3182  05f3 ade0          	call	_hal_spi_byte
+3186  05f5 81            	ret
+3221                     ; 607 void hal_spi_write_byte(uint8_t data)
+3221                     ; 608 {
+3222                     	switch	.text
+3223  05f6               _hal_spi_write_byte:
+3227                     ; 609     hal_spi_byte(data);
+3229  05f6 addd          	call	_hal_spi_byte
+3231                     ; 610 }
+3234  05f8 81            	ret
+3288                     ; 611 void hal_spi_read(uint8_t *buf, uint16_t len){
+3289                     	switch	.text
+3290  05f9               _hal_spi_read:
+3292  05f9 89            	pushw	x
+3293  05fa 89            	pushw	x
+3294       00000002      OFST:	set	2
+3297                     ; 613     for(i = 0; i < len; i++){
+3299  05fb 5f            	clrw	x
+3300  05fc 1f01          	ldw	(OFST-1,sp),x
+3303  05fe 2011          	jra	L5731
+3304  0600               L1731:
+3305                     ; 614         buf[i] = hal_spi_byte(0xFF);
+3307  0600 a6ff          	ld	a,#255
+3308  0602 add1          	call	_hal_spi_byte
+3310  0604 1e03          	ldw	x,(OFST+1,sp)
+3311  0606 72fb01        	addw	x,(OFST-1,sp)
+3312  0609 f7            	ld	(x),a
+3313                     ; 613     for(i = 0; i < len; i++){
+3315  060a 1e01          	ldw	x,(OFST-1,sp)
+3316  060c 1c0001        	addw	x,#1
+3317  060f 1f01          	ldw	(OFST-1,sp),x
+3319  0611               L5731:
+3322  0611 1e01          	ldw	x,(OFST-1,sp)
+3323  0613 1307          	cpw	x,(OFST+5,sp)
+3324  0615 25e9          	jrult	L1731
+3325                     ; 616 }
+3328  0617 5b04          	addw	sp,#4
+3329  0619 81            	ret
+3383                     ; 618 void hal_spi_write(uint8_t *buf, uint16_t len){
+3384                     	switch	.text
+3385  061a               _hal_spi_write:
+3387  061a 89            	pushw	x
+3388  061b 89            	pushw	x
+3389       00000002      OFST:	set	2
+3392                     ; 620     for(i = 0; i < len; i++){
+3394  061c 5f            	clrw	x
+3395  061d 1f01          	ldw	(OFST-1,sp),x
+3398  061f 200f          	jra	L3341
+3399  0621               L7241:
+3400                     ; 621         hal_spi_byte(buf[i]);
+3402  0621 1e03          	ldw	x,(OFST+1,sp)
+3403  0623 72fb01        	addw	x,(OFST-1,sp)
+3404  0626 f6            	ld	a,(x)
+3405  0627 adac          	call	_hal_spi_byte
+3407                     ; 620     for(i = 0; i < len; i++){
+3409  0629 1e01          	ldw	x,(OFST-1,sp)
+3410  062b 1c0001        	addw	x,#1
+3411  062e 1f01          	ldw	(OFST-1,sp),x
+3413  0630               L3341:
+3416  0630 1e01          	ldw	x,(OFST-1,sp)
+3417  0632 1307          	cpw	x,(OFST+5,sp)
+3418  0634 25eb          	jrult	L7241
+3419                     ; 623 }
+3422  0636 5b04          	addw	sp,#4
+3423  0638 81            	ret
+3465                     ; 625 void uart_server_init(uint32_t baudrate){
+3466                     	switch	.text
+3467  0639               _uart_server_init:
+3469       00000000      OFST:	set	0
+3472                     ; 626 	uart_state = UART_STATE_IDLE;
+3474  0639 3f1b          	clr	L13_uart_state
+3475                     ; 627 	uart_rx_count = 0;
+3477  063b 5f            	clrw	x
+3478  063c bf1f          	ldw	_uart_rx_count,x
+3479                     ; 628 	CLK_PeripheralClockConfig(CLK_PERIPHERAL_UART1, ENABLE);
+3481  063e ae0301        	ldw	x,#769
+3482  0641 cd0000        	call	_CLK_PeripheralClockConfig
+3484                     ; 629     UART1_Init(
+3484                     ; 630     baudrate,
+3484                     ; 631     UART1_WORDLENGTH_8D,
+3484                     ; 632     UART1_STOPBITS_1,
+3484                     ; 633     UART1_PARITY_NO,
+3484                     ; 634     UART1_SYNCMODE_CLOCK_DISABLE,
+3484                     ; 635     (UART1_Mode_TypeDef)(UART1_MODE_TX_ENABLE | UART1_MODE_RX_ENABLE)
+3484                     ; 636 );
+3486  0644 4b0c          	push	#12
+3487  0646 4b80          	push	#128
+3488  0648 4b00          	push	#0
+3489  064a 4b00          	push	#0
+3490  064c 4b00          	push	#0
+3491  064e 1e0a          	ldw	x,(OFST+10,sp)
+3492  0650 89            	pushw	x
+3493  0651 1e0a          	ldw	x,(OFST+10,sp)
+3494  0653 89            	pushw	x
+3495  0654 cd0000        	call	_UART1_Init
+3497  0657 5b09          	addw	sp,#9
+3498                     ; 638     UART1_ITConfig(UART1_IT_RXNE, ENABLE);
+3500  0659 4b01          	push	#1
+3501  065b ae0255        	ldw	x,#597
+3502  065e cd0000        	call	_UART1_ITConfig
+3504  0661 84            	pop	a
+3505                     ; 641     UART1_Cmd(ENABLE);
+3507  0662 a601          	ld	a,#1
+3508  0664 cd0000        	call	_UART1_Cmd
+3510                     ; 643     uart_rx_head = 0;
+3512  0667 5f            	clrw	x
+3513  0668 bf21          	ldw	_uart_rx_head,x
+3514                     ; 644     uart_rx_tail = 0;
+3516  066a 5f            	clrw	x
+3517  066b bf23          	ldw	_uart_rx_tail,x
+3518                     ; 645     uart_rx_count = 0;  
+3520  066d 5f            	clrw	x
+3521  066e bf1f          	ldw	_uart_rx_count,x
+3522                     ; 646 	uart_state = UART_STATE_READY;
+3524  0670 3501001b      	mov	L13_uart_state,#1
+3525                     ; 647 }
+3528  0674 81            	ret
+3556                     ; 649 void hal_timer_init(void){
+3557                     	switch	.text
+3558  0675               _hal_timer_init:
+3562                     ; 650     CLK_PeripheralClockConfig(CLK_PERIPHERAL_TIMER4, ENABLE);
+3564  0675 ae0401        	ldw	x,#1025
+3565  0678 cd0000        	call	_CLK_PeripheralClockConfig
+3567                     ; 651     TIM4_TimeBaseInit(TIM4_PRESCALER_128, 125);
+3569  067b ae077d        	ldw	x,#1917
+3570  067e cd0000        	call	_TIM4_TimeBaseInit
+3572                     ; 652     TIM4_ClearFlag(TIM4_FLAG_UPDATE);
+3574  0681 a601          	ld	a,#1
+3575  0683 cd0000        	call	_TIM4_ClearFlag
+3577                     ; 654     TIM4_ITConfig(TIM4_IT_UPDATE, ENABLE);
+3579  0686 ae0101        	ldw	x,#257
+3580  0689 cd0000        	call	_TIM4_ITConfig
+3582                     ; 656     enableInterrupts();
+3585  068c 9a            rim
+3587                     ; 657 }
+3591  068d 81            	ret
+3678                     ; 659 void tcp_server_process(void){
+3679                     	switch	.text
+3680  068e               _tcp_server_process:
+3682  068e 522b          	subw	sp,#43
+3683       0000002b      OFST:	set	43
+3686                     ; 660     uint16_t received_len = 0;
+3688                     ; 663     if(server_state == TCP_STATE_IDLE) return;
+3690  0690 3d0a          	tnz	L32_server_state
+3691  0692 2603          	jrne	L252
+3692  0694 cc076a        	jp	L052
+3693  0697               L252:
+3696                     ; 664     sock_status = getSn_SR(server_socket);
+3698  0697 b61c          	ld	a,L33_server_socket
+3699  0699 97            	ld	xl,a
+3700  069a a604          	ld	a,#4
+3701  069c 42            	mul	x,a
+3702  069d 58            	sllw	x
+3703  069e 58            	sllw	x
+3704  069f 58            	sllw	x
+3705  06a0 1c0308        	addw	x,#776
+3706  06a3 cd0000        	call	c_itolx
+3708  06a6 be02          	ldw	x,c_lreg+2
+3709  06a8 89            	pushw	x
+3710  06a9 be00          	ldw	x,c_lreg
+3711  06ab 89            	pushw	x
+3712  06ac cd0000        	call	_WIZCHIP_READ
+3714  06af 5b04          	addw	sp,#4
+3715  06b1 6b29          	ld	(OFST-2,sp),a
+3717                     ; 666     switch(sock_status){
+3719  06b3 7b29          	ld	a,(OFST-2,sp)
+3721                     ; 699             break;
+3722  06b5 4d            	tnz	a
+3723  06b6 2603          	jrne	L452
+3724  06b8 cc074c        	jp	L1741
+3725  06bb               L452:
+3726  06bb a014          	sub	a,#20
+3727  06bd 270c          	jreq	L5641
+3728  06bf a003          	sub	a,#3
+3729  06c1 2710          	jreq	L7641
+3730  06c3               L3741:
+3731                     ; 697         default:
+3731                     ; 698             server_state = TCP_STATE_ERROR;
+3733  06c3 3503000a      	mov	L32_server_state,#3
+3734                     ; 699             break;
+3736  06c7 ac6a076a      	jpf	L7351
+3737  06cb               L5641:
+3738                     ; 667         case SOCK_LISTEN:
+3738                     ; 668             server_state = TCP_STATE_LISTENING;
+3740  06cb 3501000a      	mov	L32_server_state,#1
+3741                     ; 669             break;
+3743  06cf ac6a076a      	jpf	L7351
+3744  06d3               L7641:
+3745                     ; 671         case SOCK_ESTABLISHED:
+3745                     ; 672             server_state = TCP_STATE_CONNECTED;
+3747  06d3 3502000a      	mov	L32_server_state,#2
+3748                     ; 673             received_len = getSn_RX_RSR(server_socket);
+3750  06d7 b61c          	ld	a,L33_server_socket
+3751  06d9 cd0000        	call	_getSn_RX_RSR
+3753  06dc 1f2a          	ldw	(OFST-1,sp),x
+3755                     ; 674             if(received_len > 0){
+3757  06de 1e2a          	ldw	x,(OFST-1,sp)
+3758  06e0 27b2          	jreq	L7351
+3759                     ; 675                 uint16_t read_len = (received_len > TCP_RX_BUFFER) ? TCP_RX_BUFFER : received_len;
+3761  06e2 1e2a          	ldw	x,(OFST-1,sp)
+3762  06e4 a30021        	cpw	x,#33
+3763  06e7 2505          	jrult	L442
+3764  06e9 ae0020        	ldw	x,#32
+3765  06ec 2002          	jra	L642
+3766  06ee               L442:
+3767  06ee 1e2a          	ldw	x,(OFST-1,sp)
+3768  06f0               L642:
+3769  06f0 1f2a          	ldw	(OFST-1,sp),x
+3771                     ; 677                 read_len = recv(server_socket, rx_buffer, read_len);
+3773  06f2 1e2a          	ldw	x,(OFST-1,sp)
+3774  06f4 89            	pushw	x
+3775  06f5 ae0045        	ldw	x,#_rx_buffer
+3776  06f8 89            	pushw	x
+3777  06f9 b61c          	ld	a,L33_server_socket
+3778  06fb cd0000        	call	_recv
+3780  06fe 5b04          	addw	sp,#4
+3781  0700 be02          	ldw	x,c_lreg+2
+3782  0702 1f2a          	ldw	(OFST-1,sp),x
+3784                     ; 678                 if(read_len > 0){
+3786  0704 1e2a          	ldw	x,(OFST-1,sp)
+3787  0706 2762          	jreq	L7351
+3788                     ; 679                     if(command_parser_execute((const char *)rx_buffer, read_len) == 0){
+3790  0708 1e2a          	ldw	x,(OFST-1,sp)
+3791  070a 89            	pushw	x
+3792  070b ae0045        	ldw	x,#_rx_buffer
+3793  070e cd03bc        	call	_command_parser_execute
+3795  0711 5b02          	addw	sp,#2
+3796  0713 a30000        	cpw	x,#0
+3797  0716 2652          	jrne	L7351
+3798                     ; 682                         sensor_state_t state = sensor_reader_get_state();
+3800  0718 96            	ldw	x,sp
+3801  0719 1c0025        	addw	x,#OFST-6
+3802  071c 89            	pushw	x
+3803  071d cd011a        	call	_sensor_reader_get_state
+3805  0720 85            	popw	x
+3806                     ; 683                         message_formatter_alive(resp_buf,sizeof(resp_buf),state.di1,state.di2,state.di3,state.di4);
+3808  0721 7b28          	ld	a,(OFST-3,sp)
+3809  0723 88            	push	a
+3810  0724 7b28          	ld	a,(OFST-3,sp)
+3811  0726 88            	push	a
+3812  0727 7b28          	ld	a,(OFST-3,sp)
+3813  0729 88            	push	a
+3814  072a 7b28          	ld	a,(OFST-3,sp)
+3815  072c 88            	push	a
+3816  072d ae0020        	ldw	x,#32
+3817  0730 89            	pushw	x
+3818  0731 96            	ldw	x,sp
+3819  0732 1c000b        	addw	x,#OFST-32
+3820  0735 cd0126        	call	_message_formatter_alive
+3822  0738 5b06          	addw	sp,#6
+3823                     ; 684                         tcp_server_send((uint8_t *)resp_buf, strlen(resp_buf));
+3825  073a 96            	ldw	x,sp
+3826  073b 1c0005        	addw	x,#OFST-38
+3827  073e cd0000        	call	_strlen
+3829  0741 89            	pushw	x
+3830  0742 96            	ldw	x,sp
+3831  0743 1c0007        	addw	x,#OFST-36
+3832  0746 cd0041        	call	_tcp_server_send
+3834  0749 85            	popw	x
+3835  074a 201e          	jra	L7351
+3836  074c               L1741:
+3837                     ; 690         case SOCK_CLOSED:
+3837                     ; 691             server_state = TCP_STATE_LISTENING;
+3839  074c 3501000a      	mov	L32_server_state,#1
+3840                     ; 692             close(server_socket);
+3842  0750 b61c          	ld	a,L33_server_socket
+3843  0752 cd0000        	call	_close
+3845                     ; 693             socket(server_socket, Sn_MR_TCP, server_port, 0);
+3847  0755 4b00          	push	#0
+3848  0757 be1d          	ldw	x,L53_server_port
+3849  0759 89            	pushw	x
+3850  075a b61c          	ld	a,L33_server_socket
+3851  075c ae0001        	ldw	x,#1
+3852  075f 95            	ld	xh,a
+3853  0760 cd0000        	call	_socket
+3855  0763 5b03          	addw	sp,#3
+3856                     ; 694             listen(server_socket);
+3858  0765 b61c          	ld	a,L33_server_socket
+3859  0767 cd0000        	call	_listen
+3861                     ; 695             break;
+3863  076a               L7351:
+3864                     ; 701 }
+3865  076a               L052:
+3868  076a 5b2b          	addw	sp,#43
+3869  076c 81            	ret
+3908                     ; 703 void tcp_server_init(uint16_t port){
+3909                     	switch	.text
+3910  076d               _tcp_server_init:
+3914                     ; 704     server_port = port;
+3916  076d bf1d          	ldw	L53_server_port,x
+3917                     ; 705     server_state = TCP_STATE_IDLE;
+3919  076f 3f0a          	clr	L32_server_state
+3920                     ; 708     if(socket(server_socket, Sn_MR_TCP, server_port, 0) == server_socket){
+3922  0771 4b00          	push	#0
+3923  0773 be1d          	ldw	x,L53_server_port
+3924  0775 89            	pushw	x
+3925  0776 b61c          	ld	a,L33_server_socket
+3926  0778 ae0001        	ldw	x,#1
+3927  077b 95            	ld	xh,a
+3928  077c cd0000        	call	_socket
+3930  077f 5b03          	addw	sp,#3
+3931  0781 5f            	clrw	x
+3932  0782 4d            	tnz	a
+3933  0783 2a01          	jrpl	L062
+3934  0785 53            	cplw	x
+3935  0786               L062:
+3936  0786 97            	ld	xl,a
+3937  0787 b61c          	ld	a,L33_server_socket
+3938  0789 905f          	clrw	y
+3939  078b 9097          	ld	yl,a
+3940  078d 90bf00        	ldw	c_y,y
+3941  0790 b300          	cpw	x,c_y
+3942  0792 260d          	jrne	L5651
+3943                     ; 709         if(listen(server_socket) == SOCK_OK){
+3945  0794 b61c          	ld	a,L33_server_socket
+3946  0796 cd0000        	call	_listen
+3948  0799 a101          	cp	a,#1
+3949  079b 2604          	jrne	L5651
+3950                     ; 710             server_state = TCP_STATE_LISTENING;
+3952  079d 3501000a      	mov	L32_server_state,#1
+3953  07a1               L5651:
+3954                     ; 713 }
+3957  07a1 81            	ret
+4017                     ; 715 void w5500_chip_init(void)
+4017                     ; 716 {
+4018                     	switch	.text
+4019  07a2               _w5500_chip_init:
+4021  07a2 88            	push	a
+4022       00000001      OFST:	set	1
+4025                     ; 720     GPIO_WriteLow(W5500_RST_PORT, W5500_RST_PIN);
+4027  07a3 4b20          	push	#32
+4028  07a5 ae5014        	ldw	x,#20500
+4029  07a8 cd0000        	call	_GPIO_WriteLow
+4031  07ab 84            	pop	a
+4032                     ; 721     hal_delay_ms(100);
+4034  07ac ae0064        	ldw	x,#100
+4035  07af cd0014        	call	_hal_delay_ms
+4037                     ; 722     hal_w5500_reset_high();
+4039  07b2 cd0431        	call	_hal_w5500_reset_high
+4041                     ; 723     GPIO_WriteHigh(W5500_RST_PORT, W5500_RST_PIN);
+4043  07b5 4b20          	push	#32
+4044  07b7 ae5014        	ldw	x,#20500
+4045  07ba cd0000        	call	_GPIO_WriteHigh
+4047  07bd 84            	pop	a
+4048                     ; 724     CLK_PeripheralClockConfig(CLK_PERIPHERAL_SPI, ENABLE);
+4050  07be ae0101        	ldw	x,#257
+4051  07c1 cd0000        	call	_CLK_PeripheralClockConfig
+4053                     ; 725     GPIO_Init(W5500_SCK_PORT,W5500_SCK_PIN,GPIO_MODE_OUT_PP_HIGH_FAST);
+4055  07c4 4bf0          	push	#240
+4056  07c6 4b20          	push	#32
+4057  07c8 ae500a        	ldw	x,#20490
+4058  07cb cd0000        	call	_GPIO_Init
+4060  07ce 85            	popw	x
+4061                     ; 726     GPIO_Init(W5500_MOSI_PORT,W5500_MOSI_PIN,GPIO_MODE_OUT_PP_HIGH_FAST);
+4063  07cf 4bf0          	push	#240
+4064  07d1 4b40          	push	#64
+4065  07d3 ae500a        	ldw	x,#20490
+4066  07d6 cd0000        	call	_GPIO_Init
+4068  07d9 85            	popw	x
+4069                     ; 727     GPIO_Init(W5500_MISO_PORT,W5500_MISO_PIN,GPIO_MODE_IN_FL_NO_IT);
+4071  07da 4b00          	push	#0
+4072  07dc 4b80          	push	#128
+4073  07de ae500a        	ldw	x,#20490
+4074  07e1 cd0000        	call	_GPIO_Init
+4076  07e4 85            	popw	x
+4077                     ; 728     GPIO_Init(W5500_CS_PORT,W5500_CS_PIN,GPIO_MODE_OUT_PP_HIGH_FAST);
+4079  07e5 4bf0          	push	#240
+4080  07e7 4b08          	push	#8
+4081  07e9 ae5000        	ldw	x,#20480
+4082  07ec cd0000        	call	_GPIO_Init
+4084  07ef 85            	popw	x
+4085                     ; 729     GPIO_WriteHigh(W5500_CS_PORT, W5500_CS_PIN);
+4087  07f0 4b08          	push	#8
+4088  07f2 ae5000        	ldw	x,#20480
+4089  07f5 cd0000        	call	_GPIO_WriteHigh
+4091  07f8 84            	pop	a
+4092                     ; 730     GPIO_Init(W5500_RST_PORT,W5500_RST_PIN,GPIO_MODE_OUT_PP_HIGH_FAST);
+4094  07f9 4bf0          	push	#240
+4095  07fb 4b20          	push	#32
+4096  07fd ae5014        	ldw	x,#20500
+4097  0800 cd0000        	call	_GPIO_Init
+4099  0803 85            	popw	x
+4100                     ; 731     SPI_DeInit();
+4102  0804 cd0000        	call	_SPI_DeInit
+4104                     ; 732         SPI_Init(
+4104                     ; 733         SPI_FIRSTBIT_MSB,
+4104                     ; 734         SPI_BAUDRATEPRESCALER_4,
+4104                     ; 735         SPI_MODE_MASTER,
+4104                     ; 736         SPI_CLOCKPOLARITY_LOW,
+4104                     ; 737         SPI_CLOCKPHASE_1EDGE,
+4104                     ; 738         SPI_DATADIRECTION_2LINES_FULLDUPLEX,
+4104                     ; 739         SPI_NSS_SOFT,
+4104                     ; 740         0x07
+4104                     ; 741     );
+4106  0807 4b07          	push	#7
+4107  0809 4b02          	push	#2
+4108  080b 4b00          	push	#0
+4109  080d 4b00          	push	#0
+4110  080f 4b00          	push	#0
+4111  0811 4b04          	push	#4
+4112  0813 ae0008        	ldw	x,#8
+4113  0816 cd0000        	call	_SPI_Init
+4115  0819 5b06          	addw	sp,#6
+4116                     ; 743     SPI_Cmd(ENABLE);
+4118  081b a601          	ld	a,#1
+4119  081d cd0000        	call	_SPI_Cmd
+4121                     ; 744     reg_wizchip_spi_cbfunc(hal_spi_read_byte,hal_spi_write_byte);
+4123  0820 ae05f6        	ldw	x,#_hal_spi_write_byte
+4124  0823 89            	pushw	x
+4125  0824 ae05f1        	ldw	x,#_hal_spi_read_byte
+4126  0827 cd0000        	call	_reg_wizchip_spi_cbfunc
+4128  082a 85            	popw	x
+4129                     ; 745     reg_wizchip_spiburst_cbfunc(hal_spi_read,hal_spi_write);
+4131  082b ae061a        	ldw	x,#_hal_spi_write
+4132  082e 89            	pushw	x
+4133  082f ae05f9        	ldw	x,#_hal_spi_read
+4134  0832 cd0000        	call	_reg_wizchip_spiburst_cbfunc
+4136  0835 85            	popw	x
+4137                     ; 746     reg_wizchip_cs_cbfunc(hal_spi_cs_low,hal_spi_cs_high);
+4139  0836 ae00db        	ldw	x,#_hal_spi_cs_high
+4140  0839 89            	pushw	x
+4141  083a ae00d1        	ldw	x,#_hal_spi_cs_low
+4142  083d cd0000        	call	_reg_wizchip_cs_cbfunc
+4144  0840 85            	popw	x
+4145                     ; 747     wizchip_init(0, 0);
+4147  0841 5f            	clrw	x
+4148  0842 89            	pushw	x
+4149  0843 5f            	clrw	x
+4150  0844 cd0000        	call	_wizchip_init
+4152  0847 85            	popw	x
+4153                     ; 748     version = getVERSIONR();
+4155  0848 ae0039        	ldw	x,#57
+4156  084b 89            	pushw	x
+4157  084c ae0000        	ldw	x,#0
+4158  084f 89            	pushw	x
+4159  0850 cd0000        	call	_WIZCHIP_READ
+4161  0853 5b04          	addw	sp,#4
+4162  0855 6b01          	ld	(OFST+0,sp),a
+4164                     ; 749     if(version != 0x04)
+4166  0857 7b01          	ld	a,(OFST+0,sp)
+4167  0859 a104          	cp	a,#4
+4168  085b 2702          	jreq	L7061
+4169  085d               L1161:
+4170                     ; 751         while(1);
+4172  085d 20fe          	jra	L1161
+4173  085f               L7061:
+4174                     ; 753 }
+4177  085f 84            	pop	a
+4178  0860 81            	ret
+4214                     ; 755 void system_init(void){
 4215                     	switch	.text
-4216  08eb               _hal_spi_write:
-4218  08eb 89            	pushw	x
-4219  08ec 89            	pushw	x
-4220       00000002      OFST:	set	2
-4223                     ; 606     for(i = 0; i < len; i++){
-4225  08ed 5f            	clrw	x
-4226  08ee 1f01          	ldw	(OFST-1,sp),x
-4229  08f0 200f          	jra	L3461
-4230  08f2               L7361:
-4231                     ; 607         hal_spi_byte(buf[i]);
-4233  08f2 1e03          	ldw	x,(OFST+1,sp)
-4234  08f4 72fb01        	addw	x,(OFST-1,sp)
-4235  08f7 f6            	ld	a,(x)
-4236  08f8 adac          	call	_hal_spi_byte
-4238                     ; 606     for(i = 0; i < len; i++){
-4240  08fa 1e01          	ldw	x,(OFST-1,sp)
-4241  08fc 1c0001        	addw	x,#1
-4242  08ff 1f01          	ldw	(OFST-1,sp),x
-4244  0901               L3461:
-4247  0901 1e01          	ldw	x,(OFST-1,sp)
-4248  0903 1307          	cpw	x,(OFST+5,sp)
-4249  0905 25eb          	jrult	L7361
-4250                     ; 609 }
-4253  0907 5b04          	addw	sp,#4
-4254  0909 81            	ret
-4296                     ; 611 void uart_server_init(uint32_t baudrate){
-4297                     	switch	.text
-4298  090a               _uart_server_init:
-4300       00000000      OFST:	set	0
-4303                     ; 612 	uart_state = UART_STATE_IDLE;
-4305  090a 3f1b          	clr	L13_uart_state
-4306                     ; 613 	uart_rx_count = 0;
-4308  090c 5f            	clrw	x
-4309  090d bf1f          	ldw	_uart_rx_count,x
-4310                     ; 614 	CLK_PeripheralClockConfig(CLK_PERIPHERAL_UART1, ENABLE);
-4312  090f ae0301        	ldw	x,#769
-4313  0912 cd0000        	call	_CLK_PeripheralClockConfig
-4315                     ; 615     UART1_Init(
-4315                     ; 616     baudrate,
-4315                     ; 617     UART1_WORDLENGTH_8D,
-4315                     ; 618     UART1_STOPBITS_1,
-4315                     ; 619     UART1_PARITY_NO,
-4315                     ; 620     UART1_SYNCMODE_CLOCK_DISABLE,
-4315                     ; 621     (UART1_Mode_TypeDef)(UART1_MODE_TX_ENABLE | UART1_MODE_RX_ENABLE)
-4315                     ; 622 );
-4317  0915 4b0c          	push	#12
-4318  0917 4b80          	push	#128
-4319  0919 4b00          	push	#0
-4320  091b 4b00          	push	#0
-4321  091d 4b00          	push	#0
-4322  091f 1e0a          	ldw	x,(OFST+10,sp)
-4323  0921 89            	pushw	x
-4324  0922 1e0a          	ldw	x,(OFST+10,sp)
-4325  0924 89            	pushw	x
-4326  0925 cd0000        	call	_UART1_Init
-4328  0928 5b09          	addw	sp,#9
-4329                     ; 624     UART1_ITConfig(UART1_IT_RXNE, ENABLE);
-4331  092a 4b01          	push	#1
-4332  092c ae0255        	ldw	x,#597
-4333  092f cd0000        	call	_UART1_ITConfig
-4335  0932 84            	pop	a
-4336                     ; 627     UART1_Cmd(ENABLE);
-4338  0933 a601          	ld	a,#1
-4339  0935 cd0000        	call	_UART1_Cmd
-4341                     ; 629     uart_rx_head = 0;
-4343  0938 5f            	clrw	x
-4344  0939 bf21          	ldw	_uart_rx_head,x
-4345                     ; 630     uart_rx_tail = 0;
-4347  093b 5f            	clrw	x
-4348  093c bf23          	ldw	_uart_rx_tail,x
-4349                     ; 631     uart_rx_count = 0;  
-4351  093e 5f            	clrw	x
-4352  093f bf1f          	ldw	_uart_rx_count,x
-4353                     ; 632 	uart_state = UART_STATE_READY;
-4355  0941 3501001b      	mov	L13_uart_state,#1
-4356                     ; 633 }
-4359  0945 81            	ret
-4387                     ; 635 void hal_timer_init(void){
-4388                     	switch	.text
-4389  0946               _hal_timer_init:
-4393                     ; 636     CLK_PeripheralClockConfig(CLK_PERIPHERAL_TIMER4, ENABLE);
-4395  0946 ae0401        	ldw	x,#1025
-4396  0949 cd0000        	call	_CLK_PeripheralClockConfig
-4398                     ; 637     TIM4_TimeBaseInit(TIM4_PRESCALER_128, 125);
-4400  094c ae077d        	ldw	x,#1917
-4401  094f cd0000        	call	_TIM4_TimeBaseInit
-4403                     ; 638     TIM4_ClearFlag(TIM4_FLAG_UPDATE);
-4405  0952 a601          	ld	a,#1
-4406  0954 cd0000        	call	_TIM4_ClearFlag
-4408                     ; 640     TIM4_ITConfig(TIM4_IT_UPDATE, ENABLE);
-4410  0957 ae0101        	ldw	x,#257
-4411  095a cd0000        	call	_TIM4_ITConfig
-4413                     ; 642     enableInterrupts();
-4416  095d 9a            rim
-4418                     ; 643 }
-4422  095e 81            	ret
-4509                     ; 645 void tcp_server_process(void){
-4510                     	switch	.text
-4511  095f               _tcp_server_process:
-4513  095f 522b          	subw	sp,#43
-4514       0000002b      OFST:	set	43
-4517                     ; 646     uint16_t received_len = 0;
-4519                     ; 649     if(server_state == TCP_STATE_IDLE) return;
-4521  0961 3d0a          	tnz	L32_server_state
-4522  0963 2603          	jrne	L052
-4523  0965 cc0a3b        	jp	L642
-4524  0968               L052:
-4527                     ; 650     sock_status = getSn_SR(server_socket);
-4529  0968 b61c          	ld	a,L33_server_socket
-4530  096a 97            	ld	xl,a
-4531  096b a604          	ld	a,#4
-4532  096d 42            	mul	x,a
-4533  096e 58            	sllw	x
-4534  096f 58            	sllw	x
-4535  0970 58            	sllw	x
-4536  0971 1c0308        	addw	x,#776
-4537  0974 cd0000        	call	c_itolx
-4539  0977 be02          	ldw	x,c_lreg+2
-4540  0979 89            	pushw	x
-4541  097a be00          	ldw	x,c_lreg
-4542  097c 89            	pushw	x
-4543  097d cd0000        	call	_WIZCHIP_READ
-4545  0980 5b04          	addw	sp,#4
-4546  0982 6b29          	ld	(OFST-2,sp),a
-4548                     ; 652     switch(sock_status){
-4550  0984 7b29          	ld	a,(OFST-2,sp)
-4552                     ; 685             break;
-4553  0986 4d            	tnz	a
-4554  0987 2603          	jrne	L252
-4555  0989 cc0a1d        	jp	L1071
-4556  098c               L252:
-4557  098c a014          	sub	a,#20
-4558  098e 270c          	jreq	L5761
-4559  0990 a003          	sub	a,#3
-4560  0992 2710          	jreq	L7761
-4561  0994               L3071:
-4562                     ; 683         default:
-4562                     ; 684             server_state = TCP_STATE_ERROR;
-4564  0994 3503000a      	mov	L32_server_state,#3
-4565                     ; 685             break;
-4567  0998 ac3b0a3b      	jpf	L7471
-4568  099c               L5761:
-4569                     ; 653         case SOCK_LISTEN:
-4569                     ; 654             server_state = TCP_STATE_LISTENING;
-4571  099c 3501000a      	mov	L32_server_state,#1
-4572                     ; 655             break;
-4574  09a0 ac3b0a3b      	jpf	L7471
-4575  09a4               L7761:
-4576                     ; 657         case SOCK_ESTABLISHED:
-4576                     ; 658             server_state = TCP_STATE_CONNECTED;
-4578  09a4 3502000a      	mov	L32_server_state,#2
-4579                     ; 659             received_len = getSn_RX_RSR(server_socket);
-4581  09a8 b61c          	ld	a,L33_server_socket
-4582  09aa cd0000        	call	_getSn_RX_RSR
-4584  09ad 1f2a          	ldw	(OFST-1,sp),x
-4586                     ; 660             if(received_len > 0){
-4588  09af 1e2a          	ldw	x,(OFST-1,sp)
-4589  09b1 27b2          	jreq	L7471
-4590                     ; 661                 uint16_t read_len = (received_len > TCP_RX_BUFFER) ? TCP_RX_BUFFER : received_len;
-4592  09b3 1e2a          	ldw	x,(OFST-1,sp)
-4593  09b5 a30021        	cpw	x,#33
-4594  09b8 2505          	jrult	L242
-4595  09ba ae0020        	ldw	x,#32
-4596  09bd 2002          	jra	L442
-4597  09bf               L242:
-4598  09bf 1e2a          	ldw	x,(OFST-1,sp)
-4599  09c1               L442:
-4600  09c1 1f2a          	ldw	(OFST-1,sp),x
-4602                     ; 663                 read_len = recv(server_socket, rx_buffer, read_len);
-4604  09c3 1e2a          	ldw	x,(OFST-1,sp)
-4605  09c5 89            	pushw	x
-4606  09c6 ae0060        	ldw	x,#_rx_buffer
-4607  09c9 89            	pushw	x
-4608  09ca b61c          	ld	a,L33_server_socket
-4609  09cc cd0000        	call	_recv
-4611  09cf 5b04          	addw	sp,#4
-4612  09d1 be02          	ldw	x,c_lreg+2
-4613  09d3 1f2a          	ldw	(OFST-1,sp),x
-4615                     ; 664                 if(read_len > 0){
-4617  09d5 1e2a          	ldw	x,(OFST-1,sp)
-4618  09d7 2762          	jreq	L7471
-4619                     ; 665                     if(command_parser_execute((const char *)rx_buffer, read_len) == 0){
-4621  09d9 1e2a          	ldw	x,(OFST-1,sp)
-4622  09db 89            	pushw	x
-4623  09dc ae0060        	ldw	x,#_rx_buffer
-4624  09df cd068d        	call	_command_parser_execute
-4626  09e2 5b02          	addw	sp,#2
-4627  09e4 a30000        	cpw	x,#0
-4628  09e7 2652          	jrne	L7471
-4629                     ; 668                         sensor_state_t state = sensor_reader_get_state();
-4631  09e9 96            	ldw	x,sp
-4632  09ea 1c0025        	addw	x,#OFST-6
-4633  09ed 89            	pushw	x
-4634  09ee cd011a        	call	_sensor_reader_get_state
-4636  09f1 85            	popw	x
-4637                     ; 669                         message_formatter_alive(resp_buf,sizeof(resp_buf),state.di1,state.di2,state.di3,state.di4);
-4639  09f2 7b28          	ld	a,(OFST-3,sp)
-4640  09f4 88            	push	a
-4641  09f5 7b28          	ld	a,(OFST-3,sp)
-4642  09f7 88            	push	a
-4643  09f8 7b28          	ld	a,(OFST-3,sp)
-4644  09fa 88            	push	a
-4645  09fb 7b28          	ld	a,(OFST-3,sp)
-4646  09fd 88            	push	a
-4647  09fe ae0020        	ldw	x,#32
-4648  0a01 89            	pushw	x
-4649  0a02 96            	ldw	x,sp
-4650  0a03 1c000b        	addw	x,#OFST-32
-4651  0a06 cd0126        	call	_message_formatter_alive
-4653  0a09 5b06          	addw	sp,#6
-4654                     ; 670                         tcp_server_send((uint8_t *)resp_buf, strlen(resp_buf));
-4656  0a0b 96            	ldw	x,sp
-4657  0a0c 1c0005        	addw	x,#OFST-38
-4658  0a0f cd0000        	call	_strlen
-4660  0a12 89            	pushw	x
-4661  0a13 96            	ldw	x,sp
-4662  0a14 1c0007        	addw	x,#OFST-36
-4663  0a17 cd0041        	call	_tcp_server_send
-4665  0a1a 85            	popw	x
-4666  0a1b 201e          	jra	L7471
-4667  0a1d               L1071:
-4668                     ; 676         case SOCK_CLOSED:
-4668                     ; 677             server_state = TCP_STATE_LISTENING;
-4670  0a1d 3501000a      	mov	L32_server_state,#1
-4671                     ; 678             close(server_socket);
-4673  0a21 b61c          	ld	a,L33_server_socket
-4674  0a23 cd0000        	call	_close
-4676                     ; 679             socket(server_socket, Sn_MR_TCP, server_port, 0);
-4678  0a26 4b00          	push	#0
-4679  0a28 be1d          	ldw	x,L53_server_port
-4680  0a2a 89            	pushw	x
-4681  0a2b b61c          	ld	a,L33_server_socket
-4682  0a2d ae0001        	ldw	x,#1
-4683  0a30 95            	ld	xh,a
-4684  0a31 cd0000        	call	_socket
-4686  0a34 5b03          	addw	sp,#3
-4687                     ; 680             listen(server_socket);
-4689  0a36 b61c          	ld	a,L33_server_socket
-4690  0a38 cd0000        	call	_listen
-4692                     ; 681             break;
-4694  0a3b               L7471:
-4695                     ; 687 }
-4696  0a3b               L642:
-4699  0a3b 5b2b          	addw	sp,#43
-4700  0a3d 81            	ret
-4739                     ; 689 void tcp_server_init(uint16_t port){
-4740                     	switch	.text
-4741  0a3e               _tcp_server_init:
-4745                     ; 690     server_port = port;
-4747  0a3e bf1d          	ldw	L53_server_port,x
-4748                     ; 691     server_state = TCP_STATE_IDLE;
-4750  0a40 3f0a          	clr	L32_server_state
-4751                     ; 694     if(socket(server_socket, Sn_MR_TCP, server_port, 0) == server_socket){
-4753  0a42 4b00          	push	#0
-4754  0a44 be1d          	ldw	x,L53_server_port
-4755  0a46 89            	pushw	x
-4756  0a47 b61c          	ld	a,L33_server_socket
-4757  0a49 ae0001        	ldw	x,#1
-4758  0a4c 95            	ld	xh,a
-4759  0a4d cd0000        	call	_socket
-4761  0a50 5b03          	addw	sp,#3
-4762  0a52 5f            	clrw	x
-4763  0a53 4d            	tnz	a
-4764  0a54 2a01          	jrpl	L652
-4765  0a56 53            	cplw	x
-4766  0a57               L652:
-4767  0a57 97            	ld	xl,a
-4768  0a58 b61c          	ld	a,L33_server_socket
-4769  0a5a 905f          	clrw	y
-4770  0a5c 9097          	ld	yl,a
-4771  0a5e 90bf00        	ldw	c_y,y
-4772  0a61 b300          	cpw	x,c_y
-4773  0a63 260d          	jrne	L5771
-4774                     ; 695         if(listen(server_socket) == SOCK_OK){
-4776  0a65 b61c          	ld	a,L33_server_socket
-4777  0a67 cd0000        	call	_listen
-4779  0a6a a101          	cp	a,#1
-4780  0a6c 2604          	jrne	L5771
-4781                     ; 696             server_state = TCP_STATE_LISTENING;
-4783  0a6e 3501000a      	mov	L32_server_state,#1
-4784  0a72               L5771:
-4785                     ; 699 }
-4788  0a72 81            	ret
-4848                     ; 701 void w5500_chip_init(void)
-4848                     ; 702 {
-4849                     	switch	.text
-4850  0a73               _w5500_chip_init:
-4852  0a73 88            	push	a
-4853       00000001      OFST:	set	1
-4856                     ; 706     GPIO_WriteLow(W5500_RST_PORT, W5500_RST_PIN);
-4858  0a74 4b20          	push	#32
-4859  0a76 ae5014        	ldw	x,#20500
-4860  0a79 cd0000        	call	_GPIO_WriteLow
-4862  0a7c 84            	pop	a
-4863                     ; 707     hal_delay_ms(100);
-4865  0a7d ae0064        	ldw	x,#100
-4866  0a80 cd0014        	call	_hal_delay_ms
-4868                     ; 708     hal_w5500_reset_high();
-4870  0a83 cd0702        	call	_hal_w5500_reset_high
-4872                     ; 709     GPIO_WriteHigh(W5500_RST_PORT, W5500_RST_PIN);
-4874  0a86 4b20          	push	#32
-4875  0a88 ae5014        	ldw	x,#20500
-4876  0a8b cd0000        	call	_GPIO_WriteHigh
-4878  0a8e 84            	pop	a
-4879                     ; 710     CLK_PeripheralClockConfig(CLK_PERIPHERAL_SPI, ENABLE);
-4881  0a8f ae0101        	ldw	x,#257
-4882  0a92 cd0000        	call	_CLK_PeripheralClockConfig
-4884                     ; 711     GPIO_Init(W5500_SCK_PORT,W5500_SCK_PIN,GPIO_MODE_OUT_PP_HIGH_FAST);
-4886  0a95 4bf0          	push	#240
-4887  0a97 4b20          	push	#32
-4888  0a99 ae500a        	ldw	x,#20490
-4889  0a9c cd0000        	call	_GPIO_Init
-4891  0a9f 85            	popw	x
-4892                     ; 712     GPIO_Init(W5500_MOSI_PORT,W5500_MOSI_PIN,GPIO_MODE_OUT_PP_HIGH_FAST);
-4894  0aa0 4bf0          	push	#240
-4895  0aa2 4b40          	push	#64
-4896  0aa4 ae500a        	ldw	x,#20490
-4897  0aa7 cd0000        	call	_GPIO_Init
-4899  0aaa 85            	popw	x
-4900                     ; 713     GPIO_Init(W5500_MISO_PORT,W5500_MISO_PIN,GPIO_MODE_IN_FL_NO_IT);
-4902  0aab 4b00          	push	#0
-4903  0aad 4b80          	push	#128
-4904  0aaf ae500a        	ldw	x,#20490
-4905  0ab2 cd0000        	call	_GPIO_Init
-4907  0ab5 85            	popw	x
-4908                     ; 714     GPIO_Init(W5500_CS_PORT,W5500_CS_PIN,GPIO_MODE_OUT_PP_HIGH_FAST);
-4910  0ab6 4bf0          	push	#240
-4911  0ab8 4b08          	push	#8
-4912  0aba ae5000        	ldw	x,#20480
-4913  0abd cd0000        	call	_GPIO_Init
-4915  0ac0 85            	popw	x
-4916                     ; 715     GPIO_WriteHigh(W5500_CS_PORT, W5500_CS_PIN);
-4918  0ac1 4b08          	push	#8
-4919  0ac3 ae5000        	ldw	x,#20480
-4920  0ac6 cd0000        	call	_GPIO_WriteHigh
-4922  0ac9 84            	pop	a
-4923                     ; 716     GPIO_Init(W5500_RST_PORT,W5500_RST_PIN,GPIO_MODE_OUT_PP_HIGH_FAST);
-4925  0aca 4bf0          	push	#240
-4926  0acc 4b20          	push	#32
-4927  0ace ae5014        	ldw	x,#20500
-4928  0ad1 cd0000        	call	_GPIO_Init
-4930  0ad4 85            	popw	x
-4931                     ; 717     SPI_DeInit();
-4933  0ad5 cd0000        	call	_SPI_DeInit
-4935                     ; 718         SPI_Init(
-4935                     ; 719         SPI_FIRSTBIT_MSB,
-4935                     ; 720         SPI_BAUDRATEPRESCALER_4,
-4935                     ; 721         SPI_MODE_MASTER,
-4935                     ; 722         SPI_CLOCKPOLARITY_LOW,
-4935                     ; 723         SPI_CLOCKPHASE_1EDGE,
-4935                     ; 724         SPI_DATADIRECTION_2LINES_FULLDUPLEX,
-4935                     ; 725         SPI_NSS_SOFT,
-4935                     ; 726         0x07
-4935                     ; 727     );
-4937  0ad8 4b07          	push	#7
-4938  0ada 4b02          	push	#2
-4939  0adc 4b00          	push	#0
-4940  0ade 4b00          	push	#0
-4941  0ae0 4b00          	push	#0
-4942  0ae2 4b04          	push	#4
-4943  0ae4 ae0008        	ldw	x,#8
-4944  0ae7 cd0000        	call	_SPI_Init
-4946  0aea 5b06          	addw	sp,#6
-4947                     ; 729     SPI_Cmd(ENABLE);
-4949  0aec a601          	ld	a,#1
-4950  0aee cd0000        	call	_SPI_Cmd
-4952                     ; 730     reg_wizchip_spi_cbfunc(hal_spi_read_byte,hal_spi_write_byte);
-4954  0af1 ae08c7        	ldw	x,#_hal_spi_write_byte
-4955  0af4 89            	pushw	x
-4956  0af5 ae08c2        	ldw	x,#_hal_spi_read_byte
-4957  0af8 cd0000        	call	_reg_wizchip_spi_cbfunc
-4959  0afb 85            	popw	x
-4960                     ; 731     reg_wizchip_spiburst_cbfunc(hal_spi_read,hal_spi_write);
-4962  0afc ae08eb        	ldw	x,#_hal_spi_write
-4963  0aff 89            	pushw	x
-4964  0b00 ae08ca        	ldw	x,#_hal_spi_read
-4965  0b03 cd0000        	call	_reg_wizchip_spiburst_cbfunc
-4967  0b06 85            	popw	x
-4968                     ; 732     reg_wizchip_cs_cbfunc(hal_spi_cs_low,hal_spi_cs_high);
-4970  0b07 ae00db        	ldw	x,#_hal_spi_cs_high
-4971  0b0a 89            	pushw	x
-4972  0b0b ae00d1        	ldw	x,#_hal_spi_cs_low
-4973  0b0e cd0000        	call	_reg_wizchip_cs_cbfunc
-4975  0b11 85            	popw	x
-4976                     ; 733     wizchip_init(0, 0);
-4978  0b12 5f            	clrw	x
-4979  0b13 89            	pushw	x
-4980  0b14 5f            	clrw	x
-4981  0b15 cd0000        	call	_wizchip_init
-4983  0b18 85            	popw	x
-4984                     ; 734     version = getVERSIONR();
-4986  0b19 ae0039        	ldw	x,#57
-4987  0b1c 89            	pushw	x
-4988  0b1d ae0000        	ldw	x,#0
-4989  0b20 89            	pushw	x
-4990  0b21 cd0000        	call	_WIZCHIP_READ
-4992  0b24 5b04          	addw	sp,#4
-4993  0b26 6b01          	ld	(OFST+0,sp),a
-4995                     ; 735     if(version != 0x04)
-4997  0b28 7b01          	ld	a,(OFST+0,sp)
-4998  0b2a a104          	cp	a,#4
-4999  0b2c 2702          	jreq	L7102
-5000  0b2e               L1202:
-5001                     ; 737         while(1);
-5003  0b2e 20fe          	jra	L1202
-5004  0b30               L7102:
-5005                     ; 739 }
-5008  0b30 84            	pop	a
-5009  0b31 81            	ret
-5045                     ; 741 void system_init(void){
-5046                     	switch	.text
-5047  0b32               _system_init:
-5051                     ; 743     CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1);  /* 16MHz clock */
-5053  0b32 4f            	clr	a
-5054  0b33 cd0000        	call	_CLK_HSIPrescalerConfig
-5056                     ; 745 	hal_gpio_init();
-5058  0b36 cd070c        	call	_hal_gpio_init
-5060                     ; 746     hal_timer_init();
-5062  0b39 cd0946        	call	_hal_timer_init
-5064                     ; 748 	relay_control_init();
-5066  0b3c cd06fc        	call	_relay_control_init
-5068                     ; 749 	sensor_reader_init();
-5070  0b3f cd05fd        	call	_sensor_reader_init
-5072                     ; 751     w5500_chip_init();
-5074  0b42 cd0a73        	call	_w5500_chip_init
-5076                     ; 752     tcp_server_init(TCP_SERVER_PORT);
-5078  0b45 ae1388        	ldw	x,#5000
-5079  0b48 cd0a3e        	call	_tcp_server_init
-5081                     ; 754     uart_server_init(UART_BAUDRATE);
-5083  0b4b aec200        	ldw	x,#49664
-5084  0b4e 89            	pushw	x
-5085  0b4f ae0001        	ldw	x,#1
-5086  0b52 89            	pushw	x
-5087  0b53 cd090a        	call	_uart_server_init
-5089  0b56 5b04          	addw	sp,#4
-5090                     ; 757     hal_timer_set_callback(timer_callback);
-5092  0b58 ae0640        	ldw	x,#_timer_callback
-5093  0b5b cd068a        	call	_hal_timer_set_callback
-5095                     ; 758     hal_timer_start();
-5097  0b5e cd056e        	call	_hal_timer_start
-5099                     ; 759 	hal_delay_ms(500);
-5101  0b61 ae01f4        	ldw	x,#500
-5102  0b64 cd0014        	call	_hal_delay_ms
-5104                     ; 760 }
-5107  0b67 81            	ret
-5110                     	switch	.const
-5111  000c               L5302_msg:
-5112  000c 52455345542c  	dc.b	"RESET, OK",10,0
-5152                     ; 762 void main_loop(void)
-5152                     ; 763 {
-5153                     	switch	.text
-5154  0b68               _main_loop:
-5156  0b68 520b          	subw	sp,#11
-5157       0000000b      OFST:	set	11
-5160  0b6a               L5502:
-5161                     ; 767         tcp_server_process();
-5163  0b6a cd095f        	call	_tcp_server_process
-5165                     ; 769 		uart_server_process();
-5167  0b6d cd07e2        	call	_uart_server_process
-5169                     ; 771         if(GPIO_ReadInputPin(HARDRST_PORT, HARDRST_PIN) == RESET)
-5171  0b70 4b80          	push	#128
-5172  0b72 ae5005        	ldw	x,#20485
-5173  0b75 cd0000        	call	_GPIO_ReadInputPin
-5175  0b78 5b01          	addw	sp,#1
-5176  0b7a 4d            	tnz	a
-5177  0b7b 26ed          	jrne	L5502
-5178                     ; 773             hal_delay_ms(50);
-5180  0b7d ae0032        	ldw	x,#50
-5181  0b80 cd0014        	call	_hal_delay_ms
-5183                     ; 774 			if (GPIO_ReadInputPin(HARDRST_PORT, HARDRST_PIN) == 0){
-5185  0b83 4b80          	push	#128
-5186  0b85 ae5005        	ldw	x,#20485
-5187  0b88 cd0000        	call	_GPIO_ReadInputPin
-5189  0b8b 5b01          	addw	sp,#1
-5190  0b8d 4d            	tnz	a
-5191  0b8e 26da          	jrne	L5502
-5192                     ; 776 				char msg[] = "RESET, OK\n";
-5194  0b90 96            	ldw	x,sp
-5195  0b91 1c0001        	addw	x,#OFST-10
-5196  0b94 90ae000c      	ldw	y,#L5302_msg
-5197  0b98 a60b          	ld	a,#11
-5198  0b9a cd0000        	call	c_xymov
-5200                     ; 777                 if (uart_server_is_ready()){
-5202  0b9d cd008d        	call	_uart_server_is_ready
-5204  0ba0 a30000        	cpw	x,#0
-5205  0ba3 2710          	jreq	L5602
-5206                     ; 778                     uart_server_send((uint8_t *)msg, strlen(msg));
-5208  0ba5 96            	ldw	x,sp
-5209  0ba6 1c0001        	addw	x,#OFST-10
-5210  0ba9 cd0000        	call	_strlen
-5212  0bac 89            	pushw	x
-5213  0bad 96            	ldw	x,sp
-5214  0bae 1c0003        	addw	x,#OFST-8
-5215  0bb1 cd00e5        	call	_uart_server_send
-5217  0bb4 85            	popw	x
-5218  0bb5               L5602:
-5219                     ; 780 				hal_delay_ms(100);
-5221  0bb5 ae0064        	ldw	x,#100
-5222  0bb8 cd0014        	call	_hal_delay_ms
-5224  0bbb 20ad          	jra	L5502
-5249                     ; 787 int main(void)
-5249                     ; 788 {
-5250                     	switch	.text
-5251  0bbd               _main:
-5255                     ; 789 	system_init();
-5257  0bbd cd0b32        	call	_system_init
-5259                     ; 790     main_loop();
-5261  0bc0 ada6          	call	_main_loop
-5263  0bc2               L7702:
-5264                     ; 791     while(1);
-5266  0bc2 20fe          	jra	L7702
-5585                     	xdef	_main
-5586                     	xdef	_main_loop
-5587                     	xdef	_system_init
-5588                     	xdef	_w5500_chip_init
-5589                     	xdef	_tcp_server_init
-5590                     	xdef	_tcp_server_process
-5591                     	xdef	_hal_timer_init
-5592                     	xdef	_uart_server_init
-5593                     	xdef	_hal_spi_write
-5594                     	xdef	_hal_spi_read
-5595                     	xdef	_hal_spi_write_byte
-5596                     	xdef	_hal_spi_read_byte
-5597                     	xdef	_hal_spi_byte
-5598                     	xdef	_uart_server_process
-5599                     	xdef	_hal_uart_read_byte
-5600                     	xdef	_hal_uart_available
-5601                     	xdef	_hal_gpio_init
-5602                     	xdef	_hal_w5500_reset_high
-5603                     	xdef	_relay_control_init
-5604                     	xdef	_command_parser_execute
-5605                     	xdef	_hal_timer_set_callback
-5606                     	xdef	_timer_callback
-5607                     	xdef	_send_alive_message
-5608                     	xdef	_sensor_reader_init
-5609                     	xdef	_process_axle_counting
-5610                     	xdef	_hal_timer_start
-5611                     	xdef	_sensor_reader_update
-5612                     	xdef	_relay_control_set_all
-5613                     	xdef	_relay_control_set
-5614                     	xdef	_hal_relay_set
-5615                     	xdef	_message_formatter_avcc
-5616                     	xdef	_u32_to_str
-5617                     	xdef	_u16_to_str
-5618                     	xdef	_hal_di_read
-5619                     	xdef	_message_formatter_alive
-5620                     	xdef	_sensor_reader_get_state
-5621                     	xdef	_uart_server_send
-5622                     	xdef	_hal_spi_cs_high
-5623                     	xdef	_hal_spi_cs_low
-5624                     	xdef	_hal_uart_send
-5625                     	xdef	_hal_uart_send_byte
-5626                     	xdef	_uart_server_is_ready
-5627                     	xdef	_tcp_server_send
-5628                     	xdef	_hal_delay_ms
-5629                     	xdef	_tcp_server_is_connected
-5630                     	xdef	_hal_get_millis
-5631                     	xdef	_user_callback
-5632                     	xdef	_systick_ms
-5633                     	switch	.ubsct
-5634  0000               _uart_rx_buffer:
-5635  0000 000000000000  	ds.b	32
-5636                     	xdef	_uart_rx_buffer
-5637  0020               L73_uart_tx_buffer:
-5638  0020 000000000000  	ds.b	32
-5639                     	xdef	_uart_rx_tail
-5640                     	xdef	_uart_rx_head
-5641                     	xdef	_uart_rx_count
-5642  0040               _tx_buffer:
-5643  0040 000000000000  	ds.b	32
-5644                     	xdef	_tx_buffer
-5645  0060               _rx_buffer:
-5646  0060 000000000000  	ds.b	32
-5647                     	xdef	_rx_buffer
-5648                     	xref	_strlen
-5649                     	xref	_send
-5650                     	xref	_recv
-5651                     	xref	_listen
-5652                     	xref	_close
-5653                     	xref	_socket
-5654                     	xref	_wizchip_init
-5655                     	xref	_reg_wizchip_spiburst_cbfunc
-5656                     	xref	_reg_wizchip_spi_cbfunc
-5657                     	xref	_getSn_RX_RSR
-5658                     	xref	_reg_wizchip_cs_cbfunc
-5659                     	xref	_WIZCHIP_READ
-5660                     	xref	_TIM4_ClearFlag
-5661                     	xref	_TIM4_ITConfig
-5662                     	xref	_TIM4_Cmd
-5663                     	xref	_TIM4_TimeBaseInit
-5664                     	xref	_SPI_GetFlagStatus
-5665                     	xref	_SPI_ReceiveData
-5666                     	xref	_SPI_SendData
-5667                     	xref	_SPI_Cmd
-5668                     	xref	_SPI_Init
-5669                     	xref	_SPI_DeInit
-5670                     	xref	_UART1_GetFlagStatus
-5671                     	xref	_UART1_SendData8
-5672                     	xref	_UART1_ITConfig
-5673                     	xref	_UART1_Cmd
-5674                     	xref	_UART1_Init
-5675                     	xref	_GPIO_ReadInputPin
-5676                     	xref	_GPIO_WriteLow
-5677                     	xref	_GPIO_WriteHigh
-5678                     	xref	_GPIO_Init
-5679                     	xref	_CLK_HSIPrescalerConfig
-5680                     	xref	_CLK_PeripheralClockConfig
-5681                     	switch	.const
-5682  0017               L1641:
-5683  0017 4552524f522c  	dc.b	"ERROR,INVALID_COMM"
-5684  0029 414e440a00    	dc.b	"AND",10,0
-5685                     	xref.b	c_lreg
-5686                     	xref.b	c_x
-5687                     	xref.b	c_y
-5707                     	xref	c_itolx
-5708                     	xref	c_lgadc
-5709                     	xref	c_ludv
-5710                     	xref	c_ladc
-5711                     	xref	c_lumd
-5712                     	xref	c_lzmp
-5713                     	xref	c_xymov
-5714                     	xref	c_lcmp
-5715                     	xref	c_lsub
-5716                     	xref	c_uitolx
-5717                     	xref	c_rtol
-5718                     	xref	c_ltor
-5719                     	end
+4216  0861               _system_init:
+4220                     ; 757     CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1);  /* 16MHz clock */
+4222  0861 4f            	clr	a
+4223  0862 cd0000        	call	_CLK_HSIPrescalerConfig
+4225                     ; 759 	hal_gpio_init();
+4227  0865 cd043b        	call	_hal_gpio_init
+4229                     ; 760     hal_timer_init();
+4231  0868 cd0675        	call	_hal_timer_init
+4233                     ; 762 	relay_control_init();
+4235  086b cd042b        	call	_relay_control_init
+4237                     ; 763 	sensor_reader_init();
+4239  086e cd032c        	call	_sensor_reader_init
+4241                     ; 765     w5500_chip_init();
+4243  0871 cd07a2        	call	_w5500_chip_init
+4245                     ; 766     tcp_server_init(TCP_SERVER_PORT);
+4247  0874 ae1388        	ldw	x,#5000
+4248  0877 cd076d        	call	_tcp_server_init
+4250                     ; 768     uart_server_init(UART_BAUDRATE);
+4252  087a aec200        	ldw	x,#49664
+4253  087d 89            	pushw	x
+4254  087e ae0001        	ldw	x,#1
+4255  0881 89            	pushw	x
+4256  0882 cd0639        	call	_uart_server_init
+4258  0885 5b04          	addw	sp,#4
+4259                     ; 771     hal_timer_set_callback(timer_callback);
+4261  0887 ae036f        	ldw	x,#_timer_callback
+4262  088a cd03b9        	call	_hal_timer_set_callback
+4264                     ; 772     hal_timer_start();
+4266  088d cd02aa        	call	_hal_timer_start
+4268                     ; 773 	  hal_delay_ms(500);
+4270  0890 ae01f4        	ldw	x,#500
+4271  0893 cd0014        	call	_hal_delay_ms
+4273                     ; 774 }
+4276  0896 81            	ret
+4279                     	switch	.const
+4280  0008               L5261_msg:
+4281  0008 52455345542c  	dc.b	"RESET, OK",10,0
+4321                     ; 776 void main_loop(void)
+4321                     ; 777 {
+4322                     	switch	.text
+4323  0897               _main_loop:
+4325  0897 520b          	subw	sp,#11
+4326       0000000b      OFST:	set	11
+4329  0899               L5461:
+4330                     ; 781         tcp_server_process();
+4332  0899 cd068e        	call	_tcp_server_process
+4334                     ; 783 		uart_server_process();
+4336  089c cd0511        	call	_uart_server_process
+4338                     ; 785         if(GPIO_ReadInputPin(HARDRST_PORT, HARDRST_PIN) == RESET)
+4340  089f 4b80          	push	#128
+4341  08a1 ae5005        	ldw	x,#20485
+4342  08a4 cd0000        	call	_GPIO_ReadInputPin
+4344  08a7 5b01          	addw	sp,#1
+4345  08a9 4d            	tnz	a
+4346  08aa 26ed          	jrne	L5461
+4347                     ; 787             hal_delay_ms(50);
+4349  08ac ae0032        	ldw	x,#50
+4350  08af cd0014        	call	_hal_delay_ms
+4352                     ; 788 			if (GPIO_ReadInputPin(HARDRST_PORT, HARDRST_PIN) == 0){
+4354  08b2 4b80          	push	#128
+4355  08b4 ae5005        	ldw	x,#20485
+4356  08b7 cd0000        	call	_GPIO_ReadInputPin
+4358  08ba 5b01          	addw	sp,#1
+4359  08bc 4d            	tnz	a
+4360  08bd 26da          	jrne	L5461
+4361                     ; 790 				char msg[] = "RESET, OK\n";
+4363  08bf 96            	ldw	x,sp
+4364  08c0 1c0001        	addw	x,#OFST-10
+4365  08c3 90ae0008      	ldw	y,#L5261_msg
+4366  08c7 a60b          	ld	a,#11
+4367  08c9 cd0000        	call	c_xymov
+4369                     ; 791                 if (uart_server_is_ready()){
+4371  08cc cd008d        	call	_uart_server_is_ready
+4373  08cf a30000        	cpw	x,#0
+4374  08d2 2710          	jreq	L5561
+4375                     ; 792                     uart_server_send((uint8_t *)msg, strlen(msg));
+4377  08d4 96            	ldw	x,sp
+4378  08d5 1c0001        	addw	x,#OFST-10
+4379  08d8 cd0000        	call	_strlen
+4381  08db 89            	pushw	x
+4382  08dc 96            	ldw	x,sp
+4383  08dd 1c0003        	addw	x,#OFST-8
+4384  08e0 cd00e5        	call	_uart_server_send
+4386  08e3 85            	popw	x
+4387  08e4               L5561:
+4388                     ; 794 				hal_delay_ms(100);
+4390  08e4 ae0064        	ldw	x,#100
+4391  08e7 cd0014        	call	_hal_delay_ms
+4393  08ea 20ad          	jra	L5461
+4418                     ; 801 int main(void)
+4418                     ; 802 {
+4419                     	switch	.text
+4420  08ec               _main:
+4424                     ; 803 	system_init();
+4426  08ec cd0861        	call	_system_init
+4428                     ; 804     main_loop();
+4430  08ef ada6          	call	_main_loop
+4432  08f1               L7661:
+4433                     ; 805     while(1);
+4435  08f1 20fe          	jra	L7661
+4754                     	xdef	_main
+4755                     	xdef	_main_loop
+4756                     	xdef	_system_init
+4757                     	xdef	_w5500_chip_init
+4758                     	xdef	_tcp_server_init
+4759                     	xdef	_tcp_server_process
+4760                     	xdef	_hal_timer_init
+4761                     	xdef	_uart_server_init
+4762                     	xdef	_hal_spi_write
+4763                     	xdef	_hal_spi_read
+4764                     	xdef	_hal_spi_write_byte
+4765                     	xdef	_hal_spi_read_byte
+4766                     	xdef	_hal_spi_byte
+4767                     	xdef	_uart_server_process
+4768                     	xdef	_hal_uart_read_byte
+4769                     	xdef	_hal_uart_available
+4770                     	xdef	_hal_gpio_init
+4771                     	xdef	_hal_w5500_reset_high
+4772                     	xdef	_relay_control_init
+4773                     	xdef	_command_parser_execute
+4774                     	xdef	_hal_timer_set_callback
+4775                     	xdef	_timer_callback
+4776                     	xdef	_send_alive_message
+4777                     	xdef	_sensor_reader_init
+4778                     	xdef	_process_axle_counting
+4779                     	xdef	_hal_timer_start
+4780                     	xdef	_sensor_reader_update
+4781                     	xdef	_relay_control_set_all
+4782                     	xdef	_relay_control_set
+4783                     	xdef	_hal_relay_set
+4784                     	xdef	_hal_di_read
+4785                     	xdef	_message_formatter_alive
+4786                     	xdef	_sensor_reader_get_state
+4787                     	xdef	_uart_server_send
+4788                     	xdef	_hal_spi_cs_high
+4789                     	xdef	_hal_spi_cs_low
+4790                     	xdef	_hal_uart_send
+4791                     	xdef	_hal_uart_send_byte
+4792                     	xdef	_uart_server_is_ready
+4793                     	xdef	_tcp_server_send
+4794                     	xdef	_hal_delay_ms
+4795                     	xdef	_tcp_server_is_connected
+4796                     	xdef	_hal_get_millis
+4797                     	xdef	_user_callback
+4798                     	xdef	_systick_ms
+4799                     	switch	.ubsct
+4800  0000               _uart_rx_buffer:
+4801  0000 000000000000  	ds.b	32
+4802                     	xdef	_uart_rx_buffer
+4803  0020               L73_uart_tx_buffer:
+4804  0020 0000000000    	ds.b	5
+4805                     	xdef	_uart_rx_tail
+4806                     	xdef	_uart_rx_head
+4807                     	xdef	_uart_rx_count
+4808  0025               _tx_buffer:
+4809  0025 000000000000  	ds.b	32
+4810                     	xdef	_tx_buffer
+4811  0045               _rx_buffer:
+4812  0045 000000000000  	ds.b	32
+4813                     	xdef	_rx_buffer
+4814                     	xref	_strlen
+4815                     	xref	_send
+4816                     	xref	_recv
+4817                     	xref	_listen
+4818                     	xref	_close
+4819                     	xref	_socket
+4820                     	xref	_wizchip_init
+4821                     	xref	_reg_wizchip_spiburst_cbfunc
+4822                     	xref	_reg_wizchip_spi_cbfunc
+4823                     	xref	_getSn_RX_RSR
+4824                     	xref	_reg_wizchip_cs_cbfunc
+4825                     	xref	_WIZCHIP_READ
+4826                     	xref	_TIM4_ClearFlag
+4827                     	xref	_TIM4_ITConfig
+4828                     	xref	_TIM4_Cmd
+4829                     	xref	_TIM4_TimeBaseInit
+4830                     	xref	_SPI_GetFlagStatus
+4831                     	xref	_SPI_ReceiveData
+4832                     	xref	_SPI_SendData
+4833                     	xref	_SPI_Cmd
+4834                     	xref	_SPI_Init
+4835                     	xref	_SPI_DeInit
+4836                     	xref	_UART1_GetFlagStatus
+4837                     	xref	_UART1_SendData8
+4838                     	xref	_UART1_ITConfig
+4839                     	xref	_UART1_Cmd
+4840                     	xref	_UART1_Init
+4841                     	xref	_GPIO_ReadInputPin
+4842                     	xref	_GPIO_WriteLow
+4843                     	xref	_GPIO_WriteHigh
+4844                     	xref	_GPIO_Init
+4845                     	xref	_CLK_HSIPrescalerConfig
+4846                     	xref	_CLK_PeripheralClockConfig
+4847                     	switch	.const
+4848  0013               L1521:
+4849  0013 4552524f522c  	dc.b	"ERROR,INVALID_COMM"
+4850  0025 414e440a00    	dc.b	"AND",10,0
+4851                     	xref.b	c_lreg
+4852                     	xref.b	c_x
+4853                     	xref.b	c_y
+4873                     	xref	c_itolx
+4874                     	xref	c_xymov
+4875                     	xref	c_lcmp
+4876                     	xref	c_lsub
+4877                     	xref	c_uitolx
+4878                     	xref	c_rtol
+4879                     	xref	c_ltor
+4880                     	end

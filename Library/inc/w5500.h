@@ -46,6 +46,7 @@ static uint16_t sock_any_port = SOCK_ANY_PORT_NUM;
 #define Sn_IR_SENDOK                 0x10
 #define SOCK_BUSY             0  
 #define Sn_IR_TIMEOUT                0x08
+#define SOCKERR_DATALEN       (SOCK_ERROR - 14) 
 #define Sn_MR(N)           (_W5500_IO_BASE_ + (0x0000 << 8) + (WIZCHIP_SREG_BLOCK(N) << 3))
 #define setSn_TXBUF_SIZE(sn, txbufsize) WIZCHIP_WRITE(Sn_TXBUF_SIZE(sn), txbufsize)
 #define setSn_RXBUF_SIZE(sn, rxbufsize) WIZCHIP_WRITE(Sn_RXBUF_SIZE(sn),rxbufsize)
@@ -56,6 +57,8 @@ static uint16_t sock_any_port = SOCK_ANY_PORT_NUM;
 #define getSn_SR(sn) WIZCHIP_READ(Sn_SR(sn))
 #define setSn_CR(sn, cr) WIZCHIP_WRITE(Sn_CR(sn), cr)
 #define Sn_RX_RSR(N)       (_W5500_IO_BASE_ + (0x0026 << 8) + (WIZCHIP_SREG_BLOCK(N) << 3))
+#define getSn_RXBUF_SIZE(sn) WIZCHIP_READ(Sn_RXBUF_SIZE(sn))
+#define getSn_RxMAX(sn) (((uint16_t)getSn_RXBUF_SIZE(sn)) << 10)		
 
 #define CHECK_SOCKNUM()                        \
     do {                                       \
@@ -74,6 +77,10 @@ static uint16_t sock_any_port = SOCK_ANY_PORT_NUM;
         if (getSn_SR(sn) != SOCK_INIT)         \
             return SOCKERR_SOCKINIT;           \
     } while (0)
+#define CHECK_SOCKDATA()   \
+   do{                     \
+      if(len == 0) return SOCKERR_DATALEN;   \
+   }while(0);              \
 
 #define getVERSIONR()          WIZCHIP_READ(VERSIONR)
 #define setSn_IR(sn, ir) WIZCHIP_WRITE(Sn_IR(sn), (ir & 0x1F))
@@ -88,6 +95,25 @@ static uint16_t sock_any_port = SOCK_ANY_PORT_NUM;
 		WIZCHIP_WRITE(Sn_PORT(sn),   (uint8_t)(port >> 8)); \
 		WIZCHIP_WRITE(WIZCHIP_OFFSET_INC(Sn_PORT(sn),1), (uint8_t) port); \
 	}
+#define Sn_TX_WR(N)        (_W5500_IO_BASE_ + (0x0024 << 8) + (WIZCHIP_SREG_BLOCK(N) << 3))
+#define Sn_TX_FSR(N)       (_W5500_IO_BASE_ + (0x0020 << 8) + (WIZCHIP_SREG_BLOCK(N) << 3))
+#define Sn_RX_RD(N)        (_W5500_IO_BASE_ + (0x0028 << 8) + (WIZCHIP_SREG_BLOCK(N) << 3))
+#define WIZCHIP_TXBUF_BLOCK(N)      (2+4*N)
+#define WIZCHIP_RXBUF_BLOCK(N)      (3+4*N) //< Socket N Rx buffer address block
+#define getSn_TX_WR(sn) (((uint16_t)WIZCHIP_READ(Sn_TX_WR(sn)) << 8) + WIZCHIP_READ(WIZCHIP_OFFSET_INC(Sn_TX_WR(sn),1)))		
+#define setSn_TX_WR(sn, txwr) { \
+		WIZCHIP_WRITE(Sn_TX_WR(sn),   (uint8_t)(txwr>>8)); \
+		WIZCHIP_WRITE(WIZCHIP_OFFSET_INC(Sn_TX_WR(sn),1), (uint8_t) txwr); \
+		}
+#define getSn_RX_RD(sn) (((uint16_t)WIZCHIP_READ(Sn_RX_RD(sn)) << 8) + WIZCHIP_READ(WIZCHIP_OFFSET_INC(Sn_RX_RD(sn),1)))		
+#define setSn_RX_RD(sn, rxrd) { \
+		WIZCHIP_WRITE(Sn_RX_RD(sn),   (uint8_t)(rxrd>>8)); \
+		WIZCHIP_WRITE(WIZCHIP_OFFSET_INC(Sn_RX_RD(sn),1), (uint8_t) rxrd); \
+	}
+#define getSn_TXBUF_SIZE(sn) WIZCHIP_READ(Sn_TXBUF_SIZE(sn))
+#define getSn_TxMAX(sn) (((uint16_t)getSn_TXBUF_SIZE(sn)) << 10)		
+#define getSn_IR(sn) (WIZCHIP_READ(Sn_IR(sn)) & 0x1F)
+
 typedef struct __WIZCHIP
 {
     uint16_t if_mode;
@@ -130,7 +156,7 @@ uint8_t WIZCHIP_READ(uint32_t AddrSel);
 void WIZCHIP_READ_BUF(uint32_t AddrSel, uint8_t* pBuf, uint16_t len);
 void reg_wizchip_cs_cbfunc(void(*cs_sel)(void),
                            void(*cs_desel)(void));
-
+uint16_t getSn_TX_FSR(uint8_t sn);
 uint16_t getSn_RX_RSR(uint8_t sn);
 void WIZCHIP_WRITE_BUF(uint32_t AddrSel, uint8_t* pBuf, uint16_t len);
 void reg_wizchip_spi_cbfunc(
