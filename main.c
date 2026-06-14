@@ -22,6 +22,14 @@ typedef enum {
     UART_STATE_TX_PENDING,
     UART_STATE_ERROR
 } uart_state_t;
+
+typedef enum {
+    TCP_STATE_IDLE,
+    TCP_STATE_LISTENING,
+    TCP_STATE_CONNECTED,
+    TCP_STATE_ERROR
+} tcp_state_t;
+
 typedef struct {
     unsigned long last_alive_time;
     unsigned long last_sensor_time;
@@ -43,30 +51,58 @@ static axle_counter_t axle_counter = {
     0,
     0
 };
-
+static tcp_state_t server_state = TCP_STATE_IDLE;
 static task_timer_t task_timer = {0, 0, 0,};
+uint8_t rx_buffer[TCP_RX_BUFFER];
+uint8_t tx_buffer[TCP_TX_BUFFER];
 static sensor_state_t current_state = {0, 0, 0, 0};
 typedef void (*timer_callback_t)(void);
 static uart_state_t uart_state = UART_STATE_IDLE;
 static uint8_t server_socket = 0;
-static volatile uint16_t uart_rx_count = 0;
-static volatile uint16_t uart_rx_head = 0;
-static volatile uint16_t uart_rx_tail = 0;
+static uint16_t server_port = TCP_SERVER_PORT;
+uint16_t uart_rx_count = 0;
+uint16_t uart_rx_head = 0;
+uint16_t uart_rx_tail = 0;
 static uint8_t uart_tx_buffer[UART_TX_BUFFER_SIZE];
-static uint8_t uart_rx_buffer[32];
-static unsigned long systick_ms = 0;
-static timer_callback_t user_callback = 0;
+uint8_t uart_rx_buffer[32];
+unsigned long systick_ms = 0;
+timer_callback_t user_callback = 0;
+
+
 
 
 unsigned long hal_get_millis(void)
 {
     return systick_ms;
 }
-
+int tcp_server_is_connected(void)
+{
+    return (server_state == TCP_STATE_CONNECTED) ? 1 : 0;
+}
 void hal_delay_ms(unsigned int ms)
 {
     unsigned long start = hal_get_millis();
     while ((hal_get_millis() - start) < ms);
+}
+int tcp_server_send(const uint8_t *data, uint16_t len)
+{
+    uint16_t sent;
+
+    if (server_state != TCP_STATE_CONNECTED) {
+        return -1;
+    }
+
+    if (len > TCP_TX_BUFFER) {
+        len = TCP_TX_BUFFER;
+    }
+
+    /* Copy to TX buffer */
+    memcpy(tx_buffer, data, len);
+
+    /* Send via socket */
+    sent = send(server_socket, tx_buffer, len);
+
+    return (sent == len) ? 0 : -1;
 }
 
 int uart_server_is_ready(void){
@@ -98,7 +134,6 @@ void hal_spi_cs_high(void)
 {
     GPIO_WriteHigh(W5500_CS_PORT, W5500_CS_PIN);
 }
-
 int uart_server_send(const uint8_t *data, uint16_t len)
 {
     if (uart_state == UART_STATE_IDLE) {
@@ -173,7 +208,7 @@ uint8_t hal_di_read(uint8_t di_num)
     return (GPIO_ReadInputPin(port, pin) == SET) ? 1 : 0;
 }
 
-static char* u16_to_str(char *p, uint16_t value)
+char* u16_to_str(char *p, uint16_t value)
 {
     char temp[6];
     uint8_t i = 0;
@@ -199,7 +234,7 @@ static char* u16_to_str(char *p, uint16_t value)
     return p;
 }
 
-static char* u32_to_str(char *p, uint32_t value)
+char* u32_to_str(char *p, uint32_t value)
 {
     char temp[10];
     uint8_t i = 0;
@@ -502,7 +537,7 @@ uint8_t hal_uart_read_byte(void){
 void uart_server_process(void){
 	uint16_t available_len;
 	uint8_t read_byte;
-	char resp_buf[20];
+	char resp_buf[32];
 	sensor_state_t state;
 	
 	if (uart_state == UART_STATE_IDLE){
@@ -607,6 +642,62 @@ void hal_timer_init(void){
     enableInterrupts();
 }
 
+void tcp_server_process(void){
+    uint16_t received_len = 0;
+    uint8_t sock_status;
+
+    if(server_state == TCP_STATE_IDLE) return;
+    sock_status = getSn_SR(server_socket);
+
+    switch(sock_status){
+        case SOCK_LISTEN:
+            server_state = TCP_STATE_LISTENING;
+            break;
+        
+        case SOCK_ESTABLISHED:
+            server_state = TCP_STATE_CONNECTED;
+            received_len = getSn_RX_RSR(server_socket);
+            if(received_len > 0){
+                uint16_t read_len = (received_len > TCP_RX_BUFFER) ? TCP_RX_BUFFER : received_len;
+
+                read_len = recv(server_socket, rx_buffer, read_len);
+                if(read_len > 0){
+                    if(command_parser_execute((const char *)rx_buffer, read_len) == 0){
+                        /* Send success response (ALIVE message) */
+                        char resp_buf[32];
+                        sensor_state_t state = sensor_reader_get_state();
+                        message_formatter_alive(resp_buf,sizeof(resp_buf),state.di1,state.di2,state.di3,state.di4);
+                        tcp_server_send((uint8_t *)resp_buf, strlen(resp_buf));
+                    }
+                }
+            }
+            break;
+        
+        case SOCK_CLOSED:
+            server_state = TCP_STATE_LISTENING;
+            close(server_socket);
+            socket(server_socket, Sn_MR_TCP, server_port, 0);
+            listen(server_socket);
+            break;
+        
+        default:
+            server_state = TCP_STATE_ERROR;
+            break;
+    }
+}
+
+void tcp_server_init(uint16_t port){
+    server_port = port;
+    server_state = TCP_STATE_IDLE;
+
+    //w5500_init_network();
+    if(socket(server_socket, Sn_MR_TCP, server_port, 0) == server_socket){
+        if(listen(server_socket) == SOCK_OK){
+            server_state = TCP_STATE_LISTENING;
+        }
+    }
+}
+
 void w5500_chip_init(void)
 {
     uint8_t version;
@@ -640,6 +731,11 @@ void w5500_chip_init(void)
     reg_wizchip_spiburst_cbfunc(hal_spi_read,hal_spi_write);
     reg_wizchip_cs_cbfunc(hal_spi_cs_low,hal_spi_cs_high);
     wizchip_init(0, 0);
+    version = getVERSIONR();
+    if(version != 0x04)
+    {
+        while(1);
+    }
 }
 
 void system_init(void){
@@ -653,6 +749,7 @@ void system_init(void){
 	sensor_reader_init();
 
     w5500_chip_init();
+    tcp_server_init(TCP_SERVER_PORT);
 
     uart_server_init(UART_BAUDRATE);
 
@@ -666,6 +763,8 @@ void main_loop(void)
 {
     while(1)
     {
+        /* Process TCP server communications */
+        tcp_server_process();
 		/* Process UART server communcation*/
 		uart_server_process();
 
@@ -692,3 +791,4 @@ int main(void)
     while(1);
 }
 
+// IP DI NHI HA configuration setting

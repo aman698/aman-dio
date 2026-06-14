@@ -101,9 +101,9 @@
 #define SENSOR_READ_INTERVAL 50 /* Read sensors every 50ms */
 
 /* Message Buffer Sizes */
-#define MSG_BUFFER_SIZE 80
-#define TCP_RX_BUFFER   512
-#define TCP_TX_BUFFER   512
+#define MSG_BUFFER_SIZE 32
+#define TCP_RX_BUFFER   32
+#define TCP_TX_BUFFER   32
 
 
 /* ============================================================================

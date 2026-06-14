@@ -1,5 +1,5 @@
 
-Map of Debug\final.sm8 from link file Debug\final.lkf - Sun Jun 14 14:18:02 2026
+Map of Debug\final.sm8 from link file Debug\final.lkf - Sun Jun 14 17:41:04 2026
 
 
                                --------
@@ -7,17 +7,17 @@ Map of Debug\final.sm8 from link file Debug\final.lkf - Sun Jun 14 14:18:02 2026
                                --------
 
 start 00008080 end 000080be length    62 segment .const
-start 00008100 end 0000927e length  4478 segment .text
+start 00008127 end 000097c9 length  5794 segment .text
 start 00004000 end 00004000 length     0 segment .eeprom
-start 00000000 end 0000003a length    58 segment .bsct, initialized
-start 000080c6 end 00008100 length    58 segment .bsct, from
-start 0000003a end 00000084 length    74 segment .ubsct
-start 00000084 end 00000084 length     0 segment .bit
-start 00000084 end 00000084 length     0 segment .share
+start 00000000 end 00000061 length    97 segment .bsct, initialized
+start 000080c6 end 00008127 length    97 segment .bsct, from
+start 00000061 end 000000ab length    74 segment .ubsct
+start 000000ab end 000000ab length     0 segment .bit
+start 000000ab end 000000ab length     0 segment .share
 start 00000100 end 00000100 length     0 segment .data
 start 00000100 end 00000100 length     0 segment .bss
-start 00000000 end 0000077b length  1915 segment .info.
-start 00000000 end 000046cf length 18127 segment .debug
+start 00000000 end 000007aa length  1962 segment .info.
+start 00000000 end 00004f68 length 20328 segment .debug
 start 00008000 end 00008080 length   128 segment .const
 start 000080be end 000080c6 length     8 segment .init
 
@@ -27,136 +27,145 @@ start 000080be end 000080c6 length     8 segment .init
                                -------
 
 C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\crtsi0.sm8:
-start 00008100 end 00008150 length    80 section .text
+start 00008127 end 00008177 length    80 section .text
 start 00000100 end 00000100 length     0 section .bss
-start 0000003a end 0000003a length     0 section .ubsct
+start 00000061 end 00000061 length     0 section .ubsct
 start 00000000 end 00000033 length    51 section .info.
 
 Debug\w5500.o:
-start 00008150 end 000081be length   110 section .text
-start 00000000 end 00000014 length    20 section .bsct
-start 00000000 end 000006d3 length  1747 section .debug
+start 00008177 end 000086a7 length  1328 section .text
+start 00000000 end 00000036 length    54 section .bsct
+start 00000000 end 00000be8 length  3048 section .debug
 start 00000033 end 0000009d length   106 section .info.
 
 Debug\stm8s_clk.o:
-start 000081be end 000082b1 length   243 section .text
-start 000006d3 end 00000e11 length  1854 section .debug
+start 000086a7 end 0000879a length   243 section .text
+start ******** end ******** length     0 section .bsct *** removed ***
+start 00000be8 end 00001382 length  1946 section .debug
 start 0000009d end 0000010b length   110 section .info.
 start 00008080 end 0000808c length    12 section .const
 
 Debug\stm8s_spi.o:
-start 000082b1 end 00008326 length   117 section .text
-start 00000e11 end 000016be length  2221 section .debug
+start 0000879a end 0000880f length   117 section .text
+start ******** end ******** length     0 section .bsct *** removed ***
+start 00001382 end 00001c8b length  2313 section .debug
 start 0000010b end 00000179 length   110 section .info.
 
 Debug\stm8s_gpio.o:
-start 00008326 end 000083ac length   134 section .text
-start 000016be end 00001e10 length  1874 section .debug
+start 0000880f end 00008895 length   134 section .text
+start ******** end ******** length     0 section .bsct *** removed ***
+start 00001c8b end 00002439 length  1966 section .debug
 start 00000179 end 000001e8 length   111 section .info.
 
 Debug\stm8s_tim4.o:
-start 000083ac end 000083e1 length    53 section .text
-start 00001e10 end 0000221b length  1035 section .debug
+start 00008895 end 000088ca length    53 section .text
+start ******** end ******** length     0 section .bsct *** removed ***
+start 00002439 end 000028a0 length  1127 section .debug
 start 000001e8 end 00000257 length   111 section .info.
 
 Debug\stm8s_uart1.o:
-start 000083e1 end 000085d7 length   502 section .text
-start 0000221b end 00002c4e length  2611 section .debug
+start 000088ca end 00008ac0 length   502 section .text
+start ******** end ******** length     0 section .bsct *** removed ***
+start 000028a0 end 0000332f length  2703 section .debug
 start 00000257 end 000002c7 length   112 section .info.
 start 0000808c end 00008090 length     4 section .const
 
 Debug\main.o:
-start 000085d7 end 0000900c length  2613 section .text
-start 00000014 end 0000003a length    38 section .bsct
-start 0000003a end 0000007a length    64 section .ubsct
-start 00002c4e end 00004564 length  6422 section .debug
+start 00008ac0 end 00009549 length  2697 section .text
+start 00000036 end 00000061 length    43 section .bsct
+start 00000061 end 000000a1 length    64 section .ubsct
+start 0000332f end 00004dfd length  6862 section .debug
 start 000002c7 end 00000330 length   105 section .info.
 start 00008090 end 000080be length    46 section .const
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libis0.sm8)strlen0.o:
-start 0000900c end 00009018 length    12 section .text
+start 00009549 end 00009555 length    12 section .text
 start 00000330 end 0000035e length    46 section .info.
 
+(C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)itolx.o:
+start 00009555 end 00009563 length    14 section .text
+start 0000035e end 0000038d length    47 section .info.
+
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ladc.o:
-start 00009018 end 00009029 length    17 section .text
-start 0000035e end 0000038c length    46 section .info.
+start 00009563 end 00009574 length    17 section .text
+start 0000038d end 000003bb length    46 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lcmp.o:
-start 00009029 end 00009049 length    32 section .text
-start 0000038c end 000003ba length    46 section .info.
+start 00009574 end 00009594 length    32 section .text
+start 000003bb end 000003e9 length    46 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lgadc.o:
-start 00009049 end 00009059 length    16 section .text
-start 000003ba end 000003e9 length    47 section .info.
+start 00009594 end 000095a4 length    16 section .text
+start 000003e9 end 00000418 length    47 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)llsh.o:
-start 00009059 end 00009068 length    15 section .text
-start 000003e9 end 00000417 length    46 section .info.
+start 000095a4 end 000095b3 length    15 section .text
+start 00000418 end 00000446 length    46 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lreg.o:
-start 0000007a end 0000007e length     4 section .ubsct
-start 00000417 end 00000445 length    46 section .info.
+start 000000a1 end 000000a5 length     4 section .ubsct
+start 00000446 end 00000474 length    46 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lsub.o:
-start 00009068 end 00009080 length    24 section .text
-start 00000445 end 00000473 length    46 section .info.
+start 000095b3 end 000095cb length    24 section .text
+start 00000474 end 000004a2 length    46 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ltor.o:
-start 00009080 end 00009092 length    18 section .text
-start 00000473 end 000004a1 length    46 section .info.
+start 000095cb end 000095dd length    18 section .text
+start 000004a2 end 000004d0 length    46 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ludiv.o:
-start 00009092 end 000090a6 length    20 section .text
-start 000004a1 end 000004d0 length    47 section .info.
+start 000095dd end 000095f1 length    20 section .text
+start 000004d0 end 000004ff length    47 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ldiv.o:
-start 000090a6 end 00009191 length   235 section .text
-start 000004d0 end 000004fe length    46 section .info.
+start 000095f1 end 000096dc length   235 section .text
+start 000004ff end 0000052d length    46 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lgneg.o:
-start 00009191 end 000091a4 length    19 section .text
-start 000004fe end 0000052d length    47 section .info.
+start 000096dc end 000096ef length    19 section .text
+start 0000052d end 0000055c length    47 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lneg.o:
-start 000091a4 end 000091b9 length    21 section .text
-start 0000052d end 0000055b length    46 section .info.
+start 000096ef end 00009704 length    21 section .text
+start 0000055c end 0000058a length    46 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lumod.o:
-start 000091b9 end 000091d3 length    26 section .text
-start 0000055b end 0000058a length    47 section .info.
+start 00009704 end 0000971e length    26 section .text
+start 0000058a end 000005b9 length    47 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lzmp.o:
-start 000091d3 end 000091e6 length    19 section .text
-start 0000058a end 000005b8 length    46 section .info.
+start 0000971e end 00009731 length    19 section .text
+start 000005b9 end 000005e7 length    46 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)rtol.o:
-start 000091e6 end 000091f8 length    18 section .text
-start 000005b8 end 000005e6 length    46 section .info.
+start 00009731 end 00009743 length    18 section .text
+start 000005e7 end 00000615 length    46 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)smul.o:
-start 000091f8 end 00009237 length    63 section .text
-start 000005e6 end 00000614 length    46 section .info.
+start 00009743 end 00009782 length    63 section .text
+start 00000615 end 00000643 length    46 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)utolx.o:
-start 00009237 end 0000923e length     7 section .text
-start 00000614 end 00000643 length    47 section .info.
+start 00009782 end 00009789 length     7 section .text
+start 00000643 end 00000672 length    47 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)xreg.o:
-start 0000007e end 00000081 length     3 section .ubsct
-start 00000643 end 00000671 length    46 section .info.
+start 000000a5 end 000000a8 length     3 section .ubsct
+start 00000672 end 000006a0 length    46 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)xymov.o:
-start 0000923e end 0000927d length    63 section .text
-start 00000671 end 000006a0 length    47 section .info.
+start 00009789 end 000097c8 length    63 section .text
+start 000006a0 end 000006cf length    47 section .info.
 
 (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)yreg.o:
-start 00000081 end 00000084 length     3 section .ubsct
-start 000006a0 end 000006ce length    46 section .info.
+start 000000a8 end 000000ab length     3 section .ubsct
+start 000006cf end 000006fd length    46 section .info.
 
 Debug\stm8_interrupt_vector.o:
-start 0000927d end 0000927e length     1 section .text
-start 00004564 end 000046cf length   363 section .debug
-start 000006ce end 00000748 length   122 section .info.
+start 000097c8 end 000097c9 length     1 section .text
+start 00004dfd end 00004f68 length   363 section .debug
+start 000006fd end 00000777 length   122 section .info.
 start 00008000 end 00008080 length   128 section .const
 
 
@@ -165,8 +174,8 @@ start 00008000 end 00008080 length   128 section .const
                              -----------
 
 Debug\main.o:
-L355_u32_to_str                   35   (21)
-L374_u16_to_str                   15   (15)
+L515_u16_to_str                   15   (15)
+L575_u32_to_str                   35   (21)
 _command_parser_execute           25   (8)
 _hal_delay_ms                     16   (12)
 _hal_di_read                      10   (5)
@@ -174,12 +183,12 @@ _hal_get_millis                    4   (2)
 _hal_gpio_init                    15   (2)
 _hal_relay_set                    13   (8)
 _hal_spi_byte                      6   (3)
-_hal_spi_cs_high              >    7   (2)
-_hal_spi_cs_low               >    7   (2)
-_hal_spi_read                 >   14   (8)
-_hal_spi_read_byte            >    8   (2)
-_hal_spi_write                >   14   (8)
-_hal_spi_write_byte           >    8   (2)
+_hal_spi_cs_high                   7   (2)
+_hal_spi_cs_low                    7   (2)
+_hal_spi_read                     14   (8)
+_hal_spi_read_byte                 8   (2)
+_hal_spi_write                    14   (8)
+_hal_spi_write_byte                8   (2)
 _hal_timer_init                    6   (2)
 _hal_timer_set_callback            2   (2)
 _hal_timer_start                   4   (2)
@@ -188,7 +197,7 @@ _hal_uart_read_byte                3   (3)
 _hal_uart_send                    16   (8)
 _hal_uart_send_byte                8   (3)
 _hal_w5500_reset_high              7   (2)
-_main                         >   73   (2)
+_main                         >  137   (2)
 _main_loop                        71   (13)
 _message_formatter_alive          10   (10)
 _message_formatter_avcc           51   (16)
@@ -200,13 +209,14 @@ _send_alive_message               64   (42)
 _sensor_reader_get_state           8   (4)
 _sensor_reader_init               14   (2)
 _sensor_reader_update             12   (2)
-_system_init                      56   (2)
-_timer_callback               >  105   (2)
+_system_init                     135   (2)
+_tcp_server_init                 133   (2)
+_timer_callback                  105   (2)
 _uart_server_init                 54   (6)
 _uart_server_is_ready              2   (2)
 _uart_server_process              58   (33)
 _uart_server_send                 22   (6)
-_w5500_chip_init                  18   (2)
+_w5500_chip_init                 127   (3)
 
 Debug\stm8_interrupt_vector.o:
 f_NonHandledInterrupt         >    6   (6)
@@ -245,298 +255,375 @@ _UART1_Init                       48   (23)
 _UART1_SendData8                   2   (2)
 
 Debug\w5500.o:
-L311_wizchip_spi_writeburst   >    6   (6)
-L32_wizchip_cs_deselect       >    2   (2)
-L3_wizchip_cs_select          >    2   (2)
-L53_wizchip_spi_readbyte      >    2   (2)
-L74_wizchip_spi_writebyte     >    2   (2)
-L76_wizchip_spi_readburst     >    6   (6)
+L16_wizchip_spi_readbyte           2   (2)
+L311_wizchip_spi_readburst         6   (6)
+L37_wizchip_spi_writebyte          2   (2)
+L72_wizchip_cs_select              2   (2)
+L731_wizchip_spi_writeburst        6   (6)
+L74_wizchip_cs_deselect            2   (2)
+_WIZCHIP_READ                    115   (10) *** pointer() ***
+_WIZCHIP_READ_BUF                120   (15) *** pointer() ***
+_WIZCHIP_WRITE                   116   (11) *** pointer() ***
+_close                           119   (3)
+_listen                          122   (3)
 _reg_wizchip_cs_cbfunc             6   (6)
 _reg_wizchip_spi_cbfunc            6   (6)
 _reg_wizchip_spiburst_cbfunc       6   (6)
-_wizchip_init                      5   (5)
+_socket                          131   (11)
+_wizchip_init                    124   (8)
 
 C:\Program Files (x86:
 _strlen                            2   (2)
 
-Stack size: 111
+Stack size: 143
 
 
                               ---------
                               Call tree
                               ---------
-   1 > L311_wizchip_spi_writeburst: (6)
+   1 > _GPIO_Write: (5)
 
-   2 > L32_wizchip_cs_deselect: (2)
+   2 > __stext: (0)
 
-   3 > L3_wizchip_cs_select: (2)
-
-   4 > L53_wizchip_spi_readbyte: (2)
-
-   5 > L74_wizchip_spi_writebyte: (2)
-
-   6 > L76_wizchip_spi_readburst: (6)
-
-   7 > _GPIO_Write: (5)
-
-   8 > __stext: (0)
-
-   9 > _hal_spi_cs_high: (2)
-  10      + _GPIO_WriteHigh: (5)
-       
-  11 > _hal_spi_cs_low: (2)
-  12      + _GPIO_WriteLow: (5)
-       
-  13 > _hal_spi_read: (8)
-  14      + _hal_spi_byte: (3)
-  15      |    + _SPI_GetFlagStatus: (3)
-  16      |    + _SPI_ReceiveData: (2)
-  17      |    + _SPI_SendData: (2)
-          | 
-       
-  18 > _hal_spi_read_byte: (2)
-  19      + _hal_spi_byte --> 14
-       
-  20 > _hal_spi_write: (8)
-  21      + _hal_spi_byte --> 14
-       
-  22 > _hal_spi_write_byte: (2)
-  23      + _hal_spi_byte --> 14
-       
-  24 > _main: (2)
-  25      + _main_loop: (13)
-  26      |    + _GPIO_ReadInputPin: (5)
-  27      |    + _hal_delay_ms: (12)
-  28      |    |    + _hal_get_millis: (2)
+   3 > _main: (2)
+   4      + _main_loop: (13)
+   5      |    + _GPIO_ReadInputPin: (5)
+   6      |    + _hal_delay_ms: (12)
+   7      |    |    + _hal_get_millis: (2)
           |    | 
-  29      |    + _strlen: (2)
-  30      |    + _uart_server_is_ready: (2)
-  31      |    + _uart_server_process: (33)
-  32      |    |    + _command_parser_execute: (8)
-  33      |    |    |    + _relay_control_set: (4)
-  34      |    |    |    |    + _hal_relay_set: (8)
-  35      |    |    |    |    |    + _GPIO_WriteHigh --> 10
-  36      |    |    |    |    |    + _GPIO_WriteLow --> 12
+   8      |    + _strlen: (2)
+   9      |    + _uart_server_is_ready: (2)
+  10      |    + _uart_server_process: (33)
+  11      |    |    + _command_parser_execute: (8)
+  12      |    |    |    + _relay_control_set: (4)
+  13      |    |    |    |    + _hal_relay_set: (8)
+  14      |    |    |    |    |    + _GPIO_WriteHigh: (5)
+  15      |    |    |    |    |    + _GPIO_WriteLow: (5)
           |    |    |    |    | 
           |    |    |    | 
           |    |    | 
-  37      |    |    + _hal_uart_available: (2)
-  38      |    |    + _hal_uart_read_byte: (3)
-  39      |    |    + _message_formatter_alive: (10)
-  40      |    |    + _sensor_reader_get_state: (4)
-  41      |    |    + _strlen --> 29
-  42      |    |    + _uart_server_send: (6)
-  43      |    |    |    + _hal_uart_send: (8)
-  44      |    |    |    |    + _hal_uart_send_byte: (3)
-  45      |    |    |    |    |    + _UART1_GetFlagStatus: (5)
-  46      |    |    |    |    |    + _UART1_SendData8: (2)
+  16      |    |    + _hal_uart_available: (2)
+  17      |    |    + _hal_uart_read_byte: (3)
+  18      |    |    + _message_formatter_alive: (10)
+  19      |    |    + _sensor_reader_get_state: (4)
+  20      |    |    + _strlen --> 8
+  21      |    |    + _uart_server_send: (6)
+  22      |    |    |    + _hal_uart_send: (8)
+  23      |    |    |    |    + _hal_uart_send_byte: (3)
+  24      |    |    |    |    |    + _UART1_GetFlagStatus: (5)
+  25      |    |    |    |    |    + _UART1_SendData8: (2)
           |    |    |    |    | 
           |    |    |    | 
           |    |    | 
           |    | 
-  47      |    + _uart_server_send --> 42
+  26      |    + _uart_server_send --> 21
           | 
-  48      + _system_init: (2)
-  49      |    + _CLK_HSIPrescalerConfig: (3)
-  50      |    + _hal_delay_ms --> 27
-  51      |    + _hal_gpio_init: (2)
-  52      |    |    + _GPIO_Init: (6)
-  53      |    |    + _hal_relay_set --> 34
-  54      |    |    + _hal_w5500_reset_high: (2)
-  55      |    |    |    + _GPIO_WriteHigh --> 10
+  27      + _system_init: (2)
+  28      |    + _CLK_HSIPrescalerConfig: (3)
+  29      |    + _hal_delay_ms --> 6
+  30      |    + _hal_gpio_init: (2)
+  31      |    |    + _GPIO_Init: (6)
+  32      |    |    + _hal_relay_set --> 13
+  33      |    |    + _hal_w5500_reset_high: (2)
+  34      |    |    |    + _GPIO_WriteHigh --> 14
           |    |    | 
           |    | 
-  56      |    + _hal_timer_init: (2)
-  57      |    |    + _CLK_PeripheralClockConfig: (4)
-  58      |    |    + _TIM4_ClearFlag: (2)
-  59      |    |    + _TIM4_ITConfig: (4)
-  60      |    |    + _TIM4_TimeBaseInit: (2)
+  35      |    + _hal_timer_init: (2)
+  36      |    |    + _CLK_PeripheralClockConfig: (4)
+  37      |    |    + _TIM4_ClearFlag: (2)
+  38      |    |    + _TIM4_ITConfig: (4)
+  39      |    |    + _TIM4_TimeBaseInit: (2)
           |    | 
-  61      |    + _hal_timer_set_callback: (2)
-  62      |    + _hal_timer_start: (2)
-  63      |    |    + _TIM4_Cmd: (2)
+  40      |    + _hal_timer_set_callback: (2)
+  41      |    + _hal_timer_start: (2)
+  42      |    |    + _TIM4_Cmd: (2)
           |    | 
-  64      |    + _relay_control_init: (2)
-  65      |    |    + _relay_control_set_all: (3)
-  66      |    |    |    + _relay_control_set --> 33
+  43      |    + _relay_control_init: (2)
+  44      |    |    + _relay_control_set_all: (3)
+  45      |    |    |    + _relay_control_set --> 12
           |    |    | 
           |    | 
-  67      |    + _sensor_reader_init: (2)
-  68      |    |    + _sensor_reader_update: (2)
-  69      |    |    |    + _hal_di_read: (5)
-  70      |    |    |    |    + _GPIO_ReadInputPin --> 26
+  46      |    + _sensor_reader_init: (2)
+  47      |    |    + _sensor_reader_update: (2)
+  48      |    |    |    + _hal_di_read: (5)
+  49      |    |    |    |    + _GPIO_ReadInputPin --> 5
           |    |    |    | 
           |    |    | 
           |    | 
-  71      |    + _uart_server_init: (6)
-  72      |    |    + _CLK_PeripheralClockConfig --> 57
-  73      |    |    + _UART1_Cmd: (2)
-  74      |    |    + _UART1_ITConfig: (7)
-  75      |    |    + _UART1_Init: (23)
-  76      |    |    |    + _CLK_GetClockFreq: (11)
+  50      |    + _tcp_server_init: (2)
+  51      |    |    + _listen: (3)
+  52      |    |    |    + _WIZCHIP_READ: (10)
+  53      |    |    |    |    + (L16_wizchip_spi_readbyte) ...
+  54      |    |    |    |    + (L311_wizchip_spi_readburst) ...
+  55      |    |    |    |    + (L37_wizchip_spi_writebyte) ...
+  56      |    |    |    |    + (L72_wizchip_cs_select) ...
+  57      |    |    |    |    + (L731_wizchip_spi_writeburst) ...
+  58      |    |    |    |    + (L74_wizchip_cs_deselect) ...
+  59      |    |    |    |    + (_hal_spi_cs_high) ...
+  60      |    |    |    |    + (_hal_spi_cs_low) ...
+  61      |    |    |    |    + (_hal_spi_read) ...
+  62      |    |    |    |    + (_hal_spi_read_byte) ...
+  63      |    |    |    |    + (_hal_spi_write) ...
+  64      |    |    |    |    + (_hal_spi_write_byte) ...
+  65      |    |    |    |    + (_timer_callback) ...
+          |    |    |    | 
+  66      |    |    |    + _WIZCHIP_WRITE: (11)
+  67      |    |    |    |    + (L16_wizchip_spi_readbyte) ...
+  68      |    |    |    |    + (L311_wizchip_spi_readburst) ...
+  69      |    |    |    |    + (L37_wizchip_spi_writebyte) ...
+  70      |    |    |    |    + (L72_wizchip_cs_select) ...
+  71      |    |    |    |    + (L731_wizchip_spi_writeburst) ...
+  72      |    |    |    |    + (L74_wizchip_cs_deselect) ...
+  73      |    |    |    |    + (_hal_spi_cs_high) ...
+  74      |    |    |    |    + (_hal_spi_cs_low) ...
+  75      |    |    |    |    + (_hal_spi_read) ...
+  76      |    |    |    |    + (_hal_spi_read_byte) ...
+  77      |    |    |    |    + (_hal_spi_write) ...
+  78      |    |    |    |    + (_hal_spi_write_byte) ...
+  79      |    |    |    |    + (_timer_callback) ...
+          |    |    |    | 
+  80      |    |    |    + _close: (3)
+  81      |    |    |    |    + _WIZCHIP_READ --> 52
+  82      |    |    |    |    + _WIZCHIP_WRITE --> 66
+          |    |    |    | 
+          |    |    | 
+  83      |    |    + _socket: (11)
+  84      |    |    |    + _WIZCHIP_READ --> 52
+  85      |    |    |    + _WIZCHIP_READ_BUF: (15)
+  86      |    |    |    |    + (L16_wizchip_spi_readbyte) ...
+  87      |    |    |    |    + (L311_wizchip_spi_readburst) ...
+  88      |    |    |    |    + (L37_wizchip_spi_writebyte) ...
+  89      |    |    |    |    + (L72_wizchip_cs_select) ...
+  90      |    |    |    |    + (L731_wizchip_spi_writeburst) ...
+  91      |    |    |    |    + (L74_wizchip_cs_deselect) ...
+  92      |    |    |    |    + (_hal_spi_cs_high) ...
+  93      |    |    |    |    + (_hal_spi_cs_low) ...
+  94      |    |    |    |    + (_hal_spi_read) ...
+  95      |    |    |    |    + (_hal_spi_read_byte) ...
+  96      |    |    |    |    + (_hal_spi_write) ...
+  97      |    |    |    |    + (_hal_spi_write_byte) ...
+  98      |    |    |    |    + (_timer_callback) ...
+          |    |    |    | 
+  99      |    |    |    + _WIZCHIP_WRITE --> 66
+ 100      |    |    |    + _close --> 80
           |    |    | 
           |    | 
-  77      |    + _w5500_chip_init: (2)
-  78      |    |    + _CLK_PeripheralClockConfig --> 57
-  79      |    |    + _GPIO_Init --> 52
-  80      |    |    + _GPIO_WriteHigh --> 10
-  81      |    |    + _GPIO_WriteLow --> 12
-  82      |    |    + _SPI_Cmd: (2)
-  83      |    |    + _SPI_DeInit: (2)
-  84      |    |    + _SPI_Init: (11)
-  85      |    |    + _hal_delay_ms --> 27
-  86      |    |    + _hal_w5500_reset_high --> 54
-  87      |    |    + _reg_wizchip_cs_cbfunc: (6)
-  88      |    |    + _reg_wizchip_spi_cbfunc: (6)
-  89      |    |    + _reg_wizchip_spiburst_cbfunc: (6)
-  90      |    |    + _wizchip_init: (5)
+ 101      |    + _uart_server_init: (6)
+ 102      |    |    + _CLK_PeripheralClockConfig --> 36
+ 103      |    |    + _UART1_Cmd: (2)
+ 104      |    |    + _UART1_ITConfig: (7)
+ 105      |    |    + _UART1_Init: (23)
+ 106      |    |    |    + _CLK_GetClockFreq: (11)
+          |    |    | 
+          |    | 
+ 107      |    + _w5500_chip_init: (3)
+ 108      |    |    + _CLK_PeripheralClockConfig --> 36
+ 109      |    |    + _GPIO_Init --> 31
+ 110      |    |    + _GPIO_WriteHigh --> 14
+ 111      |    |    + _GPIO_WriteLow --> 15
+ 112      |    |    + _SPI_Cmd: (2)
+ 113      |    |    + _SPI_DeInit: (2)
+ 114      |    |    + _SPI_Init: (11)
+ 115      |    |    + _WIZCHIP_READ --> 52
+ 116      |    |    + _hal_delay_ms --> 6
+ 117      |    |    + _hal_w5500_reset_high --> 33
+ 118      |    |    + _reg_wizchip_cs_cbfunc: (6)
+ 119      |    |    + _reg_wizchip_spi_cbfunc: (6)
+ 120      |    |    + _reg_wizchip_spiburst_cbfunc: (6)
+ 121      |    |    + _wizchip_init: (8)
+ 122      |    |    |    + _WIZCHIP_WRITE --> 66
+          |    |    | 
           |    | 
           | 
        
-  91 > _timer_callback: (2)
-  92      + _hal_get_millis --> 28
-  93      + _process_axle_counting: (52)
-  94      |    + _message_formatter_avcc: (16)
-  95      |    |    + L355_u32_to_str: (21)
-  96      |    |    + L374_u16_to_str: (15)
-          |    | 
-  97      |    + _sensor_reader_get_state --> 40
-  98      |    + _strlen --> 29
-  99      |    + _uart_server_is_ready --> 30
- 100      |    + _uart_server_send --> 42
-          | 
- 101      + _send_alive_message: (42)
- 102      |    + _message_formatter_alive --> 39
- 103      |    + _sensor_reader_get_state --> 40
- 104      |    + _strlen --> 29
- 105      |    + _uart_server_is_ready --> 30
- 106      |    + _uart_server_send --> 42
-          | 
- 107      + _sensor_reader_update --> 68
+ 123 > f_NonHandledInterrupt: (6)
+
+ 124   L16_wizchip_spi_readbyte: (2)
+
+ 125   L311_wizchip_spi_readburst: (6)
+
+ 126   L37_wizchip_spi_writebyte: (2)
+
+ 127   L515_u16_to_str: (15)
+
+ 128   L575_u32_to_str: (21)
+
+ 129   L72_wizchip_cs_select: (2)
+
+ 130   L731_wizchip_spi_writeburst: (6)
+
+ 131   L74_wizchip_cs_deselect: (2)
+
+ 132   _CLK_GetClockFreq --> 106
+
+ 133   _CLK_HSIPrescalerConfig --> 28
+
+ 134   _CLK_PeripheralClockConfig --> 36
+
+ 135   _GPIO_Init --> 31
+
+ 136   _GPIO_ReadInputPin --> 5
+
+ 137   _GPIO_WriteHigh --> 14
+
+ 138   _GPIO_WriteLow --> 15
+
+ 139   _SPI_Cmd --> 112
+
+ 140   _SPI_DeInit --> 113
+
+ 141   _SPI_GetFlagStatus: (3)
+
+ 142   _SPI_Init --> 114
+
+ 143   _SPI_ReceiveData: (2)
+
+ 144   _SPI_SendData: (2)
+
+ 145   _TIM4_ClearFlag --> 37
+
+ 146   _TIM4_Cmd --> 42
+
+ 147   _TIM4_ITConfig --> 38
+
+ 148   _TIM4_TimeBaseInit --> 39
+
+ 149   _UART1_Cmd --> 103
+
+ 150   _UART1_GetFlagStatus --> 24
+
+ 151   _UART1_ITConfig --> 104
+
+ 152   _UART1_Init --> 105
+
+ 153   _UART1_SendData8 --> 25
+
+ 154   _WIZCHIP_READ --> 52
+
+ 155   _WIZCHIP_READ_BUF --> 85
+
+ 156   _WIZCHIP_WRITE --> 66
+
+ 157   _close --> 80
+
+ 158   _command_parser_execute --> 11
+
+ 159   _hal_delay_ms --> 6
+
+ 160   _hal_di_read --> 48
+
+ 161   _hal_get_millis --> 7
+
+ 162   _hal_gpio_init --> 30
+
+ 163   _hal_relay_set --> 13
+
+ 164   _hal_spi_byte: (3)
+ 165      + _SPI_GetFlagStatus --> 141
+ 166      + _SPI_ReceiveData --> 143
+ 167      + _SPI_SendData --> 144
        
- 108 > f_NonHandledInterrupt: (6)
+ 168   _hal_spi_cs_high: (2)
+ 169      + _GPIO_WriteHigh --> 14
+       
+ 170   _hal_spi_cs_low: (2)
+ 171      + _GPIO_WriteLow --> 15
+       
+ 172   _hal_spi_read: (8)
+ 173      + _hal_spi_byte --> 164
+       
+ 174   _hal_spi_read_byte: (2)
+ 175      + _hal_spi_byte --> 164
+       
+ 176   _hal_spi_write: (8)
+ 177      + _hal_spi_byte --> 164
+       
+ 178   _hal_spi_write_byte: (2)
+ 179      + _hal_spi_byte --> 164
+       
+ 180   _hal_timer_init --> 35
 
- 109   L355_u32_to_str --> 95
+ 181   _hal_timer_set_callback --> 40
 
- 110   L374_u16_to_str --> 96
+ 182   _hal_timer_start --> 41
 
- 111   _CLK_GetClockFreq --> 76
+ 183   _hal_uart_available --> 16
 
- 112   _CLK_HSIPrescalerConfig --> 49
+ 184   _hal_uart_read_byte --> 17
 
- 113   _CLK_PeripheralClockConfig --> 57
+ 185   _hal_uart_send --> 22
 
- 114   _GPIO_Init --> 52
+ 186   _hal_uart_send_byte --> 23
 
- 115   _GPIO_ReadInputPin --> 26
+ 187   _hal_w5500_reset_high --> 33
 
- 116   _GPIO_WriteHigh --> 10
+ 188   _listen --> 51
 
- 117   _GPIO_WriteLow --> 12
+ 189   _main_loop --> 4
 
- 118   _SPI_Cmd --> 82
+ 190   _message_formatter_alive --> 18
 
- 119   _SPI_DeInit --> 83
+ 191   _message_formatter_avcc: (16)
+ 192      + L515_u16_to_str --> 127
+ 193      + L575_u32_to_str --> 128
+       
+ 194   _process_axle_counting: (52)
+ 195      + _message_formatter_avcc --> 191
+ 196      + _sensor_reader_get_state --> 19
+ 197      + _strlen --> 8
+ 198      + _uart_server_is_ready --> 9
+ 199      + _uart_server_send --> 21
+       
+ 200   _reg_wizchip_cs_cbfunc --> 118
 
- 120   _SPI_GetFlagStatus --> 15
+ 201   _reg_wizchip_spi_cbfunc --> 119
 
- 121   _SPI_Init --> 84
+ 202   _reg_wizchip_spiburst_cbfunc --> 120
 
- 122   _SPI_ReceiveData --> 16
+ 203   _relay_control_init --> 43
 
- 123   _SPI_SendData --> 17
+ 204   _relay_control_set --> 12
 
- 124   _TIM4_ClearFlag --> 58
+ 205   _relay_control_set_all --> 44
 
- 125   _TIM4_Cmd --> 63
+ 206   _send_alive_message: (42)
+ 207      + _message_formatter_alive --> 18
+ 208      + _sensor_reader_get_state --> 19
+ 209      + _strlen --> 8
+ 210      + _uart_server_is_ready --> 9
+ 211      + _uart_server_send --> 21
+       
+ 212   _sensor_reader_get_state --> 19
 
- 126   _TIM4_ITConfig --> 59
+ 213   _sensor_reader_init --> 46
 
- 127   _TIM4_TimeBaseInit --> 60
+ 214   _sensor_reader_update --> 47
 
- 128   _UART1_Cmd --> 73
+ 215   _socket --> 83
 
- 129   _UART1_GetFlagStatus --> 45
+ 216   _strlen --> 8
 
- 130   _UART1_ITConfig --> 74
+ 217   _system_init --> 27
 
- 131   _UART1_Init --> 75
+ 218   _tcp_server_init --> 50
 
- 132   _UART1_SendData8 --> 46
+ 219   _timer_callback: (2)
+ 220      + _hal_get_millis --> 7
+ 221      + _process_axle_counting --> 194
+ 222      + _send_alive_message --> 206
+ 223      + _sensor_reader_update --> 47
+       
+ 224   _uart_server_init --> 101
 
- 133   _command_parser_execute --> 32
+ 225   _uart_server_is_ready --> 9
 
- 134   _hal_delay_ms --> 27
+ 226   _uart_server_process --> 10
 
- 135   _hal_di_read --> 69
+ 227   _uart_server_send --> 21
 
- 136   _hal_get_millis --> 28
+ 228   _w5500_chip_init --> 107
 
- 137   _hal_gpio_init --> 51
-
- 138   _hal_relay_set --> 34
-
- 139   _hal_spi_byte --> 14
-
- 140   _hal_timer_init --> 56
-
- 141   _hal_timer_set_callback --> 61
-
- 142   _hal_timer_start --> 62
-
- 143   _hal_uart_available --> 37
-
- 144   _hal_uart_read_byte --> 38
-
- 145   _hal_uart_send --> 43
-
- 146   _hal_uart_send_byte --> 44
-
- 147   _hal_w5500_reset_high --> 54
-
- 148   _main_loop --> 25
-
- 149   _message_formatter_alive --> 39
-
- 150   _message_formatter_avcc --> 94
-
- 151   _process_axle_counting --> 93
-
- 152   _reg_wizchip_cs_cbfunc --> 87
-
- 153   _reg_wizchip_spi_cbfunc --> 88
-
- 154   _reg_wizchip_spiburst_cbfunc --> 89
-
- 155   _relay_control_init --> 64
-
- 156   _relay_control_set --> 33
-
- 157   _relay_control_set_all --> 65
-
- 158   _send_alive_message --> 101
-
- 159   _sensor_reader_get_state --> 40
-
- 160   _sensor_reader_init --> 67
-
- 161   _sensor_reader_update --> 68
-
- 162   _strlen --> 29
-
- 163   _system_init --> 48
-
- 164   _uart_server_init --> 71
-
- 165   _uart_server_is_ready --> 30
-
- 166   _uart_server_process --> 31
-
- 167   _uart_server_send --> 42
-
- 168   _w5500_chip_init --> 77
-
- 169   _wizchip_init --> 90
+ 229   _wizchip_init --> 121
 
 
 
@@ -545,56 +632,60 @@ Stack size: 111
                                -------
 
 _CLKPrescTable                 00008084   defined in Debug\stm8s_clk.o section .const
-_CLK_GetClockFreq              0000823d   defined in Debug\stm8s_clk.o section .text
+_CLK_GetClockFreq              00008726   defined in Debug\stm8s_clk.o section .text
                                           used in Debug\stm8s_uart1.o
-_CLK_HSIPrescalerConfig        0000822a   defined in Debug\stm8s_clk.o section .text
+_CLK_HSIPrescalerConfig        00008713   defined in Debug\stm8s_clk.o section .text
                                           used in Debug\main.o
-_CLK_PeripheralClockConfig     000081be   defined in Debug\stm8s_clk.o section .text
+_CLK_PeripheralClockConfig     000086a7   defined in Debug\stm8s_clk.o section .text
                                           used in Debug\main.o
-_GPIO_Init                     00008326   defined in Debug\stm8s_gpio.o section .text
+_GPIO_Init                     0000880f   defined in Debug\stm8s_gpio.o section .text
                                           used in Debug\main.o
-_GPIO_ReadInputPin             000083a5   defined in Debug\stm8s_gpio.o section .text
+_GPIO_ReadInputPin             0000888e   defined in Debug\stm8s_gpio.o section .text
                                           used in Debug\main.o
-_GPIO_Write                    0000838e   defined in Debug\stm8s_gpio.o section .text
-_GPIO_WriteHigh                00008396   defined in Debug\stm8s_gpio.o section .text
+_GPIO_Write                    00008877   defined in Debug\stm8s_gpio.o section .text
+_GPIO_WriteHigh                0000887f   defined in Debug\stm8s_gpio.o section .text
                                           used in Debug\main.o
-_GPIO_WriteLow                 0000839d   defined in Debug\stm8s_gpio.o section .text
+_GPIO_WriteLow                 00008886   defined in Debug\stm8s_gpio.o section .text
                                           used in Debug\main.o
 _HSIDivFactor                  00008080   defined in Debug\stm8s_clk.o section .const
-_SPI_Cmd                       000082fd   defined in Debug\stm8s_spi.o section .text
+_SPI_Cmd                       000087e6   defined in Debug\stm8s_spi.o section .text
                                           used in Debug\main.o
-_SPI_DeInit                    000082b1   defined in Debug\stm8s_spi.o section .text
+_SPI_DeInit                    0000879a   defined in Debug\stm8s_spi.o section .text
                                           used in Debug\main.o
-_SPI_GetFlagStatus             00008313   defined in Debug\stm8s_spi.o section .text
+_SPI_GetFlagStatus             000087fc   defined in Debug\stm8s_spi.o section .text
                                           used in Debug\main.o
-_SPI_Init                      000082c6   defined in Debug\stm8s_spi.o section .text
+_SPI_Init                      000087af   defined in Debug\stm8s_spi.o section .text
                                           used in Debug\main.o
-_SPI_ReceiveData               0000830f   defined in Debug\stm8s_spi.o section .text
+_SPI_ReceiveData               000087f8   defined in Debug\stm8s_spi.o section .text
                                           used in Debug\main.o
-_SPI_SendData                  0000830b   defined in Debug\stm8s_spi.o section .text
+_SPI_SendData                  000087f4   defined in Debug\stm8s_spi.o section .text
                                           used in Debug\main.o
-_TIM4_ClearFlag                000083dc   defined in Debug\stm8s_tim4.o section .text
+_TIM4_ClearFlag                000088c5   defined in Debug\stm8s_tim4.o section .text
                                           used in Debug\main.o
-_TIM4_Cmd                      000083b5   defined in Debug\stm8s_tim4.o section .text
+_TIM4_Cmd                      0000889e   defined in Debug\stm8s_tim4.o section .text
                                           used in Debug\main.o
-_TIM4_ITConfig                 000083c3   defined in Debug\stm8s_tim4.o section .text
+_TIM4_ITConfig                 000088ac   defined in Debug\stm8s_tim4.o section .text
                                           used in Debug\main.o
-_TIM4_TimeBaseInit             000083ac   defined in Debug\stm8s_tim4.o section .text
+_TIM4_TimeBaseInit             00008895   defined in Debug\stm8s_tim4.o section .text
                                           used in Debug\main.o
-_UART1_Cmd                     00008511   defined in Debug\stm8s_uart1.o section .text
+_UART1_Cmd                     000089fa   defined in Debug\stm8s_uart1.o section .text
                                           used in Debug\main.o
-_UART1_GetFlagStatus           00008594   defined in Debug\stm8s_uart1.o section .text
+_UART1_GetFlagStatus           00008a7d   defined in Debug\stm8s_uart1.o section .text
                                           used in Debug\main.o
-_UART1_ITConfig                0000851f   defined in Debug\stm8s_uart1.o section .text
+_UART1_ITConfig                00008a08   defined in Debug\stm8s_uart1.o section .text
                                           used in Debug\main.o
-_UART1_Init                    000083e1   defined in Debug\stm8s_uart1.o section .text
+_UART1_Init                    000088ca   defined in Debug\stm8s_uart1.o section .text
                                           used in Debug\main.o
-_UART1_SendData8               00008590   defined in Debug\stm8s_uart1.o section .text
+_UART1_SendData8               00008a79   defined in Debug\stm8s_uart1.o section .text
                                           used in Debug\main.o
-_WIZCHIP                       00000000   defined in Debug\w5500.o section .bsct, initialized
+_WIZCHIP                       0000001e   defined in Debug\w5500.o section .bsct, initialized
+_WIZCHIP_READ                  00008182   defined in Debug\w5500.o section .text
+                                          used in Debug\main.o
+_WIZCHIP_READ_BUF              00008230   defined in Debug\w5500.o section .text
+_WIZCHIP_WRITE                 000081d7   defined in Debug\w5500.o section .text
 __endmem                       000001ff   defined in command file
                                           *** not used ***
-__endzp                        00000084   defined in command file section .ubsct
+__endzp                        000000ab   defined in command file section .ubsct
                                           used in C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\crtsi0.sm8
 __idesc__                      000080be   defined in linker section .init
                                           used in C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\crtsi0.sm8
@@ -604,82 +695,92 @@ __stack                        000003ff   defined in command file
                                           used in C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\crtsi0.sm8
 __startmem                     00000100   defined in command file section .bss
                                           *** not used ***
-__stext                        00008100   defined in C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\crtsi0.sm8 section .text
+__stext                        00008127   defined in C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\crtsi0.sm8 section .text
                                           used in Debug\stm8_interrupt_vector.o
 __vectab                       00008000   defined in Debug\stm8_interrupt_vector.o section .const
-_command_parser_execute        00008c0b   defined in Debug\main.o section .text
-_exit                          0000814e   defined in C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\crtsi0.sm8 section .text
-_hal_delay_ms                  000085de   defined in Debug\main.o section .text
-_hal_di_read                   00008751   defined in Debug\main.o section .text
-_hal_get_millis                000085d7   defined in Debug\main.o section .text
-_hal_gpio_init                 00008c8a   defined in Debug\main.o section .text
-_hal_relay_set                 00008a06   defined in Debug\main.o section .text
-_hal_spi_byte                  00008e24   defined in Debug\main.o section .text
-_hal_spi_cs_high               00008659   defined in Debug\main.o section .text
-_hal_spi_cs_low                0000864f   defined in Debug\main.o section .text
-_hal_spi_read                  00008e48   defined in Debug\main.o section .text
-_hal_spi_read_byte             00008e40   defined in Debug\main.o section .text
-_hal_spi_write                 00008e69   defined in Debug\main.o section .text
-_hal_spi_write_byte            00008e45   defined in Debug\main.o section .text
-_hal_timer_init                00008ec4   defined in Debug\main.o section .text
-_hal_timer_set_callback        00008c08   defined in Debug\main.o section .text
-_hal_timer_start               00008aec   defined in Debug\main.o section .text
-_hal_uart_available            00008d36   defined in Debug\main.o section .text
-_hal_uart_read_byte            00008d39   defined in Debug\main.o section .text
-_hal_uart_send                 00008630   defined in Debug\main.o section .text
-_hal_uart_send_byte            00008616   defined in Debug\main.o section .text
-_hal_w5500_reset_high          00008c80   defined in Debug\main.o section .text
-_main                          00009005   defined in Debug\main.o section .text
+_close                         0000852d   defined in Debug\w5500.o section .text
+_command_parser_execute        000090f4   defined in Debug\main.o section .text
+_exit                          00008175   defined in C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\crtsi0.sm8 section .text
+_hal_delay_ms                  00008ac7   defined in Debug\main.o section .text
+_hal_di_read                   00008c3a   defined in Debug\main.o section .text
+_hal_get_millis                00008ac0   defined in Debug\main.o section .text
+_hal_gpio_init                 00009173   defined in Debug\main.o section .text
+_hal_relay_set                 00008eef   defined in Debug\main.o section .text
+_hal_spi_byte                  0000930d   defined in Debug\main.o section .text
+_hal_spi_cs_high               00008b42   defined in Debug\main.o section .text
+_hal_spi_cs_low                00008b38   defined in Debug\main.o section .text
+_hal_spi_read                  00009331   defined in Debug\main.o section .text
+_hal_spi_read_byte             00009329   defined in Debug\main.o section .text
+_hal_spi_write                 00009352   defined in Debug\main.o section .text
+_hal_spi_write_byte            0000932e   defined in Debug\main.o section .text
+_hal_timer_init                000093ad   defined in Debug\main.o section .text
+_hal_timer_set_callback        000090f1   defined in Debug\main.o section .text
+_hal_timer_start               00008fd5   defined in Debug\main.o section .text
+_hal_uart_available            0000921f   defined in Debug\main.o section .text
+_hal_uart_read_byte            00009222   defined in Debug\main.o section .text
+_hal_uart_send                 00008b19   defined in Debug\main.o section .text
+_hal_uart_send_byte            00008aff   defined in Debug\main.o section .text
+_hal_w5500_reset_high          00009169   defined in Debug\main.o section .text
+_listen                        000085eb   defined in Debug\w5500.o section .text
+                                          used in Debug\main.o
+_main                          00009542   defined in Debug\main.o section .text
                                           used in C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\crtsi0.sm8
-_main_loop                     00008fb3   defined in Debug\main.o section .text
-_message_formatter_alive       000086a4   defined in Debug\main.o section .text
-_message_formatter_avcc        000088a4   defined in Debug\main.o section .text
-_process_axle_counting         00008af2   defined in Debug\main.o section .text
-_reg_wizchip_cs_cbfunc         0000815b   defined in Debug\w5500.o section .text
+_main_loop                     000094f0   defined in Debug\main.o section .text
+_message_formatter_alive       00008b8d   defined in Debug\main.o section .text
+_message_formatter_avcc        00008d8d   defined in Debug\main.o section .text
+_process_axle_counting         00008fdb   defined in Debug\main.o section .text
+_reg_wizchip_cs_cbfunc         000082a2   defined in Debug\w5500.o section .text
                                           used in Debug\main.o
-_reg_wizchip_spi_cbfunc        0000817b   defined in Debug\w5500.o section .text
+_reg_wizchip_spi_cbfunc        000082c2   defined in Debug\w5500.o section .text
                                           used in Debug\main.o
-_reg_wizchip_spiburst_cbfunc   0000819b   defined in Debug\w5500.o section .text
+_reg_wizchip_spiburst_cbfunc   000082e2   defined in Debug\w5500.o section .text
                                           used in Debug\main.o
-_relay_control_init            00008c7a   defined in Debug\main.o section .text
-_relay_control_set             00008a8a   defined in Debug\main.o section .text
-_relay_control_set_all         00008a9e   defined in Debug\main.o section .text
-_send_alive_message            00008b7f   defined in Debug\main.o section .text
-_sensor_reader_get_state       00008698   defined in Debug\main.o section .text
-_sensor_reader_init            00008b7b   defined in Debug\main.o section .text
-_sensor_reader_update          00008acf   defined in Debug\main.o section .text
-_strlen                        0000900c   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libis0.sm8)strlen0.o section .text
+_relay_control_init            00009163   defined in Debug\main.o section .text
+_relay_control_set             00008f73   defined in Debug\main.o section .text
+_relay_control_set_all         00008f87   defined in Debug\main.o section .text
+_send_alive_message            00009068   defined in Debug\main.o section .text
+_sensor_reader_get_state       00008b81   defined in Debug\main.o section .text
+_sensor_reader_init            00009064   defined in Debug\main.o section .text
+_sensor_reader_update          00008fb8   defined in Debug\main.o section .text
+_sock_pack_info                00000012   defined in Debug\w5500.o section .bsct, initialized
+_socket                        000083d3   defined in Debug\w5500.o section .text
                                           used in Debug\main.o
-_system_init                   00008f83   defined in Debug\main.o section .text
-_timer_callback                00008bbe   defined in Debug\main.o section .text
-_uart_server_init              00008e88   defined in Debug\main.o section .text
-_uart_server_is_ready          0000860b   defined in Debug\main.o section .text
-_uart_server_process           00008d60   defined in Debug\main.o section .text
-_uart_server_send              00008663   defined in Debug\main.o section .text
-_w5500_chip_init               00008edd   defined in Debug\main.o section .text
-_wizchip_init                  000081bb   defined in Debug\w5500.o section .text
+_strlen                        00009549   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libis0.sm8)strlen0.o section .text
                                           used in Debug\main.o
-c_divsl                        000090a6   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ldiv.o section .text
+_system_init                   000094ba   defined in Debug\main.o section .text
+_tcp_server_init               000093c6   defined in Debug\main.o section .text
+_timer_callback                000090a7   defined in Debug\main.o section .text
+_uart_server_init              00009371   defined in Debug\main.o section .text
+_uart_server_is_ready          00008af4   defined in Debug\main.o section .text
+_uart_server_process           00009249   defined in Debug\main.o section .text
+_uart_server_send              00008b4c   defined in Debug\main.o section .text
+_w5500_chip_init               000093fb   defined in Debug\main.o section .text
+_wizchip_init                  00008302   defined in Debug\w5500.o section .text
+                                          used in Debug\main.o
+c_divsl                        000095f1   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ldiv.o section .text
                                           *** not used ***
-c_divul                        000090bd   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ldiv.o section .text
+c_divul                        00009608   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ldiv.o section .text
                                           used in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ludiv.o
                                                   (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lumod.o
-c_ladc                         00009018   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ladc.o section .text
+c_itolx                        00009555   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)itolx.o section .text
+                                          used in Debug\w5500.o
+c_ladc                         00009563   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ladc.o section .text
                                           used in Debug\main.o
-c_lcmp                         00009029   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lcmp.o section .text
+c_lcmp                         00009574   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lcmp.o section .text
                                           used in Debug\main.o
-c_lgadc                        00009049   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lgadc.o section .text
+c_lgadc                        00009594   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lgadc.o section .text
                                           used in Debug\main.o
-c_lgneg                        00009191   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lgneg.o section .text
+c_lgneg                        000096dc   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lgneg.o section .text
                                           used in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ldiv.o
-c_llsh                         00009059   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)llsh.o section .text
+c_llsh                         000095a4   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)llsh.o section .text
                                           used in Debug\stm8s_uart1.o
-c_lneg                         000091a4   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lneg.o section .text
+c_lneg                         000096ef   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lneg.o section .text
                                           used in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ldiv.o
-c_lreg                         0000007a   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lreg.o section .ubsct
-                                          used in Debug\stm8s_clk.o
+c_lreg                         000000a1   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lreg.o section .ubsct
+                                          used in Debug\w5500.o Debug\stm8s_clk.o
                                                   Debug\stm8s_uart1.o
                                                   Debug\main.o
+                                                  (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)itolx.o
                                                   (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ladc.o
                                                   (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lcmp.o
                                                   (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)llsh.o
@@ -691,37 +792,38 @@ c_lreg                         0000007a   defined in (C:\Program Files (x86)\COS
                                                   (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)rtol.o
                                                   (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)smul.o
                                                   (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)utolx.o
-c_lsub                         00009068   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lsub.o section .text
+c_lsub                         000095b3   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lsub.o section .text
                                           used in Debug\stm8s_uart1.o
                                                   Debug\main.o
-c_ltor                         00009080   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ltor.o section .text
+c_ltor                         000095cb   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ltor.o section .text
                                           used in Debug\stm8s_clk.o
                                                   Debug\stm8s_uart1.o
                                                   Debug\main.o
-c_ludv                         00009092   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ludiv.o section .text
+c_ludv                         000095dd   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ludiv.o section .text
                                           used in Debug\stm8s_clk.o
                                                   Debug\stm8s_uart1.o
                                                   Debug\main.o
-c_lumd                         000091b9   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lumod.o section .text
+c_lumd                         00009704   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lumod.o section .text
                                           used in Debug\main.o
-c_lzmp                         000091d3   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lzmp.o section .text
-                                          used in Debug\main.o
-c_rtol                         000091e6   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)rtol.o section .text
+c_lzmp                         0000971e   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)lzmp.o section .text
+                                          used in Debug\w5500.o Debug\main.o
+c_rtol                         00009731   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)rtol.o section .text
                                           used in Debug\stm8s_clk.o
                                                   Debug\stm8s_uart1.o
                                                   Debug\main.o
-c_smul                         000091f8   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)smul.o section .text
+c_smul                         00009743   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)smul.o section .text
                                           used in Debug\stm8s_uart1.o
-c_uitolx                       00009237   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)utolx.o section .text
+c_uitolx                       00009782   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)utolx.o section .text
                                           used in Debug\main.o
-c_x                            0000007e   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)xreg.o section .ubsct
+c_x                            000000a5   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)xreg.o section .ubsct
                                           used in C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\crtsi0.sm8
                                                   Debug\main.o
                                                   (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libis0.sm8)strlen0.o
                                                   (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)ldiv.o
                                                   (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)xymov.o
-c_xymov                        0000923e   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)xymov.o section .text
+c_xymov                        00009789   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)xymov.o section .text
                                           used in Debug\main.o
-c_y                            00000081   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)yreg.o section .ubsct
+c_y                            000000a8   defined in (C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\libm0.sm8)yreg.o section .ubsct
                                           used in C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8\lib\crtsi0.sm8
-f_NonHandledInterrupt          0000927d   defined in Debug\stm8_interrupt_vector.o section .text
+                                                  Debug\main.o
+f_NonHandledInterrupt          000097c8   defined in Debug\stm8_interrupt_vector.o section .text
