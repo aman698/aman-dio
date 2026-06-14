@@ -461,141 +461,398 @@
  692  0269 a601          	ld	a,#1
  695  026b 5b01          	addw	sp,#1
  696  026d 81            	ret
- 733                     ; 119 int8_t listen(uint8_t sn)
- 733                     ; 120 {
- 734                     	switch	.text
- 735  026e               _listen:
- 737  026e 88            	push	a
- 738       00000000      OFST:	set	0
- 741                     ; 121 	CHECK_SOCKNUM();
- 743  026f 7b01          	ld	a,(OFST+1,sp)
- 744  0271 a109          	cp	a,#9
- 745  0273 2505          	jrult	L342
- 748  0275 a6ff          	ld	a,#255
- 751  0277 5b01          	addw	sp,#1
- 752  0279 81            	ret
- 753  027a               L342:
- 754                     ; 122    CHECK_SOCKMODE(Sn_MR_TCP);
- 756  027a 7b01          	ld	a,(OFST+1,sp)
- 757  027c 97            	ld	xl,a
- 758  027d a604          	ld	a,#4
- 759  027f 42            	mul	x,a
- 760  0280 58            	sllw	x
- 761  0281 58            	sllw	x
- 762  0282 58            	sllw	x
- 763  0283 1c0008        	addw	x,#8
- 764  0286 cd0000        	call	c_itolx
- 766  0289 be02          	ldw	x,c_lreg+2
- 767  028b 89            	pushw	x
- 768  028c be00          	ldw	x,c_lreg
- 769  028e 89            	pushw	x
- 770  028f cd0000        	call	_WIZCHIP_READ
- 772  0292 5b04          	addw	sp,#4
- 773  0294 a40f          	and	a,#15
- 774  0296 a101          	cp	a,#1
- 775  0298 2705          	jreq	L152
- 778  029a a6fb          	ld	a,#251
- 781  029c 5b01          	addw	sp,#1
- 782  029e 81            	ret
- 783  029f               L152:
- 784                     ; 123 	CHECK_SOCKINIT();
- 786  029f 7b01          	ld	a,(OFST+1,sp)
- 787  02a1 97            	ld	xl,a
- 788  02a2 a604          	ld	a,#4
- 789  02a4 42            	mul	x,a
- 790  02a5 58            	sllw	x
- 791  02a6 58            	sllw	x
- 792  02a7 58            	sllw	x
- 793  02a8 1c0308        	addw	x,#776
- 794  02ab cd0000        	call	c_itolx
- 796  02ae be02          	ldw	x,c_lreg+2
- 797  02b0 89            	pushw	x
- 798  02b1 be00          	ldw	x,c_lreg
- 799  02b3 89            	pushw	x
- 800  02b4 cd0000        	call	_WIZCHIP_READ
- 802  02b7 5b04          	addw	sp,#4
- 803  02b9 a113          	cp	a,#19
- 804  02bb 2705          	jreq	L552
- 807  02bd a6fd          	ld	a,#253
- 810  02bf 5b01          	addw	sp,#1
- 811  02c1 81            	ret
- 812  02c2               L552:
- 813                     ; 124 	setSn_CR(sn,Sn_CR_LISTEN);
- 816  02c2 4b02          	push	#2
- 817  02c4 7b02          	ld	a,(OFST+2,sp)
- 818  02c6 97            	ld	xl,a
- 819  02c7 a604          	ld	a,#4
- 820  02c9 42            	mul	x,a
- 821  02ca 58            	sllw	x
- 822  02cb 58            	sllw	x
- 823  02cc 58            	sllw	x
- 824  02cd 1c0108        	addw	x,#264
- 825  02d0 cd0000        	call	c_itolx
- 827  02d3 be02          	ldw	x,c_lreg+2
- 828  02d5 89            	pushw	x
- 829  02d6 be00          	ldw	x,c_lreg
- 830  02d8 89            	pushw	x
- 831  02d9 cd0000        	call	_WIZCHIP_WRITE
- 833  02dc 5b05          	addw	sp,#5
- 835  02de               L162:
- 836                     ; 125 	while(getSn_CR(sn));
- 838  02de 7b01          	ld	a,(OFST+1,sp)
- 839  02e0 97            	ld	xl,a
- 840  02e1 a604          	ld	a,#4
- 841  02e3 42            	mul	x,a
- 842  02e4 58            	sllw	x
- 843  02e5 58            	sllw	x
- 844  02e6 58            	sllw	x
- 845  02e7 1c0108        	addw	x,#264
- 846  02ea cd0000        	call	c_itolx
- 848  02ed be02          	ldw	x,c_lreg+2
- 849  02ef 89            	pushw	x
- 850  02f0 be00          	ldw	x,c_lreg
- 851  02f2 89            	pushw	x
- 852  02f3 cd0000        	call	_WIZCHIP_READ
- 854  02f6 5b04          	addw	sp,#4
- 855  02f8 4d            	tnz	a
- 856  02f9 26e3          	jrne	L162
- 858  02fb 200a          	jra	L762
- 859  02fd               L562:
- 860                     ; 128          close(sn);
- 862  02fd 7b01          	ld	a,(OFST+1,sp)
- 863  02ff cd01b0        	call	_close
- 865                     ; 129          return SOCKERR_SOCKCLOSED;
- 867  0302 a6fc          	ld	a,#252
- 870  0304 5b01          	addw	sp,#1
- 871  0306 81            	ret
- 872  0307               L762:
- 873                     ; 126    while(getSn_SR(sn) != SOCK_LISTEN)
- 875  0307 7b01          	ld	a,(OFST+1,sp)
- 876  0309 97            	ld	xl,a
- 877  030a a604          	ld	a,#4
- 878  030c 42            	mul	x,a
- 879  030d 58            	sllw	x
- 880  030e 58            	sllw	x
- 881  030f 58            	sllw	x
- 882  0310 1c0308        	addw	x,#776
- 883  0313 cd0000        	call	c_itolx
- 885  0316 be02          	ldw	x,c_lreg+2
- 886  0318 89            	pushw	x
- 887  0319 be00          	ldw	x,c_lreg
- 888  031b 89            	pushw	x
- 889  031c cd0000        	call	_WIZCHIP_READ
- 891  031f 5b04          	addw	sp,#4
- 892  0321 a114          	cp	a,#20
- 893  0323 26d8          	jrne	L562
- 894                     ; 131    return SOCK_OK;
- 896  0325 a601          	ld	a,#1
- 899  0327 5b01          	addw	sp,#1
- 900  0329 81            	ret
- 962                     	xdef	_sock_pack_info
- 963                     	xdef	_listen
- 964                     	xdef	_close
- 965                     	xdef	_socket
- 966                     	xref	_WIZCHIP_READ_BUF
- 967                     	xref	_WIZCHIP_WRITE
- 968                     	xref	_WIZCHIP_READ
- 969                     	xref.b	c_lreg
- 988                     	xref	c_itolx
- 989                     	xref	c_lzmp
- 990                     	end
+ 774                     ; 118 int32_t recv(uint8_t sn, uint8_t * buf, uint16_t len)
+ 774                     ; 119 {
+ 775                     	switch	.text
+ 776  026e               _recv:
+ 778  026e 88            	push	a
+ 779  026f 5205          	subw	sp,#5
+ 780       00000005      OFST:	set	5
+ 783                     ; 120    uint8_t  tmp = 0;
+ 785                     ; 121    uint16_t recvsize = 0;
+ 787                     ; 128    CHECK_SOCKNUM();
+ 789  0271 7b06          	ld	a,(OFST+1,sp)
+ 790  0273 a109          	cp	a,#9
+ 791  0275 250c          	jrult	L362
+ 794  0277 aeffff        	ldw	x,#65535
+ 795  027a bf02          	ldw	c_lreg+2,x
+ 796  027c aeffff        	ldw	x,#-1
+ 797  027f bf00          	ldw	c_lreg,x
+ 799  0281 202a          	jra	L44
+ 800  0283               L362:
+ 801                     ; 129    CHECK_SOCKMODE(Sn_MR_TCP);
+ 803  0283 7b06          	ld	a,(OFST+1,sp)
+ 804  0285 97            	ld	xl,a
+ 805  0286 a604          	ld	a,#4
+ 806  0288 42            	mul	x,a
+ 807  0289 58            	sllw	x
+ 808  028a 58            	sllw	x
+ 809  028b 58            	sllw	x
+ 810  028c 1c0008        	addw	x,#8
+ 811  028f cd0000        	call	c_itolx
+ 813  0292 be02          	ldw	x,c_lreg+2
+ 814  0294 89            	pushw	x
+ 815  0295 be00          	ldw	x,c_lreg
+ 816  0297 89            	pushw	x
+ 817  0298 cd0000        	call	_WIZCHIP_READ
+ 819  029b 5b04          	addw	sp,#4
+ 820  029d a40f          	and	a,#15
+ 821  029f a101          	cp	a,#1
+ 822  02a1 270d          	jreq	L172
+ 825  02a3 aefffb        	ldw	x,#65531
+ 826  02a6 bf02          	ldw	c_lreg+2,x
+ 827  02a8 aeffff        	ldw	x,#-1
+ 828  02ab bf00          	ldw	c_lreg,x
+ 830  02ad               L44:
+ 832  02ad 5b06          	addw	sp,#6
+ 833  02af 81            	ret
+ 834  02b0               L172:
+ 835                     ; 130    CHECK_SOCKDATA();
+ 837  02b0 1e0b          	ldw	x,(OFST+6,sp)
+ 838  02b2 260c          	jrne	L572
+ 841  02b4 aefff2        	ldw	x,#65522
+ 842  02b7 bf02          	ldw	c_lreg+2,x
+ 843  02b9 aeffff        	ldw	x,#-1
+ 844  02bc bf00          	ldw	c_lreg,x
+ 846  02be 20ed          	jra	L44
+ 847  02c0               L572:
+ 848                     ; 132    recvsize = getSn_RxMAX(sn);
+ 851  02c0 7b06          	ld	a,(OFST+1,sp)
+ 852  02c2 97            	ld	xl,a
+ 853  02c3 a604          	ld	a,#4
+ 854  02c5 42            	mul	x,a
+ 855  02c6 58            	sllw	x
+ 856  02c7 58            	sllw	x
+ 857  02c8 58            	sllw	x
+ 858  02c9 1c1e08        	addw	x,#7688
+ 859  02cc cd0000        	call	c_itolx
+ 861  02cf be02          	ldw	x,c_lreg+2
+ 862  02d1 89            	pushw	x
+ 863  02d2 be00          	ldw	x,c_lreg
+ 864  02d4 89            	pushw	x
+ 865  02d5 cd0000        	call	_WIZCHIP_READ
+ 867  02d8 5b04          	addw	sp,#4
+ 868  02da 5f            	clrw	x
+ 869  02db 97            	ld	xl,a
+ 870  02dc 4f            	clr	a
+ 871  02dd 02            	rlwa	x,a
+ 872  02de 58            	sllw	x
+ 873  02df 58            	sllw	x
+ 874  02e0 1f04          	ldw	(OFST-1,sp),x
+ 876                     ; 133    if(recvsize < len) len = recvsize;
+ 878  02e2 1e04          	ldw	x,(OFST-1,sp)
+ 879  02e4 130b          	cpw	x,(OFST+6,sp)
+ 880  02e6 2404          	jruge	L103
+ 883  02e8 1e04          	ldw	x,(OFST-1,sp)
+ 884  02ea 1f0b          	ldw	(OFST+6,sp),x
+ 885  02ec               L103:
+ 886                     ; 144          recvsize = getSn_RX_RSR(sn);
+ 888  02ec 7b06          	ld	a,(OFST+1,sp)
+ 889  02ee cd0000        	call	_getSn_RX_RSR
+ 891  02f1 1f04          	ldw	(OFST-1,sp),x
+ 893                     ; 145          tmp = getSn_SR(sn);
+ 895  02f3 7b06          	ld	a,(OFST+1,sp)
+ 896  02f5 97            	ld	xl,a
+ 897  02f6 a604          	ld	a,#4
+ 898  02f8 42            	mul	x,a
+ 899  02f9 58            	sllw	x
+ 900  02fa 58            	sllw	x
+ 901  02fb 58            	sllw	x
+ 902  02fc 1c0308        	addw	x,#776
+ 903  02ff cd0000        	call	c_itolx
+ 905  0302 be02          	ldw	x,c_lreg+2
+ 906  0304 89            	pushw	x
+ 907  0305 be00          	ldw	x,c_lreg
+ 908  0307 89            	pushw	x
+ 909  0308 cd0000        	call	_WIZCHIP_READ
+ 911  030b 5b04          	addw	sp,#4
+ 912  030d 6b03          	ld	(OFST-2,sp),a
+ 914                     ; 146          if (tmp != SOCK_ESTABLISHED)
+ 916  030f 7b03          	ld	a,(OFST-2,sp)
+ 917  0311 a117          	cp	a,#23
+ 918  0313 275e          	jreq	L503
+ 919                     ; 148             if(tmp == SOCK_CLOSE_WAIT)
+ 921  0315 7b03          	ld	a,(OFST-2,sp)
+ 922  0317 a11c          	cp	a,#28
+ 923  0319 2645          	jrne	L703
+ 924                     ; 150                if(recvsize != 0) break;
+ 926  031b 1e04          	ldw	x,(OFST-1,sp)
+ 927  031d 2703          	jreq	L64
+ 928  031f cc03a4        	jp	L303
+ 929  0322               L64:
+ 932                     ; 151                else if(getSn_TX_FSR(sn) == getSn_TxMAX(sn))
+ 934  0322 7b06          	ld	a,(OFST+1,sp)
+ 935  0324 97            	ld	xl,a
+ 936  0325 a604          	ld	a,#4
+ 937  0327 42            	mul	x,a
+ 938  0328 58            	sllw	x
+ 939  0329 58            	sllw	x
+ 940  032a 58            	sllw	x
+ 941  032b 1c1f08        	addw	x,#7944
+ 942  032e cd0000        	call	c_itolx
+ 944  0331 be02          	ldw	x,c_lreg+2
+ 945  0333 89            	pushw	x
+ 946  0334 be00          	ldw	x,c_lreg
+ 947  0336 89            	pushw	x
+ 948  0337 cd0000        	call	_WIZCHIP_READ
+ 950  033a 5b04          	addw	sp,#4
+ 951  033c 5f            	clrw	x
+ 952  033d 97            	ld	xl,a
+ 953  033e 4f            	clr	a
+ 954  033f 02            	rlwa	x,a
+ 955  0340 58            	sllw	x
+ 956  0341 58            	sllw	x
+ 957  0342 1f01          	ldw	(OFST-4,sp),x
+ 959  0344 7b06          	ld	a,(OFST+1,sp)
+ 960  0346 cd0000        	call	_getSn_TX_FSR
+ 962  0349 1301          	cpw	x,(OFST-4,sp)
+ 963  034b 2626          	jrne	L503
+ 964                     ; 153                   close(sn);
+ 966  034d 7b06          	ld	a,(OFST+1,sp)
+ 967  034f cd01b0        	call	_close
+ 969                     ; 154                   return SOCKERR_SOCKSTATUS;
+ 971  0352 aefff9        	ldw	x,#65529
+ 972  0355 bf02          	ldw	c_lreg+2,x
+ 973  0357 aeffff        	ldw	x,#-1
+ 974  035a bf00          	ldw	c_lreg,x
+ 976  035c acad02ad      	jpf	L44
+ 977  0360               L703:
+ 978                     ; 159                close(sn);
+ 980  0360 7b06          	ld	a,(OFST+1,sp)
+ 981  0362 cd01b0        	call	_close
+ 983                     ; 160                return SOCKERR_SOCKSTATUS;
+ 985  0365 aefff9        	ldw	x,#65529
+ 986  0368 bf02          	ldw	c_lreg+2,x
+ 987  036a aeffff        	ldw	x,#-1
+ 988  036d bf00          	ldw	c_lreg,x
+ 990  036f acad02ad      	jpf	L44
+ 991  0373               L503:
+ 992                     ; 163          if((sock_io_mode & (1<<sn)) && (recvsize == 0)) return SOCK_BUSY;
+ 994  0373 ae0001        	ldw	x,#1
+ 995  0376 7b06          	ld	a,(OFST+1,sp)
+ 996  0378 4d            	tnz	a
+ 997  0379 2704          	jreq	L04
+ 998  037b               L24:
+ 999  037b 58            	sllw	x
+1000  037c 4a            	dec	a
+1001  037d 26fc          	jrne	L24
+1002  037f               L04:
+1003  037f 01            	rrwa	x,a
+1004  0380 b403          	and	a,L5_sock_io_mode+1
+1005  0382 01            	rrwa	x,a
+1006  0383 b402          	and	a,L5_sock_io_mode
+1007  0385 01            	rrwa	x,a
+1008  0386 a30000        	cpw	x,#0
+1009  0389 2712          	jreq	L123
+1011  038b 1e04          	ldw	x,(OFST-1,sp)
+1012  038d 260e          	jrne	L123
+1015  038f ae0000        	ldw	x,#0
+1016  0392 bf02          	ldw	c_lreg+2,x
+1017  0394 ae0000        	ldw	x,#0
+1018  0397 bf00          	ldw	c_lreg,x
+1020  0399 acad02ad      	jpf	L44
+1021  039d               L123:
+1022                     ; 164          if(recvsize != 0) break;
+1024  039d 1e04          	ldw	x,(OFST-1,sp)
+1025  039f 2603          	jrne	L05
+1026  03a1 cc02ec        	jp	L103
+1027  03a4               L05:
+1029  03a4               L303:
+1030                     ; 166    if(recvsize < len) len = recvsize;   
+1033  03a4 1e04          	ldw	x,(OFST-1,sp)
+1034  03a6 130b          	cpw	x,(OFST+6,sp)
+1035  03a8 2404          	jruge	L523
+1038  03aa 1e04          	ldw	x,(OFST-1,sp)
+1039  03ac 1f0b          	ldw	(OFST+6,sp),x
+1040  03ae               L523:
+1041                     ; 167    wiz_recv_data(sn, buf, len);
+1043  03ae 1e0b          	ldw	x,(OFST+6,sp)
+1044  03b0 89            	pushw	x
+1045  03b1 1e0b          	ldw	x,(OFST+6,sp)
+1046  03b3 89            	pushw	x
+1047  03b4 7b0a          	ld	a,(OFST+5,sp)
+1048  03b6 cd0000        	call	_wiz_recv_data
+1050  03b9 5b04          	addw	sp,#4
+1051                     ; 168    setSn_CR(sn,Sn_CR_RECV);
+1053  03bb 4b40          	push	#64
+1054  03bd 7b07          	ld	a,(OFST+2,sp)
+1055  03bf 97            	ld	xl,a
+1056  03c0 a604          	ld	a,#4
+1057  03c2 42            	mul	x,a
+1058  03c3 58            	sllw	x
+1059  03c4 58            	sllw	x
+1060  03c5 58            	sllw	x
+1061  03c6 1c0108        	addw	x,#264
+1062  03c9 cd0000        	call	c_itolx
+1064  03cc be02          	ldw	x,c_lreg+2
+1065  03ce 89            	pushw	x
+1066  03cf be00          	ldw	x,c_lreg
+1067  03d1 89            	pushw	x
+1068  03d2 cd0000        	call	_WIZCHIP_WRITE
+1070  03d5 5b05          	addw	sp,#5
+1072  03d7               L133:
+1073                     ; 169    while(getSn_CR(sn));
+1075  03d7 7b06          	ld	a,(OFST+1,sp)
+1076  03d9 97            	ld	xl,a
+1077  03da a604          	ld	a,#4
+1078  03dc 42            	mul	x,a
+1079  03dd 58            	sllw	x
+1080  03de 58            	sllw	x
+1081  03df 58            	sllw	x
+1082  03e0 1c0108        	addw	x,#264
+1083  03e3 cd0000        	call	c_itolx
+1085  03e6 be02          	ldw	x,c_lreg+2
+1086  03e8 89            	pushw	x
+1087  03e9 be00          	ldw	x,c_lreg
+1088  03eb 89            	pushw	x
+1089  03ec cd0000        	call	_WIZCHIP_READ
+1091  03ef 5b04          	addw	sp,#4
+1092  03f1 4d            	tnz	a
+1093  03f2 26e3          	jrne	L133
+1094                     ; 173    return (int32_t)len;
+1096  03f4 1e0b          	ldw	x,(OFST+6,sp)
+1097  03f6 cd0000        	call	c_uitolx
+1100  03f9 acad02ad      	jpf	L44
+1137                     ; 175 int8_t listen(uint8_t sn)
+1137                     ; 176 {
+1138                     	switch	.text
+1139  03fd               _listen:
+1141  03fd 88            	push	a
+1142       00000000      OFST:	set	0
+1145                     ; 177 	CHECK_SOCKNUM();
+1147  03fe 7b01          	ld	a,(OFST+1,sp)
+1148  0400 a109          	cp	a,#9
+1149  0402 2505          	jrult	L163
+1152  0404 a6ff          	ld	a,#255
+1155  0406 5b01          	addw	sp,#1
+1156  0408 81            	ret
+1157  0409               L163:
+1158                     ; 178    CHECK_SOCKMODE(Sn_MR_TCP);
+1160  0409 7b01          	ld	a,(OFST+1,sp)
+1161  040b 97            	ld	xl,a
+1162  040c a604          	ld	a,#4
+1163  040e 42            	mul	x,a
+1164  040f 58            	sllw	x
+1165  0410 58            	sllw	x
+1166  0411 58            	sllw	x
+1167  0412 1c0008        	addw	x,#8
+1168  0415 cd0000        	call	c_itolx
+1170  0418 be02          	ldw	x,c_lreg+2
+1171  041a 89            	pushw	x
+1172  041b be00          	ldw	x,c_lreg
+1173  041d 89            	pushw	x
+1174  041e cd0000        	call	_WIZCHIP_READ
+1176  0421 5b04          	addw	sp,#4
+1177  0423 a40f          	and	a,#15
+1178  0425 a101          	cp	a,#1
+1179  0427 2705          	jreq	L763
+1182  0429 a6fb          	ld	a,#251
+1185  042b 5b01          	addw	sp,#1
+1186  042d 81            	ret
+1187  042e               L763:
+1188                     ; 179 	CHECK_SOCKINIT();
+1190  042e 7b01          	ld	a,(OFST+1,sp)
+1191  0430 97            	ld	xl,a
+1192  0431 a604          	ld	a,#4
+1193  0433 42            	mul	x,a
+1194  0434 58            	sllw	x
+1195  0435 58            	sllw	x
+1196  0436 58            	sllw	x
+1197  0437 1c0308        	addw	x,#776
+1198  043a cd0000        	call	c_itolx
+1200  043d be02          	ldw	x,c_lreg+2
+1201  043f 89            	pushw	x
+1202  0440 be00          	ldw	x,c_lreg
+1203  0442 89            	pushw	x
+1204  0443 cd0000        	call	_WIZCHIP_READ
+1206  0446 5b04          	addw	sp,#4
+1207  0448 a113          	cp	a,#19
+1208  044a 2705          	jreq	L373
+1211  044c a6fd          	ld	a,#253
+1214  044e 5b01          	addw	sp,#1
+1215  0450 81            	ret
+1216  0451               L373:
+1217                     ; 180 	setSn_CR(sn,Sn_CR_LISTEN);
+1220  0451 4b02          	push	#2
+1221  0453 7b02          	ld	a,(OFST+2,sp)
+1222  0455 97            	ld	xl,a
+1223  0456 a604          	ld	a,#4
+1224  0458 42            	mul	x,a
+1225  0459 58            	sllw	x
+1226  045a 58            	sllw	x
+1227  045b 58            	sllw	x
+1228  045c 1c0108        	addw	x,#264
+1229  045f cd0000        	call	c_itolx
+1231  0462 be02          	ldw	x,c_lreg+2
+1232  0464 89            	pushw	x
+1233  0465 be00          	ldw	x,c_lreg
+1234  0467 89            	pushw	x
+1235  0468 cd0000        	call	_WIZCHIP_WRITE
+1237  046b 5b05          	addw	sp,#5
+1239  046d               L773:
+1240                     ; 181 	while(getSn_CR(sn));
+1242  046d 7b01          	ld	a,(OFST+1,sp)
+1243  046f 97            	ld	xl,a
+1244  0470 a604          	ld	a,#4
+1245  0472 42            	mul	x,a
+1246  0473 58            	sllw	x
+1247  0474 58            	sllw	x
+1248  0475 58            	sllw	x
+1249  0476 1c0108        	addw	x,#264
+1250  0479 cd0000        	call	c_itolx
+1252  047c be02          	ldw	x,c_lreg+2
+1253  047e 89            	pushw	x
+1254  047f be00          	ldw	x,c_lreg
+1255  0481 89            	pushw	x
+1256  0482 cd0000        	call	_WIZCHIP_READ
+1258  0485 5b04          	addw	sp,#4
+1259  0487 4d            	tnz	a
+1260  0488 26e3          	jrne	L773
+1262  048a 200a          	jra	L504
+1263  048c               L304:
+1264                     ; 184          close(sn);
+1266  048c 7b01          	ld	a,(OFST+1,sp)
+1267  048e cd01b0        	call	_close
+1269                     ; 185          return SOCKERR_SOCKCLOSED;
+1271  0491 a6fc          	ld	a,#252
+1274  0493 5b01          	addw	sp,#1
+1275  0495 81            	ret
+1276  0496               L504:
+1277                     ; 182    while(getSn_SR(sn) != SOCK_LISTEN)
+1279  0496 7b01          	ld	a,(OFST+1,sp)
+1280  0498 97            	ld	xl,a
+1281  0499 a604          	ld	a,#4
+1282  049b 42            	mul	x,a
+1283  049c 58            	sllw	x
+1284  049d 58            	sllw	x
+1285  049e 58            	sllw	x
+1286  049f 1c0308        	addw	x,#776
+1287  04a2 cd0000        	call	c_itolx
+1289  04a5 be02          	ldw	x,c_lreg+2
+1290  04a7 89            	pushw	x
+1291  04a8 be00          	ldw	x,c_lreg
+1292  04aa 89            	pushw	x
+1293  04ab cd0000        	call	_WIZCHIP_READ
+1295  04ae 5b04          	addw	sp,#4
+1296  04b0 a114          	cp	a,#20
+1297  04b2 26d8          	jrne	L304
+1298                     ; 187    return SOCK_OK;
+1300  04b4 a601          	ld	a,#1
+1303  04b6 5b01          	addw	sp,#1
+1304  04b8 81            	ret
+1366                     	xdef	_sock_pack_info
+1367                     	xdef	_recv
+1368                     	xdef	_listen
+1369                     	xdef	_close
+1370                     	xdef	_socket
+1371                     	xref	_wiz_recv_data
+1372                     	xref	_getSn_RX_RSR
+1373                     	xref	_getSn_TX_FSR
+1374                     	xref	_WIZCHIP_READ_BUF
+1375                     	xref	_WIZCHIP_WRITE
+1376                     	xref	_WIZCHIP_READ
+1377                     	xref.b	c_lreg
+1396                     	xref	c_uitolx
+1397                     	xref	c_itolx
+1398                     	xref	c_lzmp
+1399                     	end

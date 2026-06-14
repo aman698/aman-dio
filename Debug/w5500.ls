@@ -529,13 +529,153 @@
 1104  02df 1e02          	ldw	x,(OFST-3,sp)
 1107  02e1 5b06          	addw	sp,#6
 1108  02e3 81            	ret
-1121                     	xdef	_getSn_RX_RSR
-1122                     	xdef	_getSn_TX_FSR
-1123                     	xdef	_WIZCHIP_WRITE_BUF
-1124                     	xdef	_WIZCHIP_READ_BUF
-1125                     	xdef	_WIZCHIP_WRITE
-1126                     	xdef	_WIZCHIP_READ
-1127                     	xref.b	_WIZCHIP
-1128                     	xref.b	c_lreg
-1147                     	xref	c_itolx
-1148                     	end
+1182                     ; 168 void wiz_recv_data(uint8_t sn, uint8_t *wizdata, uint16_t len)
+1182                     ; 169 {
+1183                     	switch	.text
+1184  02e4               _wiz_recv_data:
+1186  02e4 88            	push	a
+1187  02e5 520a          	subw	sp,#10
+1188       0000000a      OFST:	set	10
+1191                     ; 170    uint16_t ptr = 0;
+1193                     ; 171    uint32_t addrsel = 0;
+1195                     ; 173    if(len == 0) return;
+1197  02e7 1e10          	ldw	x,(OFST+6,sp)
+1198  02e9 2603          	jrne	L24
+1199  02eb cc03b1        	jp	L04
+1200  02ee               L24:
+1203                     ; 174    ptr = getSn_RX_RD(sn);
+1205  02ee 7b0b          	ld	a,(OFST+1,sp)
+1206  02f0 97            	ld	xl,a
+1207  02f1 a604          	ld	a,#4
+1208  02f3 42            	mul	x,a
+1209  02f4 58            	sllw	x
+1210  02f5 58            	sllw	x
+1211  02f6 58            	sllw	x
+1212  02f7 1c2908        	addw	x,#10504
+1213  02fa cd0000        	call	c_itolx
+1215  02fd be02          	ldw	x,c_lreg+2
+1216  02ff 89            	pushw	x
+1217  0300 be00          	ldw	x,c_lreg
+1218  0302 89            	pushw	x
+1219  0303 cd0000        	call	_WIZCHIP_READ
+1221  0306 5b04          	addw	sp,#4
+1222  0308 6b04          	ld	(OFST-6,sp),a
+1224  030a 7b0b          	ld	a,(OFST+1,sp)
+1225  030c 97            	ld	xl,a
+1226  030d a604          	ld	a,#4
+1227  030f 42            	mul	x,a
+1228  0310 58            	sllw	x
+1229  0311 58            	sllw	x
+1230  0312 58            	sllw	x
+1231  0313 1c2808        	addw	x,#10248
+1232  0316 cd0000        	call	c_itolx
+1234  0319 be02          	ldw	x,c_lreg+2
+1235  031b 89            	pushw	x
+1236  031c be00          	ldw	x,c_lreg
+1237  031e 89            	pushw	x
+1238  031f cd0000        	call	_WIZCHIP_READ
+1240  0322 5b04          	addw	sp,#4
+1241  0324 5f            	clrw	x
+1242  0325 97            	ld	xl,a
+1243  0326 4f            	clr	a
+1244  0327 02            	rlwa	x,a
+1245  0328 01            	rrwa	x,a
+1246  0329 1b04          	add	a,(OFST-6,sp)
+1247  032b 2401          	jrnc	L63
+1248  032d 5c            	incw	x
+1249  032e               L63:
+1250  032e 02            	rlwa	x,a
+1251  032f 1f09          	ldw	(OFST-1,sp),x
+1252  0331 01            	rrwa	x,a
+1254                     ; 177    addrsel = ((uint32_t)ptr << 8) + (WIZCHIP_RXBUF_BLOCK(sn) << 3);
+1256  0332 7b0b          	ld	a,(OFST+1,sp)
+1257  0334 97            	ld	xl,a
+1258  0335 a604          	ld	a,#4
+1259  0337 42            	mul	x,a
+1260  0338 58            	sllw	x
+1261  0339 58            	sllw	x
+1262  033a 58            	sllw	x
+1263  033b 1c0018        	addw	x,#24
+1264  033e cd0000        	call	c_itolx
+1266  0341 96            	ldw	x,sp
+1267  0342 1c0001        	addw	x,#OFST-9
+1268  0345 cd0000        	call	c_rtol
+1271  0348 1e09          	ldw	x,(OFST-1,sp)
+1272  034a 90ae0100      	ldw	y,#256
+1273  034e cd0000        	call	c_umul
+1275  0351 96            	ldw	x,sp
+1276  0352 1c0001        	addw	x,#OFST-9
+1277  0355 cd0000        	call	c_ladd
+1279  0358 96            	ldw	x,sp
+1280  0359 1c0005        	addw	x,#OFST-5
+1281  035c cd0000        	call	c_rtol
+1284                     ; 179    WIZCHIP_READ_BUF(addrsel, wizdata, len);
+1286  035f 1e10          	ldw	x,(OFST+6,sp)
+1287  0361 89            	pushw	x
+1288  0362 1e10          	ldw	x,(OFST+6,sp)
+1289  0364 89            	pushw	x
+1290  0365 1e0b          	ldw	x,(OFST+1,sp)
+1291  0367 89            	pushw	x
+1292  0368 1e0b          	ldw	x,(OFST+1,sp)
+1293  036a 89            	pushw	x
+1294  036b cd00ae        	call	_WIZCHIP_READ_BUF
+1296  036e 5b08          	addw	sp,#8
+1297                     ; 180    ptr += len;
+1299  0370 1e09          	ldw	x,(OFST-1,sp)
+1300  0372 72fb10        	addw	x,(OFST+6,sp)
+1301  0375 1f09          	ldw	(OFST-1,sp),x
+1303                     ; 182    setSn_RX_RD(sn,ptr);
+1305  0377 7b09          	ld	a,(OFST-1,sp)
+1306  0379 88            	push	a
+1307  037a 7b0c          	ld	a,(OFST+2,sp)
+1308  037c 97            	ld	xl,a
+1309  037d a604          	ld	a,#4
+1310  037f 42            	mul	x,a
+1311  0380 58            	sllw	x
+1312  0381 58            	sllw	x
+1313  0382 58            	sllw	x
+1314  0383 1c2808        	addw	x,#10248
+1315  0386 cd0000        	call	c_itolx
+1317  0389 be02          	ldw	x,c_lreg+2
+1318  038b 89            	pushw	x
+1319  038c be00          	ldw	x,c_lreg
+1320  038e 89            	pushw	x
+1321  038f cd0055        	call	_WIZCHIP_WRITE
+1323  0392 5b05          	addw	sp,#5
+1326  0394 7b0a          	ld	a,(OFST+0,sp)
+1327  0396 88            	push	a
+1328  0397 7b0c          	ld	a,(OFST+2,sp)
+1329  0399 97            	ld	xl,a
+1330  039a a604          	ld	a,#4
+1331  039c 42            	mul	x,a
+1332  039d 58            	sllw	x
+1333  039e 58            	sllw	x
+1334  039f 58            	sllw	x
+1335  03a0 1c2908        	addw	x,#10504
+1336  03a3 cd0000        	call	c_itolx
+1338  03a6 be02          	ldw	x,c_lreg+2
+1339  03a8 89            	pushw	x
+1340  03a9 be00          	ldw	x,c_lreg
+1341  03ab 89            	pushw	x
+1342  03ac cd0055        	call	_WIZCHIP_WRITE
+1344  03af 5b05          	addw	sp,#5
+1345                     ; 183 }
+1346  03b1               L04:
+1350  03b1 5b0b          	addw	sp,#11
+1351  03b3 81            	ret
+1364                     	xdef	_wiz_recv_data
+1365                     	xdef	_getSn_RX_RSR
+1366                     	xdef	_getSn_TX_FSR
+1367                     	xdef	_WIZCHIP_WRITE_BUF
+1368                     	xdef	_WIZCHIP_READ_BUF
+1369                     	xdef	_WIZCHIP_WRITE
+1370                     	xdef	_WIZCHIP_READ
+1371                     	xref.b	_WIZCHIP
+1372                     	xref.b	c_lreg
+1373                     	xref.b	c_x
+1374                     	xref.b	c_y
+1393                     	xref	c_ladd
+1394                     	xref	c_rtol
+1395                     	xref	c_umul
+1396                     	xref	c_itolx
+1397                     	end
