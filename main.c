@@ -756,7 +756,7 @@ void system_init(void){
     /* Setup timer callback for periodic tasks */
     hal_timer_set_callback(timer_callback);
     hal_timer_start();
-	hal_delay_ms(500);
+	  hal_delay_ms(500);
 }
 
 void main_loop(void)

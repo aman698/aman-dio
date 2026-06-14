@@ -1,5 +1,4 @@
 #include "w5500.h"
-#include <cstdint>
 
 static uint16_t sock_remained_size[_WIZCHIP_SOCK_NUM_] = {0,0,};
 uint8_t  sock_pack_info[_WIZCHIP_SOCK_NUM_] = {0,};
@@ -152,7 +151,36 @@ uint16_t getSn_RX_RSR(uint8_t sn)
    }while (val != val1);
    return val;
 }
+void     WIZCHIP_WRITE_BUF(uint32_t AddrSel, uint8_t* pBuf, uint16_t len)
+{
+   uint8_t spi_data[3];
+   uint16_t i;
 
+   WIZCHIP_CRITICAL_ENTER();
+   WIZCHIP.CS._select();
+
+   AddrSel |= (_W5500_SPI_WRITE_ | _W5500_SPI_VDM_OP_);
+
+   if(!WIZCHIP.IF._SPI._write_burst) 	// byte operation
+   {
+		WIZCHIP.IF._SPI._write_byte((AddrSel & 0x00FF0000) >> 16);
+		WIZCHIP.IF._SPI._write_byte((AddrSel & 0x0000FF00) >>  8);
+		WIZCHIP.IF._SPI._write_byte((AddrSel & 0x000000FF) >>  0);
+		for(i = 0; i < len; i++)
+			WIZCHIP.IF._SPI._write_byte(pBuf[i]);
+   }
+   else									// burst operation
+   {
+		spi_data[0] = (AddrSel & 0x00FF0000) >> 16;
+		spi_data[1] = (AddrSel & 0x0000FF00) >> 8;
+		spi_data[2] = (AddrSel & 0x000000FF) >> 0;
+		WIZCHIP.IF._SPI._write_burst(spi_data, 3);
+		WIZCHIP.IF._SPI._write_burst(pBuf, len);
+   }
+
+   WIZCHIP.CS._deselect();
+   WIZCHIP_CRITICAL_EXIT();
+}
 void wiz_send_data(uint8_t sn, uint8_t *wizdata, uint16_t len)
 {
    uint16_t ptr = 0;
@@ -371,7 +399,7 @@ int32_t recv(uint8_t sn, uint8_t *buf, uint16_t len){
     };
     if(recvsize < len) len = recvsize;
     wiz_recv_data(sn, buf, len);
-    setSn_CR(sn_CR_RECV);
+    setSn_CR(sn,Sn_CR_RECV);
     while(getSn_CR(sn));
 }
 

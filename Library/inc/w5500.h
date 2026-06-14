@@ -31,6 +31,7 @@ static uint16_t sock_any_port = SOCK_ANY_PORT_NUM;
 #define SOCKERR_SOCKCLOSED    (SOCK_ERROR - 4)  
 #define SOCK_LISTEN                  0x14
 #define SOCK_INIT                    0x13
+#define SOCKERR_TIMEOUT       (SOCK_ERROR - 13)
 /* Default SPI functions */
 #define _W5500_SPI_VDM_OP_          0x00
 #define PACK_COMPLETED           0x00 
@@ -38,8 +39,13 @@ static uint16_t sock_any_port = SOCK_ANY_PORT_NUM;
 #define Sn_CR_OPEN                   0x01    
 #define SF_IO_NONBLOCK           0x01
 #define SF_TCP_NODELAY         (Sn_MR_ND)   
-            
-
+#define Sn_CR_RECV                   0x40
+#define SOCK_CLOSE_WAIT              0x1C
+#define SOCKERR_SOCKSTATUS    (SOCK_ERROR - 7)
+#define Sn_CR_SEND                   0x20
+#define Sn_IR_SENDOK                 0x10
+#define SOCK_BUSY             0  
+#define Sn_IR_TIMEOUT                0x08
 #define Sn_MR(N)           (_W5500_IO_BASE_ + (0x0000 << 8) + (WIZCHIP_SREG_BLOCK(N) << 3))
 #define setSn_TXBUF_SIZE(sn, txbufsize) WIZCHIP_WRITE(Sn_TXBUF_SIZE(sn), txbufsize)
 #define setSn_RXBUF_SIZE(sn, rxbufsize) WIZCHIP_WRITE(Sn_RXBUF_SIZE(sn),rxbufsize)
@@ -49,6 +55,8 @@ static uint16_t sock_any_port = SOCK_ANY_PORT_NUM;
 #define Sn_SR(N)           (_W5500_IO_BASE_ + (0x0003 << 8) + (WIZCHIP_SREG_BLOCK(N) << 3))
 #define getSn_SR(sn) WIZCHIP_READ(Sn_SR(sn))
 #define setSn_CR(sn, cr) WIZCHIP_WRITE(Sn_CR(sn), cr)
+#define Sn_RX_RSR(N)       (_W5500_IO_BASE_ + (0x0026 << 8) + (WIZCHIP_SREG_BLOCK(N) << 3))
+
 #define CHECK_SOCKNUM()                        \
     do {                                       \
         if (sn >= _WIZCHIP_SOCK_NUM_)          \
@@ -124,7 +132,7 @@ void reg_wizchip_cs_cbfunc(void(*cs_sel)(void),
                            void(*cs_desel)(void));
 
 uint16_t getSn_RX_RSR(uint8_t sn);
-
+void WIZCHIP_WRITE_BUF(uint32_t AddrSel, uint8_t* pBuf, uint16_t len);
 void reg_wizchip_spi_cbfunc(
     uint8_t (*spi_rb)(void),
     void (*spi_wb)(uint8_t wb)
@@ -135,6 +143,7 @@ void reg_wizchip_spiburst_cbfunc(
     void (*spi_wb)(uint8_t* pBuf, uint16_t len)
 );
 void wiz_send_data(uint8_t sn, uint8_t *wizdata, uint16_t len);
+
 void wiz_recv_data(uint8_t sn, uint8_t *wizdata, uint16_t len);
 void wizchip_sw_reset(void);
 int8_t wizchip_init(uint8_t* txsize, uint8_t* rxsize);
