@@ -3,6 +3,18 @@
 
 #include "stm8s.h"
 
+typedef struct wiz_NetInfo_t
+{
+   uint8_t mac[6];  ///< Source Mac Address
+   uint8_t ip[4];   ///< Source IP Address
+   uint8_t sn[4];   ///< Subnet Mask 
+   uint8_t gw[4];   ///< Gateway IP Address
+   uint8_t dns[4];  ///< DNS server IP Address
+}wiz_NetInfo;
+#define GAR         0x0001
+#define SUBR        0x0005
+#define SHAR        0x0009
+#define SIPR        0x000F
 #define WIZCHIP_SREG_BLOCK(N)       (1+4*N) //< Socket N register block
 #define _WIZCHIP_IO_MODE_SPI_    0x0200
 #define Sn_MR_TCP                    0x01
@@ -82,6 +94,10 @@ static uint16_t sock_any_port = SOCK_ANY_PORT_NUM;
       if(len == 0) return SOCKERR_DATALEN;   \
    }while(0);              \
 
+#define setSHAR(shar) WIZCHIP_WRITE_BUF(SHAR, shar, 6)
+#define setGAR(gar) WIZCHIP_WRITE_BUF(GAR,gar,4)
+#define setSUBR(subr) WIZCHIP_WRITE_BUF(SUBR, subr,4)
+#define setSIPR(sipr) WIZCHIP_WRITE_BUF(SIPR, sipr, 4)
 #define getVERSIONR()          WIZCHIP_READ(VERSIONR)
 #define setSn_IR(sn, ir) WIZCHIP_WRITE(Sn_IR(sn), (ir & 0x1F))
 #define SOCK_ESTABLISHED             0x17
@@ -169,7 +185,7 @@ void reg_wizchip_spiburst_cbfunc(
     void (*spi_wb)(uint8_t* pBuf, uint16_t len)
 );
 void wiz_send_data(uint8_t sn, uint8_t *wizdata, uint16_t len);
-
+void wizchip_setnetinfo(wiz_NetInfo* pnetinfo);
 void wiz_recv_data(uint8_t sn, uint8_t *wizdata, uint16_t len);
 void wizchip_sw_reset(void);
 int8_t wizchip_init(uint8_t* txsize, uint8_t* rxsize);

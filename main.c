@@ -5,7 +5,7 @@
 #include "stm8s_conf.h"
 #include <string.h>
 
-#define UART_RX_BUFFER_SIZE 8
+#define UART_RX_BUFFER_SIZE 5
 #define UART_TX_BUFFER_SIZE 5
 typedef struct 
 {
@@ -64,7 +64,7 @@ uint16_t uart_rx_count = 0;
 uint16_t uart_rx_head = 0;
 uint16_t uart_rx_tail = 0;
 static uint8_t uart_tx_buffer[UART_TX_BUFFER_SIZE];
-uint8_t uart_rx_buffer[32];
+uint8_t uart_rx_buffer[5];
 unsigned long systick_ms = 0;
 timer_callback_t user_callback = 0;
 
@@ -190,110 +190,6 @@ uint8_t hal_di_read(uint8_t di_num)
     return (GPIO_ReadInputPin(port, pin) == SET) ? 1 : 0;
 }
 
-// char* u16_to_str(char *p, uint16_t value)
-// {
-//     char temp[6];
-//     uint8_t i = 0;
-//     uint8_t j;
-
-//     if(value == 0)
-//     {
-//         *p++ = '0';
-//         return p;
-//     }
-
-//     while(value)
-//     {
-//         temp[i++] = (value % 10) + '0';
-//         value /= 10;
-//     }
-
-//     for(j = i; j > 0; j--)
-//     {
-//         *p++ = temp[j - 1];
-//     }
-
-//     return p;
-// }
-
-// char* u32_to_str(char *p, uint32_t value)
-// {
-//     char temp[10];
-//     uint8_t i = 0;
-//     uint8_t j;
-
-//     if(value == 0)
-//     {
-//         *p++ = '0';
-//         return p;
-//     }
-
-//     while(value)
-//     {
-//         temp[i++] = (value % 10) + '0';
-//         value /= 10;
-//     }
-
-//     for(j = i; j > 0; j--)
-//     {
-//         *p++ = temp[j - 1];
-//     }
-
-//     return p;
-// }
-
-// void message_formatter_avcc(char *buf,
-//                             int buf_size,
-//                             uint16_t lanid,
-//                             uint32_t seqn,
-//                             uint16_t axle_count)
-// {
-//     char *p;
-
-//     if(buf == 0)
-//         return;
-
-//     if(buf_size < 40)
-//         return;
-
-//     p = buf;
-
-//     /* START,AVCC, */
-//     *p++ = 'S';
-//     *p++ = 'T';
-//     *p++ = 'A';
-//     *p++ = 'R';
-//     *p++ = 'T';
-//     *p++ = ',';
-//     *p++ = 'A';
-//     *p++ = 'V';
-//     *p++ = 'C';
-//     *p++ = 'C';
-//     *p++ = ',';
-
-//     p = u16_to_str(p, lanid);
-
-//     *p++ = ',';
-
-//     p = u32_to_str(p, seqn);
-
-//     *p++ = ',';
-//     *p++ = 'A';
-//     *p++ = 'X';
-//     *p++ = 'L';
-//     *p++ = 'E';
-//     *p++ = ',';
-
-//     p = u16_to_str(p, axle_count);
-
-//     *p++ = ',';
-//     *p++ = 'E';
-//     *p++ = 'N';
-//     *p++ = 'D';
-
-//     *p = '\0';
-// }
-
 void hal_relay_set(uint8_t relay_num, uint8_t state){
 	GPIO_TypeDef *port;
 	GPIO_Pin_TypeDef pin;
@@ -345,45 +241,7 @@ void hal_timer_start(void)
 {
     TIM4_Cmd(ENABLE);
 }
-/*
-* Process acle counting state machine
-*/
-// void process_axle_counting(void){
-//     sensor_state_t sensor = sensor_reader_get_state();
 
-//     /* Vehicle entered loop detection */
-//     if(sensor.di1 == 1 && axle_counter.prev_di1_state == 0){
-//         axle_counter.loop_active = 1;
-//         axle_counter.axle_count = 0;
-//     }
-//     /* Count axle pulses while vehicle is on loop */
-//     if(axle_counter.loop_active){
-//         if(sensor.di2 == 1 && axle_counter.prev_di2_state == 0){
-//             axle_counter.axle_count++;
-//         }
-//         axle_counter.prev_di2_state = sensor.di2;
-//     }
-
-//     /* Vehicle left loop */
-//     if (sensor.di1 == 0 && axle_counter.prev_di1_state == 1 && axle_counter.loop_active){
-//         uint16_t axle_final_count = axle_counter.axle_count / 2;
-
-//         char msg_buf[40];
-//         message_formatter_avcc(msg_buf, sizeof(msg_buf),DEVICE_LANID,axle_counter.embedded_seq_num,axle_final_count);
-//         /* Send via UART if ready */
-//         if(uart_server_is_ready()){
-//             uart_server_send((uint8_t *)msg_buf, strlen(msg_buf));
-//         }
-//         if(tcp_server_is_ready()){
-//             tcp_server_send((uint8_t *)msg_buf, strlen(msg_buf));
-//         }
-//         /* RESET COUNTER */
-//         axle_counter.embedded_seq_num++;
-//         axle_counter.loop_active = 0;
-//         axle_counter.axle_count = 0;
-//     }
-//     axle_counter.prev_di1_state = sensor.di1;
-// }
 void process_axle_counting(void)
 {
     sensor_state_t sensor = sensor_reader_get_state();
@@ -435,7 +293,10 @@ void send_alive_message(void)
         sensor.di3,
         sensor.di4
     );
-
+    if (tcp_server_is_connected())
+    {
+        tcp_server_send((uint8_t *)msg_buf, strlen(msg_buf));
+    }
     if (uart_server_is_ready())
     {
         uart_server_send((uint8_t *)msg_buf, strlen(msg_buf));
@@ -699,12 +560,27 @@ void tcp_server_process(void){
             break;
     }
 }
+static void w5500_init_network(void)
+{
+    wiz_NetInfo netinfo;
 
+    uint8_t mac[6] = MAC_ADDR;
+    uint8_t ip[4]  = IP_ADDR;
+    uint8_t sn[4]  = SUBNET_MASK;
+    uint8_t gw[4]  = GATEWAY_ADDR;
+
+    memcpy(netinfo.mac, mac, 6);
+    memcpy(netinfo.ip,  ip, 4);
+    memcpy(netinfo.sn,  sn, 4);
+    memcpy(netinfo.gw,  gw, 4);
+
+    wizchip_setnetinfo(&netinfo);
+}
 void tcp_server_init(uint16_t port){
     server_port = port;
     server_state = TCP_STATE_IDLE;
 
-    //w5500_init_network();
+    w5500_init_network();
     if(socket(server_socket, Sn_MR_TCP, server_port, 0) == server_socket){
         if(listen(server_socket) == SOCK_OK){
             server_state = TCP_STATE_LISTENING;
@@ -770,7 +646,7 @@ void system_init(void){
     /* Setup timer callback for periodic tasks */
     hal_timer_set_callback(timer_callback);
     hal_timer_start();
-	  hal_delay_ms(500);
+	hal_delay_ms(500);
 }
 
 void main_loop(void)
@@ -788,6 +664,9 @@ void main_loop(void)
 			if (GPIO_ReadInputPin(HARDRST_PORT, HARDRST_PIN) == 0){
 				/* Send reset message */
 				char msg[] = "RESET, OK\n";
+                if(tcp_server_is_connected()){
+                    tcp_server_send((uint8_t *)msg, strlen(msg));
+                }
                 if (uart_server_is_ready()){
                     uart_server_send((uint8_t *)msg, strlen(msg));
                 }
@@ -804,5 +683,3 @@ int main(void)
     main_loop();
     while(1);
 }
-
-// IP DI NHI HA configuration setting

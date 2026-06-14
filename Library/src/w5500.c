@@ -265,6 +265,14 @@ void reg_wizchip_spiburst_cbfunc(
     }
 }
 
+void wizchip_setnetinfo(wiz_NetInfo* pnetinfo)
+{
+   setSHAR(pnetinfo->mac);
+   setGAR(pnetinfo->gw);
+   setSUBR(pnetinfo->sn);
+   setSIPR(pnetinfo->ip);
+}
+
 int8_t wizchip_init(uint8_t* txsize, uint8_t* rxsize)
 {
     int8_t i;
