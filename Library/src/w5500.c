@@ -318,7 +318,9 @@ int8_t socket(uint8_t sn, uint8_t protocol, uint16_t port, uint8_t flag){
         {
             uint32_t taddr;
             getSIPR((uint8_t*)&taddr);
-            if(taddr == 0) return SOCKERR_SOCKINIT;
+            if(taddr == 0) 
+                return SOCKERR_SOCKINIT;
+            break;
         }
         default :
             return SOCKERR_SOCKMODE;
@@ -426,6 +428,8 @@ int32_t recv(uint8_t sn, uint8_t *buf, uint16_t len){
     wiz_recv_data(sn, buf, len);
     setSn_CR(sn,Sn_CR_RECV);
     while(getSn_CR(sn));
+    
+    return len;
 }
 
 int32_t send(uint8_t sn, uint8_t * buf, uint16_t len){

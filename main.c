@@ -5,8 +5,8 @@
 #include "stm8s_conf.h"
 #include <string.h>
 
-#define UART_RX_BUFFER_SIZE 5
-#define UART_TX_BUFFER_SIZE 5
+#define UART_RX_BUFFER_SIZE 6
+#define UART_TX_BUFFER_SIZE 16
 typedef struct 
 {
     uint8_t di1;
@@ -60,11 +60,11 @@ typedef void (*timer_callback_t)(void);
 static uart_state_t uart_state = UART_STATE_IDLE;
 static uint8_t server_socket = 0;
 static uint16_t server_port = TCP_SERVER_PORT;
-uint16_t uart_rx_count = 0;
-uint16_t uart_rx_head = 0;
-uint16_t uart_rx_tail = 0;
+uint8_t uart_rx_count = 0;
+uint8_t uart_rx_head = 0;
+uint8_t uart_rx_tail = 0;
 static uint8_t uart_tx_buffer[UART_TX_BUFFER_SIZE];
-uint8_t uart_rx_buffer[5];
+uint8_t uart_rx_buffer[UART_RX_BUFFER_SIZE];
 unsigned long systick_ms = 0;
 timer_callback_t user_callback = 0;
 
@@ -280,7 +280,7 @@ void sensor_reader_init(void)
 
 void send_alive_message(void)
 {
-    char msg_buf[32];
+    char msg_buf[5];
     sensor_state_t sensor;
 
     sensor = sensor_reader_get_state();
@@ -412,7 +412,7 @@ uint8_t hal_uart_read_byte(void){
 void uart_server_process(void){
 	uint16_t available_len;
 	uint8_t read_byte;
-	char resp_buf[32];
+	char resp_buf[5];
 	sensor_state_t state;
 	
 	if (uart_state == UART_STATE_IDLE){
@@ -435,7 +435,7 @@ void uart_server_process(void){
 					 	uart_server_send((uint8_t *)resp_buf,strlen(resp_buf));
 					}
                     else {
-                        uart_server_send((uint8_t *)"ERROR,INVALID_COMMAND\n",strlen("ERROR,INVALID_COMMAND\n"));
+                        uart_server_send((uint8_t *)"ERR", 3);
                     }
                     uart_rx_count = 0;
 				}
@@ -536,10 +536,13 @@ void tcp_server_process(void){
                 uint16_t read_len = (received_len > TCP_RX_BUFFER) ? TCP_RX_BUFFER : received_len;
 
                 read_len = recv(server_socket, rx_buffer, read_len);
+                if(read_len > 0 && read_len < TCP_RX_BUFFER){
+                    rx_buffer[read_len] = '\0';
+                }
                 if(read_len > 0){
                     if(command_parser_execute((const char *)rx_buffer, read_len) == 0){
                         /* Send success response (ALIVE message) */
-                        char resp_buf[32];
+                        char resp_buf[5];
                         sensor_state_t state = sensor_reader_get_state();
                         message_formatter_alive(resp_buf,sizeof(resp_buf),state.di1,state.di2,state.di3,state.di4);
                         tcp_server_send((uint8_t *)resp_buf, strlen(resp_buf));
@@ -551,12 +554,21 @@ void tcp_server_process(void){
         case SOCK_CLOSED:
             server_state = TCP_STATE_LISTENING;
             close(server_socket);
-            socket(server_socket, Sn_MR_TCP, server_port, 0);
-            listen(server_socket);
+            if(socket(server_socket, Sn_MR_TCP, server_port, 0) >= 0)
+            {
+                if(listen(server_socket) == SOCK_OK)
+                {
+                    server_state = TCP_STATE_LISTENING;
+                }
+            }
             break;
         
         default:
-            server_state = TCP_STATE_ERROR;
+            close(server_socket);
+            if(socket(server_socket, Sn_MR_TCP, server_port, 0) >= 0){
+                listen(server_socket);
+                server_state = TCP_STATE_LISTENING;
+            }
             break;
     }
 }
@@ -591,7 +603,8 @@ void tcp_server_init(uint16_t port){
 void w5500_chip_init(void)
 {
     uint8_t version;
-
+    uint8_t txsize[8] = {16,0,0,0,0,0,0,0};
+    uint8_t rxsize[8] = {16,0,0,0,0,0,0,0};
     /* Reset W5500 */
     GPIO_WriteLow(W5500_RST_PORT, W5500_RST_PIN);
     hal_delay_ms(100);
@@ -620,7 +633,7 @@ void w5500_chip_init(void)
     reg_wizchip_spi_cbfunc(hal_spi_read_byte,hal_spi_write_byte);
     reg_wizchip_spiburst_cbfunc(hal_spi_read,hal_spi_write);
     reg_wizchip_cs_cbfunc(hal_spi_cs_low,hal_spi_cs_high);
-    wizchip_init(0, 0);
+    wizchip_init(txsize, rxsize);
     version = getVERSIONR();
     if(version != 0x04)
     {

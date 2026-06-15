@@ -102,8 +102,8 @@
 
 /* Message Buffer Sizes */
 #define MSG_BUFFER_SIZE 32
-#define TCP_RX_BUFFER   32
-#define TCP_TX_BUFFER   32
+#define TCP_RX_BUFFER   6
+#define TCP_TX_BUFFER   16
 
 
 /* ============================================================================
