@@ -2,14 +2,11 @@
 #define __STM8S_CONF_H
 
 #include "stm8s.h"
-#include "stm8s_clk.h"
 #include "config.h"
+#include "stm8s_clk.h"
 #include "stm8s_gpio.h"
-#include "stm8s_uart1.h"
 #include "stm8s_spi.h"
-#include "stm8s_tim4.h"
 #include "w5500.h"
-
 #define USE_FULL_ASSERT 0
 
 #if USE_FULL_ASSERT
